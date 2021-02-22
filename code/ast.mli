@@ -11,3 +11,12 @@ type expr =
   | Pint of int
   | Float of float
   | Var of string
+  | Expr of expr
+
+type stmts = 
+    Repeated of stmts * stmts
+  | Expr of expr
+
+
+type fdel = 
+    Fdel of string * string * stmts

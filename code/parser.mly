@@ -7,6 +7,7 @@
 %token <int> PINT
 %token <float> FLOAT
 %token <string> VAR
+%token RPAREN LPAREN RCURL LCURL
 
 %left SEMI
 %right ASSIGN
@@ -16,10 +17,18 @@
 %left PLUS MINUS
 %left TIMES DIVIDE
 
-%start expr
-%type <Ast.expr> expr
+%start fdel
+%type <Ast.fdel> fdel
 
 %%
+
+fdel:
+| VAR LPAREN VAR RPAREN
+    LCURL stmts RCURL       { Fdel($1, $3, $6) }
+
+stmts:
+| stmts stmts               { Repeated($1, $2)}
+| expr                      { Expr($1) }
 
 expr:
 // Math Operators
@@ -46,3 +55,4 @@ expr:
 | VAR ASSIGN expr           { AssignOp($1, $3) }
 | VAR                       { Var($1) }
 | expr SEMI expr            { Binop($1, Semi, $3) }
+

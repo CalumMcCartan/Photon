@@ -3,6 +3,9 @@ open Ast
 let print_list = function
   list -> print_endline(String.concat " " list)
 
+let stmt_to_string = function
+  stmts -> ""
+
 let rec eval = function 
 | Int(x) -> print_list ["Int"; string_of_int x] ; x
 | Float(x) -> print_list ["Float"; string_of_float x] ; 0
@@ -32,10 +35,27 @@ let rec eval = function
   let value = eval expr in 
   print_list ["Assign"; var; "to"; string_of_int value] ;
   value
+| Expr(expr) ->
+  let value = eval expr in 
+  print_list ["Expr"; string_of_int value] ; 0
 
+let rec read = function
+| Repeated(stmt1, stmt2) ->
+  let result1 = read stmt1 in
+  let result2 = read stmt1 in
+  print_list ["Statements"; stmt_to_string result1; stmt_to_string result2]; result1
+| Expr(expr) ->
+  let value = eval expr in 
+  print_list ["Expr"; string_of_int value] ; expr
+
+let rec fdel = function
+| Fdel(name, typ, stmt) ->
+  print_list ["Function Start"; name; typ] ;
+  let result = read stmt in
+  print_list ["Function End"; name; typ; stmt_to_string result]; None
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let expr = Parser.expr Scanner.tokenize lexbuf in
-  let result = eval expr in
-  print_endline (string_of_int result)
+  let func = Parser.fdel Scanner.tokenize lexbuf in
+  let result = fdel func in 
+  print_endline("Done")

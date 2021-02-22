@@ -31,4 +31,8 @@ rule tokenize = parse
 | '=' { ASSIGN }
 | ';' { SEMI }
 | [' ' '\t' '\r' '\n'] { tokenize lexbuf }
+| '(' { LPAREN }
+| ')' { RPAREN }
+| '{' { LCURL }
+| '}' { RCURL }
 | eof { EOF }
