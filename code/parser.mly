@@ -63,4 +63,4 @@ expr:
 | LPAREN expr RPAREN        { $2 }
 
 // Built-In Functions
-| expr LPAREN expr RPAREN    { Binf($1, $3) }
+| VAR LPAREN expr RPAREN    { Binf($1, $3) }
