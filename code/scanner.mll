@@ -20,8 +20,11 @@ rule tokenize = parse
 | "<=" { LESS_EQUAL }
 | "&" { AND }
 | "||" { OR }
+| '!' { NOT }
 
 (* Literals *)
+| "true" { BOOL(true) }
+| "false" { BOOL(false) }
 | digit+ as lit { INT(int_of_string lit) }
 | pint as lit { PINT(int_of_string lit) }
 | float as lit { FLOAT(float_of_string lit) }
