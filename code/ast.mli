@@ -16,6 +16,7 @@ type expr =
   | Bool of bool
   | Var of string
   | Expr of expr
+  | Binf of string * expr
 
 type stmts = 
     Repeated of stmts * stmts

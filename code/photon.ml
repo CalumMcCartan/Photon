@@ -44,6 +44,11 @@ let rec eval = function
 | Expr(expr) ->
   let value = eval expr in 
   print_list ["Expr"; string_of_int value] ; 0
+| Binf(funcname, expr) ->
+    let value = eval expr in
+    print_list [funcname; string_of_int value] ; 0
+    
+    
 
 let rec read = function
 | Repeated(stmt1, stmt2) ->

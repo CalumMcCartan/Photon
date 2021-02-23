@@ -8,7 +8,6 @@
 %token <float> FLOAT
 %token <bool> BOOL
 %token <string> VAR
-%token <string> LOAD FLIP ROTATE SAVE MIN MAX PRINT DESTROY
 %token RPAREN LPAREN RCURL LCURL PERIOD
 
 %left SEMI
@@ -64,11 +63,4 @@ expr:
 | LPAREN expr RPAREN        { $2 }
 
 // Built-In Functions
-| LOAD LPAREN expr RPAREN    { Binf(Load, $3) }
-| expr PERIOD FLIP           { Binf(Flip, $1) }
-| expr PERIOD ROTATE         { Binf(Rotate, $1)}
-| expr PERIOD SAVE           { Binf(Save, $1)}
-| PRINT LPAREN expr RPAREN   { Binf(Print, $3) }
-| MIN LPAREN expr RPAREN     { Binf(Min, $3) }
-| MAX LPAREN expr RPAREN     { Binf(Max, $3) }
-| DESTROY LPAREN expr RPAREN { Binf(Destroy, $3)}
+| expr LPAREN expr RPAREN    { Binf($1, $3) }
