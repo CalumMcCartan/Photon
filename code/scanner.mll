@@ -21,6 +21,16 @@ rule tokenize = parse
 | "&" { AND }
 | "||" { OR }
 
+(* Data Types*)
+| "int" {INT_}
+| "float" {FLOAT_}
+| "string" {STR_}
+| "bool" {BOOL_}
+| "[]" {ARR_}
+| "Image" {IMG_}
+| "pint" {PINT_}
+| "pixel" {PIX_}
+
 (* Literals *)
 | digit+ as lit { INT(int_of_string lit) }
 | pint as lit { PINT(int_of_string lit) }

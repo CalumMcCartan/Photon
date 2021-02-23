@@ -7,6 +7,7 @@
 %token <int> PINT
 %token <float> FLOAT
 %token <string> VAR
+%token <string> dtype
 %token RPAREN LPAREN RCURL LCURL
 
 %left SEMI
@@ -16,6 +17,7 @@
 %left EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left INT_ FLOAT_ STR_ BOOL_ ARR_ PINT_ PIX_ IMG_ 
 
 %start fdel
 %type <Ast.fdel> fdel
@@ -50,6 +52,10 @@ expr:
 | INT                       { Int($1) }
 | FLOAT                     { Float($1) }
 | PINT                      { Pint($1) }
+
+// Data Types
+| dtype VAR                  {Typeset($1,$2)}
+
 
 // Other
 | VAR ASSIGN expr           { AssignOp($1, $3) }

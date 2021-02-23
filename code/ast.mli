@@ -4,6 +4,8 @@ type operator =
     Eql | Gre | Les | GreEql | LesEql | And | Or |
     Semi
 
+type dtype = INT_ | FLOAT_ | STR_ | BOOL_ | ARR_ | PINT_ | PIX_ | IMG_
+
 type expr =
     Binop of expr * operator * expr
   | AssignOp of string * expr
@@ -12,6 +14,7 @@ type expr =
   | Float of float
   | Var of string
   | Expr of expr
+  | Typeset of string * dtype
 
 type stmts = 
     Repeated of stmts * stmts
@@ -20,3 +23,5 @@ type stmts =
 
 type fdel = 
     Fdel of string * string * stmts
+
+ 
