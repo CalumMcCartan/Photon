@@ -64,11 +64,11 @@ expr:
 | LPAREN expr RPAREN        { $2 }
 
 // Built-In Functions
-| LOAD LPAREN expr RPAREN    { BINF(Load, $3) }
-| expr PERIOD FLIP           { BINF(Flip, $1) }
-| expr PERIOD ROTATE         { BINF(Rotate, $1)}
-| expr PERIOD SAVE           { BINF(Save, $1)}
-| PRINT LPAREN expr RPAREN   { BINF(Print, $3) }
-| MIN LPAREN expr RPAREN     { BINF(Min, $3) }
-| MAX LPAREN expr RPAREN     { BINF(Max, $3) }
-| DESTROY LPAREN expr RPAREN { BINF(Destroy, $3)}
+| LOAD LPAREN expr RPAREN    { Binf(Load, $3) }
+| expr PERIOD FLIP           { Binf(Flip, $1) }
+| expr PERIOD ROTATE         { Binf(Rotate, $1)}
+| expr PERIOD SAVE           { Binf(Save, $1)}
+| PRINT LPAREN expr RPAREN   { Binf(Print, $3) }
+| MIN LPAREN expr RPAREN     { Binf(Min, $3) }
+| MAX LPAREN expr RPAREN     { Binf(Max, $3) }
+| DESTROY LPAREN expr RPAREN { Binf(Destroy, $3)}
