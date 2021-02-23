@@ -5,16 +5,20 @@ type operator =
     Semi
 
 type dtype = INT_ | FLOAT_ | STR_ | BOOL_ | ARR_ | PINT_ | PIX_ | IMG_
+type uni_operator = Not
 
 type expr =
     Binop of expr * operator * expr
+  | Uniop of uni_operator * expr
   | AssignOp of string * expr
   | Int of int
   | Pint of int
   | Float of float
+  | Bool of bool
   | Var of string
   | Expr of expr
   | Typeset of string * dtype
+  | Binf of string * expr
 
 type stmts = 
     Repeated of stmts * stmts

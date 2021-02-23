@@ -9,6 +9,7 @@ let stmt_to_string = function
 let rec eval = function 
 | Int(x) -> print_list ["Int"; string_of_int x] ; x
 | Float(x) -> print_list ["Float"; string_of_float x] ; 0
+| Bool(x) -> print_list ["Bool"; string_of_bool x] ; 0
 | Pint(x) -> print_list ["Pint"; string_of_int x] ; x
 | Var(x) -> print_list ["Var"; x] ; 0
 | Binop(e1, op, e2) ->
@@ -31,6 +32,11 @@ let rec eval = function
     ) in
   print_list ["Binop"; string_of_int v1; opType; string_of_int v2] ;
   0
+| Uniop(op, expr) ->
+  let value = eval expr in
+  let opType = (match op with Not -> "!") in
+  print_list ["Uninop"; opType; string_of_int value] ;
+  0
 | AssignOp(var, expr) ->
   let value = eval expr in 
   print_list ["Assign"; var; "to"; string_of_int value] ;
@@ -38,6 +44,11 @@ let rec eval = function
 | Expr(expr) ->
   let value = eval expr in 
   print_list ["Expr"; string_of_int value] ; 0
+| Binf(funcname, expr) ->
+    let value = eval expr in
+    print_list [funcname; string_of_int value] ; 0
+    
+    
 
 let rec read = function
 | Repeated(stmt1, stmt2) ->

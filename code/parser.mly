@@ -1,14 +1,16 @@
 %{ open Ast %}
 
 %token PLUS MINUS TIMES DIVIDE
-%token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR
+%token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR NOT
 %token EOF SEMI ASSIGN
 %token <int> INT
 %token <int> PINT
 %token <float> FLOAT
+%token <bool> BOOL
 %token <string> VAR
 %token <string> dtype
-%token RPAREN LPAREN RCURL LCURL
+
+%token RPAREN LPAREN RCURL LCURL PERIOD
 
 %left SEMI
 %right ASSIGN
@@ -17,12 +19,13 @@
 %left EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left INT_ FLOAT_ STR_ BOOL_ ARR_ PINT_ PIX_ IMG_ 
+%left NOT
 
 %start fdel
 %type <Ast.fdel> fdel
 
 %%
+
 
 fdel:
 | VAR LPAREN VAR RPAREN
@@ -47,11 +50,13 @@ expr:
 | expr LESS_EQUAL expr      { Binop($1, LesEql, $3) }
 | expr AND expr             { Binop($1, And, $3) }
 | expr OR expr              { Binop($1, Or, $3) }
+| NOT expr                  { Uniop(Not, $2) }
 
 // Literals
 | INT                       { Int($1) }
 | FLOAT                     { Float($1) }
 | PINT                      { Pint($1) }
+| BOOL                      { Bool($1) }
 
 // Data Types
 | dtype VAR                  {Typeset($1,$2)}
@@ -61,4 +66,7 @@ expr:
 | VAR ASSIGN expr           { AssignOp($1, $3) }
 | VAR                       { Var($1) }
 | expr SEMI expr            { Binop($1, Semi, $3) }
+| LPAREN expr RPAREN        { $2 }
 
+// Built-In Functions
+| VAR LPAREN expr RPAREN    { Binf($1, $3) }

@@ -20,6 +20,8 @@ rule tokenize = parse
 | "<=" { LESS_EQUAL }
 | "&" { AND }
 | "||" { OR }
+| '!' { NOT }
+
 
 (* Data Types*)
 | "int" {INT_}
@@ -32,12 +34,15 @@ rule tokenize = parse
 | "pixel" {PIX_}
 
 (* Literals *)
+| "true" { BOOL(true) }
+| "false" { BOOL(false) }
 | digit+ as lit { INT(int_of_string lit) }
 | pint as lit { PINT(int_of_string lit) }
 | float as lit { FLOAT(float_of_string lit) }
 | ['a'-'z']+ as var { VAR(var) }
 
 (* Other *)
+| '.' { PERIOD }
 | '=' { ASSIGN }
 | ';' { SEMI }
 | [' ' '\t' '\r' '\n'] { tokenize lexbuf }
