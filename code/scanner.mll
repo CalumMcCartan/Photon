@@ -22,6 +22,17 @@ rule tokenize = parse
 | "||" { OR }
 | '!' { NOT }
 
+(* Built-In Functions *)
+| "load" { LOAD }
+| "save" { SAVE }
+| "flip" { FLIP }
+| "rotate" { ROTATE }
+| "save" { SAVE }
+| "min" { MIN }
+| "max" { MAX }
+| "print" { PRINT }
+| "destroy" { DESTROY }
+
 (* Literals *)
 | "true" { BOOL(true) }
 | "false" { BOOL(false) }
@@ -31,6 +42,7 @@ rule tokenize = parse
 | ['a'-'z']+ as var { VAR(var) }
 
 (* Other *)
+| '.' { PERIOD }
 | '=' { ASSIGN }
 | ';' { SEMI }
 | [' ' '\t' '\r' '\n'] { tokenize lexbuf }

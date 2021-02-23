@@ -8,7 +8,8 @@
 %token <float> FLOAT
 %token <bool> BOOL
 %token <string> VAR
-%token RPAREN LPAREN RCURL LCURL
+%token <string> LOAD FLIP ROTATE SAVE MIN MAX PRINT DESTROY
+%token RPAREN LPAREN RCURL LCURL PERIOD
 
 %left SEMI
 %right ASSIGN
@@ -23,6 +24,7 @@
 %type <Ast.fdel> fdel
 
 %%
+
 
 fdel:
 | VAR LPAREN VAR RPAREN
@@ -61,3 +63,12 @@ expr:
 | expr SEMI expr            { Binop($1, Semi, $3) }
 | LPAREN expr RPAREN        { $2 }
 
+// Built-In Functions
+| LOAD LPAREN expr RPAREN    { BINF(Load, $3) }
+| expr PERIOD FLIP           { BINF(Flip, $1) }
+| expr PERIOD ROTATE         { BINF(Rotate, $1)}
+| expr PERIOD SAVE           { BINF(Save, $1)}
+| PRINT LPAREN expr RPAREN   { BINF(Print, $3) }
+| MIN LPAREN expr RPAREN     { BINF(Min, $3) }
+| MAX LPAREN expr RPAREN     { BINF(Max, $3) }
+| DESTROY LPAREN expr RPAREN { BINF(Destroy, $3)}
