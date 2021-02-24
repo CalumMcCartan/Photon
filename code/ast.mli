@@ -25,6 +25,7 @@ type expr =
   | Img_ of string
   | Typeset of string * string
   | Binf of string * expr
+  | ObjFunc of string * string
 
 
 type stmts = 

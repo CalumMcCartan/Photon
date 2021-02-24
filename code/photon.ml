@@ -57,7 +57,8 @@ let rec eval = function
 | Binf(funcname, expr) ->
     let value = eval expr in
     print_list [funcname; string_of_int value] ; 0
-    
+| ObjFunc(expr, funcname) ->
+    print_list [funcname; expr] ; 0
     
 
 let rec read = function

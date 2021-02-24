@@ -85,3 +85,4 @@ expr:
 
 // Built-In Functions
 | VAR LPAREN expr RPAREN    { Binf($1, $3) }
+| VAR PERIOD VAR         { ObjFunc($1, $3)}
