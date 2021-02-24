@@ -1,5 +1,6 @@
 functionstart (typesgohere) 
 {
+float x;
 x = 23.5 / (14 + 255) * 7; 
 x == 4; 
 print(x);

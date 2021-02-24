@@ -24,14 +24,14 @@ rule tokenize = parse
 
 
 (* Data Types*)
-| "int" {INT_}
-| "float" {FLOAT_}
-| "string" {STR_}
-| "bool" {BOOL_}
-| "[]" {ARR_}
-| "Image" {IMG_}
-| "pint" {PINT_}
-| "pixel" {PIX_}
+| "int" as dtype {INT_(dtype)}
+| "float" as dtype {FLOAT_(dtype)}
+| "string" as dtype {STR_(dtype)}
+| "bool" as dtype {BOOL_(dtype)}
+| "[]" as dtype {ARR_(dtype)}
+| "Image" as dtype {IMG_(dtype)}
+| "pint" as dtype {PINT_(dtype)}
+| "pixel" as dtype {PIX_(dtype)}
 
 (* Literals *)
 | "true" { BOOL(true) }

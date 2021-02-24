@@ -4,7 +4,6 @@ type operator =
     Eql | Gre | Les | GreEql | LesEql | And | Or |
     Semi
 
-type dtype = INT_ | FLOAT_ | STR_ | BOOL_ | ARR_ | PINT_ | PIX_ | IMG_
 type uni_operator = Not
 
 type expr =
@@ -17,8 +16,17 @@ type expr =
   | Bool of bool
   | Var of string
   | Expr of expr
-  | Typeset of string * dtype
+  | Int_ of string
+  | Float_ of string
+  | Str_ of string
+  | Bool_ of string
+  | Arr_ of string
+  | Pint_ of string
+  | Pix_ of string
+  | Img_ of string
+  | Typeset of string * string
   | Binf of string * expr
+
 
 type stmts = 
     Repeated of stmts * stmts

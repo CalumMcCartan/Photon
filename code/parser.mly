@@ -8,7 +8,14 @@
 %token <float> FLOAT
 %token <bool> BOOL
 %token <string> VAR
-%token <string> dtype
+%token <string> INT_ 
+%token <string> FLOAT_ 
+%token <string> STR_ 
+%token <string> BOOL_ 
+%token <string> ARR_ 
+%token <string> PINT_ 
+%token <string> PIX_ 
+%token <string> IMG_
 
 %token RPAREN LPAREN RCURL LCURL PERIOD
 
@@ -58,8 +65,25 @@ expr:
 | PINT                      { Pint($1) }
 | BOOL                      { Bool($1) }
 
-// Data Types
-| dtype VAR                  {Typeset($1,$2)}
+//Date Type
+| INT_ VAR                  {Typeset($1,$2)}
+| FLOAT_ VAR                {Typeset($1,$2)}
+| STR_ VAR                  {Typeset($1,$2)}
+| BOOL_ VAR                 {Typeset($1,$2)}
+| ARR_ VAR                  {Typeset($1,$2)}
+| PINT_ VAR                 {Typeset($1,$2)}
+| PIX_ VAR                  {Typeset($1,$2)}
+| IMG_ VAR                  {Typeset($1,$2)}
+
+| INT_                      {Int_($1)}
+| FLOAT_ VAR                {Float_($1)}
+| STR_ VAR                  {Str_($1)}
+| BOOL_ VAR                 {Bool_($1)}
+| ARR_ VAR                  {Arr_($1)}
+| PINT_ VAR                 {Pint_($1)}
+| PIX_ VAR                  {Pix_($1)}
+| IMG_ VAR                  {Img_($1)}
+
 
 
 // Other
