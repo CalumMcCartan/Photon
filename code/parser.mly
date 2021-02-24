@@ -4,18 +4,10 @@
 %token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR NOT
 %token EOF SEMI ASSIGN
 %token <int> INT
-%token <int> PINT
 %token <float> FLOAT
 %token <bool> BOOL
 %token <string> VAR
-%token <string> INT_ 
-%token <string> FLOAT_ 
-%token <string> STR_ 
-%token <string> BOOL_ 
-%token <string> ARR_ 
-%token <string> PINT_ 
-%token <string> PIX_ 
-%token <string> IMG_
+%token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_
 
 %token RPAREN LPAREN RCURL LCURL PERIOD
 
@@ -65,18 +57,16 @@ expr:
 // Literals
 | INT                       { Int($1) }
 | FLOAT                     { Float($1) }
-| PINT                      { Pint($1) }
 | BOOL                      { Bool($1) }
 
-//Date Type
-| INT_ VAR                  {Typeset($1,$2)}
-| FLOAT_ VAR                {Typeset($1,$2)}
-| STR_ VAR                  {Typeset($1,$2)}
-| BOOL_ VAR                 {Typeset($1,$2)}
-| ARR_ VAR                  {Typeset($1,$2)}
-| PINT_ VAR                 {Typeset($1,$2)}
-| PIX_ VAR                  {Typeset($1,$2)}
-| IMG_ VAR                  {Typeset($1,$2)}
+// Declare variable
+| INT_ VAR                  { Typeset(Int_, $2) }
+| FLOAT_ VAR                { Typeset(Float_, $2) }
+| STR_ VAR                  { Typeset(Str_, $2) }
+| BOOL_ VAR                 { Typeset(Bool_, $2) }
+| PINT_ VAR                 { Typeset(Pint_, $2) }
+| PIX_ VAR                  { Typeset(Pix_, $2) }
+| IMG_ VAR                  { Typeset(Img_, $2) }
 
 // Other
 | VAR ASSIGN expr           { AssignOp($1, $3) }
