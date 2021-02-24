@@ -33,9 +33,6 @@ fdel:
 | FDECL VAR VAR LPAREN VAR RPAREN
     LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
 
-stmt:
-| expr SEMI                { Expr($1) }
-
 stmts:
   /* empty */
 | stmt                      { Single($1) }
@@ -49,7 +46,7 @@ stmt:
     LCURL stmt RCURL        { While($3, $6) }
 | FOR LPAREN expr COLON expr COLON expr RPAREN
     LCURL stmt RCURL        { For($3, $5, $7, $10) }
-| expr                      { Expr($1) }
+| expr SEMI                { Expr($1) }
 
 expr:
 // Math Operators
