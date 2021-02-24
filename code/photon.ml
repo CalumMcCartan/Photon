@@ -69,7 +69,6 @@ let rec eval = function
     | Magenta -> "Magenta"
     | Yellow -> "Yellow") in
   print_list ["Color"; colorval]; 0
-  print_list ["Expr"; string_of_int value] ; 0
 | Binf(funcname, expr) ->
     let value = eval expr in
     print_list [funcname; string_of_int value] ; 0
