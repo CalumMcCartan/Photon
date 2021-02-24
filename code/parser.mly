@@ -2,12 +2,14 @@
 
 %token PLUS MINUS TIMES DIVIDE
 %token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR
-%token EOF SEMI ASSIGN
+%token EOF SEMI ASSIGN COLON
 %token <int> INT
 %token <int> PINT
 %token <float> FLOAT
 %token <string> VAR
 %token RPAREN LPAREN RCURL LCURL
+%token FDECL IF ELSE WHILE FOR
+%token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
 
 %left SEMI
 %right ASSIGN
@@ -23,11 +25,23 @@
 %%
 
 fdel:
-| VAR LPAREN VAR RPAREN
-    LCURL stmts RCURL       { Fdel($1, $3, $6) }
+| FDECL VAR VAR LPAREN VAR RPAREN
+    LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
 
 stmts:
-| stmts stmts               { Repeated($1, $2)}
+  /* empty */
+| stmt                      { Single($1) }
+| stmts stmt                { Repeated($1, $2) }
+
+
+stmt:
+| IF LPAREN expr RPAREN
+    LCURL stmt RCURL
+  ELSE LCURL stmt RCURL     { IfStmt($3, $6, $10) }
+| WHILE LPAREN expr RPAREN
+    LCURL stmt RCURL        { While($3, $6) }
+| FOR LPAREN expr COLON expr COLON expr RPAREN
+    LCURL stmt RCURL        { For($3, $5, $7, $10) }
 | expr                      { Expr($1) }
 
 expr:
@@ -45,6 +59,16 @@ expr:
 | expr LESS_EQUAL expr      { Binop($1, LesEql, $3) }
 | expr AND expr             { Binop($1, And, $3) }
 | expr OR expr              { Binop($1, Or, $3) }
+
+// Color Keywords
+| BLACK                     { Color(Black) }
+| WHITE                     { Color(White) }
+| RED                       { Color(Red) }
+| GREEN                     { Color(Green) }
+| BLUE                      { Color(Blue) }
+| CYAN                      { Color(Cyan) }
+| MAGENTA                   { Color(Magenta) }
+| YELLOW                    { Color(Yellow) }
 
 // Literals
 | INT                       { Int($1) }
