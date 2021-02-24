@@ -1,11 +1,15 @@
 func returntype functionname (inputname) 
 {
-    x = _black
-    x = _white
-    x = _red
-    x = _green
-    x = _blue
-    x = _cyan
-    x = _magenta
-    x = _yellow
+    fancy123_name = _black;
+    myArray[4] = _white;
+    x = _red;
+    x = _green;
+    x = _blue;
+    x = _cyan;
+    x = _magenta;
+    x = _yellow;
+    float x;
+    print(x);
+    x = 23.5 / (14 + 255) * 7; 
+    9 > 8 & x <= 2 || 4 > x & 6 >= 2 * x;
 }

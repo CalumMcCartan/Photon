@@ -13,7 +13,7 @@ type colors =
 type expr =
     Binop of expr * operator * expr
   | Uniop of uni_operator * expr
-  | AssignOp of string * expr
+  | AssignOp of expr * expr
   | Int of int
   | Float of float
   | Bool of bool

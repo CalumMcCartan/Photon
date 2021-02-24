@@ -12,7 +12,7 @@
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
 %token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_
 
-%token RPAREN LPAREN RCURL LCURL PERIOD
+%token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR
 
 %left SEMI
 %right ASSIGN
@@ -47,6 +47,10 @@ stmt:
 | FOR LPAREN expr COLON expr COLON expr RPAREN
     LCURL stmt RCURL        { For($3, $5, $7, $10) }
 | expr SEMI                { Expr($1) }
+
+var:
+| VAR                      { Var($1) }
+| var LSQR expr RSQR       { $1 }
 
 expr:
 // Math Operators
@@ -90,8 +94,8 @@ expr:
 | IMG_ VAR                  { Typeset(Img_, $2) }
 
 // Other
-| VAR ASSIGN expr           { AssignOp($1, $3) }
-| VAR                       { Var($1) }
+| var ASSIGN expr           { AssignOp($1, $3) }
+| var                       { $1 }
 | LPAREN expr RPAREN        { $2 }
 
 // Built-In Functions

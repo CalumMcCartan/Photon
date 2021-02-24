@@ -39,8 +39,9 @@ let rec eval = function
   print_list ["Uninop"; opType; string_of_int value] ;
   0
 | AssignOp(var, expr) ->
+  let var = eval var in 
   let value = eval expr in 
-  print_list ["Assign"; var; "to"; string_of_int value] ;
+  print_list ["Assign"; string_of_int var; "to"; string_of_int value] ;
   value
 | Typeset (var_type, var) ->
   let type_name = 
@@ -106,7 +107,7 @@ let rec reads = function
   let result1 = read stmt in
   print_list ["Statement"; stmt_to_string result1]; result1
 | Repeated(stmts, stmt) ->
-  let result1 = reads stmts in
+  let _ = reads stmts in
   let result2 = read stmt in
   print_list ["Statements"; stmt_to_string result2]; result2
 

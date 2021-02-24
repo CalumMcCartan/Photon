@@ -50,7 +50,7 @@ rule tokenize = parse
 | "false" { BOOL(false) }
 | ['0'-'9']+ as lit { INT(int_of_string lit) }
 | ['0'-'9']+'.'['0'-'9']* as lit { FLOAT(float_of_string lit) }
-| ['a'-'z']+ as var { VAR(var) }
+| ['a'-'z']+['a'-'z' '0'-'9' '_']* as var { VAR(var) }
 
 (* Other *)
 | '.' { PERIOD }
@@ -62,4 +62,6 @@ rule tokenize = parse
 | ')' { RPAREN }
 | '{' { LCURL }
 | '}' { RCURL }
+| '[' { LSQR }
+| ']' { RSQR }
 | eof { EOF }
