@@ -3,7 +3,7 @@ type operator =
     Add | Sub | Mul | Div |
     Eql | Gre | Les | GreEql | LesEql | And | Or
 
-type uni_operator = Not
+type uni_operator = Not | Negate
 
 type var_type = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_
 

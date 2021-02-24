@@ -21,7 +21,7 @@
 %left EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
-%left NOT
+%right NOT 
 
 %start fdel
 %type <Ast.fdel> fdel
@@ -68,6 +68,7 @@ expr:
 | expr AND expr             { Binop($1, And, $3) }
 | expr OR expr              { Binop($1, Or, $3) }
 | NOT expr                  { Uniop(Not, $2) }
+| MINUS expr                { Uniop(Negate, $2) }
 
 // Color Keywords
 | BLACK                     { Color(Black) }

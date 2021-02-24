@@ -35,7 +35,10 @@ let rec eval = function
   0
 | Uniop(op, expr) ->
   let value = eval expr in
-  let opType = (match op with Not -> "!") in
+  let opType = (match op with 
+    | Not -> "!"
+    | Negate -> "-"
+  ) in
   print_list ["Uninop"; opType; string_of_int value] ;
   0
 | AssignOp(var, expr) ->

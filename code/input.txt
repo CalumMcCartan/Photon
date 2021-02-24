@@ -1,7 +1,7 @@
 func returntype functionname (inputname) 
 {
     fancy123_name = _black;
-    myArray[4] = _white;
+    x = -4 - 3;
     x = _red;
     x = _green;
     x = _blue;
@@ -10,6 +10,6 @@ func returntype functionname (inputname)
     x = _yellow;
     float x;
     print(x);
-    x = 23.5 / (14 + 255) * 7; 
-    9 > 8 & x <= 2 || 4 > x & 6 >= 2 * x;
+    x = 23.5 / (14 + 255) * 7;
+    9 > 8 & x <= 2 || 4 > x & 6 >= 2 * x & !!true;
 }
