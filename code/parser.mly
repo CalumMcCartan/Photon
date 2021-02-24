@@ -1,15 +1,18 @@
 %{ open Ast %}
 
 %token PLUS MINUS TIMES DIVIDE
-%token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR
+%token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR NOT
 %token EOF SEMI ASSIGN COLON
 %token <int> INT
-%token <int> PINT
 %token <float> FLOAT
+%token <bool> BOOL
 %token <string> VAR
 %token RPAREN LPAREN RCURL LCURL
 %token FDECL IF ELSE WHILE FOR
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
+%token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_
+
+%token RPAREN LPAREN RCURL LCURL PERIOD
 
 %left SEMI
 %right ASSIGN
@@ -18,21 +21,25 @@
 %left EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL
 %left PLUS MINUS
 %left TIMES DIVIDE
+%left NOT
 
 %start fdel
 %type <Ast.fdel> fdel
 
 %%
 
+
 fdel:
 | FDECL VAR VAR LPAREN VAR RPAREN
     LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
+
+stmt:
+| expr SEMI                { Expr($1) }
 
 stmts:
   /* empty */
 | stmt                      { Single($1) }
 | stmts stmt                { Repeated($1, $2) }
-
 
 stmt:
 | IF LPAREN expr RPAREN
@@ -59,6 +66,7 @@ expr:
 | expr LESS_EQUAL expr      { Binop($1, LesEql, $3) }
 | expr AND expr             { Binop($1, And, $3) }
 | expr OR expr              { Binop($1, Or, $3) }
+| NOT expr                  { Uniop(Not, $2) }
 
 // Color Keywords
 | BLACK                     { Color(Black) }
@@ -73,10 +81,22 @@ expr:
 // Literals
 | INT                       { Int($1) }
 | FLOAT                     { Float($1) }
-| PINT                      { Pint($1) }
+| BOOL                      { Bool($1) }
+
+// Declare variable
+| INT_ VAR                  { Typeset(Int_, $2) }
+| FLOAT_ VAR                { Typeset(Float_, $2) }
+| STR_ VAR                  { Typeset(Str_, $2) }
+| BOOL_ VAR                 { Typeset(Bool_, $2) }
+| PINT_ VAR                 { Typeset(Pint_, $2) }
+| PIX_ VAR                  { Typeset(Pix_, $2) }
+| IMG_ VAR                  { Typeset(Img_, $2) }
 
 // Other
 | VAR ASSIGN expr           { AssignOp($1, $3) }
 | VAR                       { Var($1) }
-| expr SEMI expr            { Binop($1, Semi, $3) }
+| LPAREN expr RPAREN        { $2 }
 
+// Built-In Functions
+| VAR LPAREN expr RPAREN    { Binf($1, $3) }
+| VAR PERIOD VAR         { ObjFunc($1, $3)}

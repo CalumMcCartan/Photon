@@ -1,21 +1,28 @@
 
 type operator = 
     Add | Sub | Mul | Div |
-    Eql | Gre | Les | GreEql | LesEql | And | Or |
-    Semi
+    Eql | Gre | Les | GreEql | LesEql | And | Or
+
+type uni_operator = Not
+
+type var_type = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_
 
 type colors =
     Black | White | Red | Green | Blue | Cyan | Magenta | Yellow
 
 type expr =
     Binop of expr * operator * expr
+  | Uniop of uni_operator * expr
   | AssignOp of string * expr
   | Int of int
-  | Pint of int
   | Float of float
+  | Bool of bool
   | Var of string
   | Expr of expr
   | Color of colors
+  | Typeset of var_type * string
+  | Binf of string * expr
+  | ObjFunc of string * string
 
 type stmt = 
   Expr of expr

@@ -1,8 +1,5 @@
 { open Parser }
 
-let digit = ['0'-'9']
-let float = digit+'.'digit*
-let pint =  ['0''1']?digit?digit | '2'['0'-'4']digit | "25"['0'-'5']
 
 rule tokenize = parse
   
@@ -37,14 +34,26 @@ rule tokenize = parse
 | "_cyan" { CYAN }
 | "_magenta" { MAGENTA }
 | "_yellow" { YELLOW }
+| '!' { NOT }
+
+(* Data Types*)
+| "int" { INT_ }
+| "float" { FLOAT_ }
+| "string" { STR_ }
+| "bool" { BOOL_ }
+| "Image" { IMG_ }
+| "pint" { PINT_ }
+| "pixel" { PIX_ }
 
 (* Literals *)
-| digit+ as lit { INT(int_of_string lit) }
-| pint as lit { PINT(int_of_string lit) }
-| float as lit { FLOAT(float_of_string lit) }
+| "true" { BOOL(true) }
+| "false" { BOOL(false) }
+| ['0'-'9']+ as lit { INT(int_of_string lit) }
+| ['0'-'9']+'.'['0'-'9']* as lit { FLOAT(float_of_string lit) }
 | ['a'-'z']+ as var { VAR(var) }
 
 (* Other *)
+| '.' { PERIOD }
 | '=' { ASSIGN }
 | ';' { SEMI }
 | ':' { COLON }
