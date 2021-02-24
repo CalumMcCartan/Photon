@@ -30,7 +30,6 @@ let rec eval = function
     | Sub -> "-"
     | Mul -> "*"
     | Div -> "/"
-    | Semi -> ";"
     | Eql -> "=="
     | Gre -> ">"
     | GreEql -> ">="
@@ -79,5 +78,5 @@ let rec fdel = function
 let _ =
   let lexbuf = Lexing.from_channel stdin in
   let func = Parser.fdel Scanner.tokenize lexbuf in
-  let result = fdel func in 
+  let _ = fdel func in 
   print_endline("Done")

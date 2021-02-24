@@ -38,9 +38,12 @@ fdel:
 | VAR LPAREN VAR RPAREN
     LCURL stmts RCURL       { Fdel($1, $3, $6) }
 
+stmt:
+| expr SEMI                { Expr($1) }
+
 stmts:
-| stmts stmts               { Repeated($1, $2)}
-| expr                      { Expr($1) }
+| stmts stmt               { Repeated($1, $2)}
+| stmt                     { $1 }
 
 expr:
 // Math Operators
@@ -75,21 +78,9 @@ expr:
 | PIX_ VAR                  {Typeset($1,$2)}
 | IMG_ VAR                  {Typeset($1,$2)}
 
-| INT_                      {Int_($1)}
-| FLOAT_ VAR                {Float_($1)}
-| STR_ VAR                  {Str_($1)}
-| BOOL_ VAR                 {Bool_($1)}
-| ARR_ VAR                  {Arr_($1)}
-| PINT_ VAR                 {Pint_($1)}
-| PIX_ VAR                  {Pix_($1)}
-| IMG_ VAR                  {Img_($1)}
-
-
-
 // Other
 | VAR ASSIGN expr           { AssignOp($1, $3) }
 | VAR                       { Var($1) }
-| expr SEMI expr            { Binop($1, Semi, $3) }
 | LPAREN expr RPAREN        { $2 }
 
 // Built-In Functions

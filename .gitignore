@@ -1,3 +1,11 @@
+
+
+# ocamlyacc parser.mly
+parser.ml
+parser.mli
+
+
+# ----- Github ocaml .gitignore preset -----
 *.annot
 *.cmo
 *.cma

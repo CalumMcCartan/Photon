@@ -1,8 +1,7 @@
 
 type operator = 
     Add | Sub | Mul | Div |
-    Eql | Gre | Les | GreEql | LesEql | And | Or |
-    Semi
+    Eql | Gre | Les | GreEql | LesEql | And | Or
 
 type uni_operator = Not
 
