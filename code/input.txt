@@ -1,6 +1,6 @@
 func returntype functionname (inputname) 
 {
-    fancy123_name = _black;
+    Fancy123_Name = _black;
     x = -4 - 3;
     x = _red;
     x = _green;
@@ -12,4 +12,7 @@ func returntype functionname (inputname)
     print(x);
     x = 23.5 / (14 + 255) * 7;
     9 > 8 & x <= 2 || 4 > x & 6 >= 2 * x & !!true;
+    x = [1, 2, 3];
+    x = pixel[800][600];
+    x[3][1] = 2;
 }

@@ -14,6 +14,7 @@ let rec eval = function
 | Float(x) -> print_list ["Float"; string_of_float x] ; 0
 | Bool(x) -> print_list ["Bool"; string_of_bool x] ; 0
 | Var(x) -> print_list ["Var"; x] ; 0
+| Array(x) -> print_list ["Array"] ; 0
 | Binop(e1, op, e2) ->
   let v1 = eval e1 in
   let v2 = eval e2 in

@@ -50,10 +50,11 @@ rule tokenize = parse
 | "false" { BOOL(false) }
 | ['0'-'9']+ as lit { INT(int_of_string lit) }
 | ['0'-'9']+'.'['0'-'9']* as lit { FLOAT(float_of_string lit) }
-| ['a'-'z']+['a'-'z' '0'-'9' '_']* as var { VAR(var) }
+| ['a'-'z' 'A'-'Z']+['a'-'z' 'A'-'Z' '0'-'9' '_']* as var { VAR(var) }
 
 (* Other *)
 | '.' { PERIOD }
+| ',' { COMMA }
 | '=' { ASSIGN }
 | ';' { SEMI }
 | ':' { COLON }

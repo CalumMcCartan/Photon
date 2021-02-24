@@ -12,7 +12,7 @@
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
 %token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_
 
-%token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR
+%token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR COMMA
 
 %left SEMI
 %right ASSIGN
@@ -52,6 +52,28 @@ var:
 | VAR                      { Var($1) }
 | var LSQR expr RSQR       { $1 }
 
+types:
+| INT_                     { Int_ }
+| FLOAT_                   { Float_ }
+| STR_                     { Str_ }
+| BOOL_                    { Bool_ }
+| PINT_                    { Pint_ }
+| PIX_                     { Pix_ }
+| IMG_                     { Img_ }
+
+// Arrays
+array:
+| LSQR expr_list RSQR      { $2 }
+| types array_size          { $2 }
+
+array_size:
+| array_size LSQR expr RSQR  { $3 }
+| LSQR expr RSQR             { $2 }
+
+expr_list:
+| expr_list COMMA expr      { $1 }
+| expr                      { $1 }
+
 expr:
 // Math Operators
 | expr PLUS expr            { Binop($1, Add, $3) }
@@ -84,6 +106,7 @@ expr:
 | INT                       { Int($1) }
 | FLOAT                     { Float($1) }
 | BOOL                      { Bool($1) }
+| array                     { Array($1) }
 
 // Declare variable
 | INT_ VAR                  { Typeset(Int_, $2) }

@@ -17,6 +17,7 @@ type expr =
   | Int of int
   | Float of float
   | Bool of bool
+  | Array of expr
   | Var of string
   | Expr of expr
   | Color of colors
