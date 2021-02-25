@@ -5,7 +5,7 @@ type operator =
 
 type uni_operator = Not | Negate
 
-type var_type = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_
+type var_type = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_ | Void_
 
 type colors =
     Black | White | Red | Green | Blue | Cyan | Magenta | Yellow
@@ -18,6 +18,7 @@ type expr =
   | Float of float
   | Bool of bool
   | Str of string
+  | Null
   | Array of expr
   | Var of string
   | Expr of expr
@@ -37,7 +38,7 @@ type stmts =
 | None
 
 type fdel = 
-    Fdel of string * string * string * stmts
+    Fdel of var_type * string * string * stmts
 |   NoFdel
 
 type program = Program

@@ -44,6 +44,7 @@ rule tokenize = parse
 | "Image" { IMG_ }
 | "pint" { PINT_ }
 | "pixel" { PIX_ }
+| "void" { VOID_ }
 
 (* Other *)
 | '#' { comment lexbuf }
@@ -63,6 +64,7 @@ rule tokenize = parse
 | eof { EOF }
 
 (* Literals *)
+| "null" { NULL }
 | "true" { BOOL(true) }
 | "false" { BOOL(false) }
 | ['0'-'9']+ as lit { INT(int_of_string lit) }

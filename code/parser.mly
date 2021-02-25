@@ -7,10 +7,11 @@
 %token <float> FLOAT
 %token <bool> BOOL
 %token <string> VAR STR
+%token NULL
 %token RPAREN LPAREN RCURL LCURL
 %token FDECL IF ELSE WHILE FOR
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
-%token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_
+%token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_ VOID_
 
 %token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR COMMA QUOTE
 
@@ -34,7 +35,7 @@ program:
 | fdel program             { $1 }
 
 fdel:
-| FDECL VAR VAR LPAREN VAR RPAREN
+| FDECL return_types VAR LPAREN VAR RPAREN
     LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
 
 stmts:
@@ -63,6 +64,10 @@ types:
 | PINT_                    { Pint_ }
 | PIX_                     { Pix_ }
 | IMG_                     { Img_ }
+
+return_types:
+| types                    { $1 }
+| VOID_                    { Void_ }
 
 // Arrays
 array:
@@ -111,6 +116,7 @@ expr:
 | BOOL                      { Bool($1) }
 | array                     { Array($1) }
 | STR                       { Str($1) }
+| NULL                      { Null }
 
 // Declare variable
 | INT_ VAR                  { Typeset(Int_, $2) }
@@ -127,5 +133,5 @@ expr:
 | LPAREN expr RPAREN        { $2 }
 
 // Built-In Functions
-| VAR LPAREN expr RPAREN    { Binf($1, $3) }
-| VAR PERIOD VAR         { ObjFunc($1, $3)}
+| VAR LPAREN expr_list RPAREN    { Binf($1, $3) }
+| VAR PERIOD VAR LPAREN expr_list RPAREN   { ObjFunc($1, $3)}

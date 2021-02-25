@@ -1,4 +1,4 @@
-func returntype functionname (inputname) 
+func void functionname (inputname) 
 {
     # I am a comment
     Fancy123_Name = _black;
@@ -19,4 +19,8 @@ func returntype functionname (inputname)
     x = [1, 2, 3];
     x = pixel[800][600];
     x[3][1] = 2;
+    x.callFunc(1, 2 + 3);
+    x = null;
 }
+
+functionname(value);

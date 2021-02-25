@@ -16,6 +16,7 @@ let rec eval = function
 | Bool(x) -> print_list ["Bool"; string_of_bool x] ; 0
 | Str(x) -> print_list ["String"; x] ; 0
 | Var(x) -> print_list ["Var"; x] ; 0
+| Null -> print_list ["Null"] ; 0
 | Array(x) -> print_list ["Array"] ; 0
 | Binop(e1, op, e2) ->
   let v1 = eval e1 in
@@ -118,9 +119,9 @@ let rec reads = function
 
 let rec fdel = function
 | Fdel(typ, name, input, stmts) ->
-  print_list ["Function Start"; typ; name; input] ;
+  print_list ["Function Start"; name; input] ;
   let result = reads stmts in
-  print_list ["Function End"; typ; name; input; stmts_to_string result]; None
+  print_list ["Function End"; name; input; stmts_to_string result]; None
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
