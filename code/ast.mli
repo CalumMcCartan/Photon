@@ -32,8 +32,11 @@ type stmt =
 | For of expr * expr * expr * stmt
 
 type stmts =
-  Single of stmt
 | Repeated of stmts * stmt
+| None
 
 type fdel = 
     Fdel of string * string * string * stmts
+|   NoFdel
+
+type program = Program

@@ -23,19 +23,22 @@
 %left TIMES DIVIDE
 %right NOT 
 
-%start fdel
-%type <Ast.fdel> fdel
+%start program
+%type <Ast.fdel> program
 
 %%
 
+program:
+  /* empty */              { NoFdel }
+| stmt program             { NoFdel }
+| fdel program             { $1 }
 
 fdel:
 | FDECL VAR VAR LPAREN VAR RPAREN
     LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
 
 stmts:
-  /* empty */
-| stmt                      { Single($1) }
+  /* empty */               { None }
 | stmts stmt                { Repeated($1, $2) }
 
 stmt:

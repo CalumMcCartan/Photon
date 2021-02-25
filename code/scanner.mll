@@ -53,6 +53,7 @@ rule tokenize = parse
 | ['a'-'z' 'A'-'Z']+['a'-'z' 'A'-'Z' '0'-'9' '_']* as var { VAR(var) }
 
 (* Other *)
+| '#' { comment lexbuf }
 | '.' { PERIOD }
 | ',' { COMMA }
 | '=' { ASSIGN }
@@ -66,3 +67,9 @@ rule tokenize = parse
 | '[' { LSQR }
 | ']' { RSQR }
 | eof { EOF }
+
+(* Comments *)
+and comment = parse
+| '\n' { tokenize lexbuf }
+| eof  { tokenize lexbuf }
+| _    { comment lexbuf }

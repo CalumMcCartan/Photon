@@ -9,6 +9,7 @@ let stmt_to_string = function
 let stmts_to_string = function
   stmts -> ""
 
+(* Temporary/incomplete function for printing the program *)
 let rec eval = function 
 | Int(x) -> print_list ["Int"; string_of_int x] ; x
 | Float(x) -> print_list ["Float"; string_of_float x] ; 0
@@ -107,9 +108,8 @@ let rec read = function
     string_of_int value3; stmt_to_string result1] ; result1
 
 let rec reads = function
-| Single(stmt) ->
-  let result1 = read stmt in
-  print_list ["Statement"; stmt_to_string result1]; result1
+| None ->
+  print_list ["No Statements"]; 0
 | Repeated(stmts, stmt) ->
   let _ = reads stmts in
   let result2 = read stmt in
@@ -123,6 +123,6 @@ let rec fdel = function
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
-  let func = Parser.fdel Scanner.tokenize lexbuf in
-  let _ = fdel func in 
+  let firstfunc = Parser.program Scanner.tokenize lexbuf in
+  let _ = fdel firstfunc in 
   print_endline("Done")
