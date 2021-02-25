@@ -3,6 +3,8 @@ func returntype functionname (inputname)
     # I am a comment
     Fancy123_Name = _black;
     pixel x;
+    string s;
+    s = "Hello";
     x = -4 - 3;
     x = _red;
     x = _green;

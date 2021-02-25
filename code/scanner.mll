@@ -45,15 +45,9 @@ rule tokenize = parse
 | "pint" { PINT_ }
 | "pixel" { PIX_ }
 
-(* Literals *)
-| "true" { BOOL(true) }
-| "false" { BOOL(false) }
-| ['0'-'9']+ as lit { INT(int_of_string lit) }
-| ['0'-'9']+'.'['0'-'9']* as lit { FLOAT(float_of_string lit) }
-| ['a'-'z' 'A'-'Z']+['a'-'z' 'A'-'Z' '0'-'9' '_']* as var { VAR(var) }
-
 (* Other *)
 | '#' { comment lexbuf }
+| '"' { QUOTE }
 | '.' { PERIOD }
 | ',' { COMMA }
 | '=' { ASSIGN }
@@ -67,6 +61,14 @@ rule tokenize = parse
 | '[' { LSQR }
 | ']' { RSQR }
 | eof { EOF }
+
+(* Literals *)
+| "true" { BOOL(true) }
+| "false" { BOOL(false) }
+| ['0'-'9']+ as lit { INT(int_of_string lit) }
+| ['0'-'9']+'.'['0'-'9']* as lit { FLOAT(float_of_string lit) }
+| ['a'-'z' 'A'-'Z']+['a'-'z' 'A'-'Z' '0'-'9' '_']* as var { VAR(var) }
+| '"'[' '-'!' '#'-'~']+'"' as lit { STR(lit) }
 
 (* Comments *)
 and comment = parse

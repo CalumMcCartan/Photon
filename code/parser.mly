@@ -6,13 +6,13 @@
 %token <int> INT
 %token <float> FLOAT
 %token <bool> BOOL
-%token <string> VAR
+%token <string> VAR STR
 %token RPAREN LPAREN RCURL LCURL
 %token FDECL IF ELSE WHILE FOR
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
 %token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_
 
-%token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR COMMA
+%token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR COMMA QUOTE
 
 %left SEMI
 %right ASSIGN
@@ -110,6 +110,7 @@ expr:
 | FLOAT                     { Float($1) }
 | BOOL                      { Bool($1) }
 | array                     { Array($1) }
+| STR                       { Str($1) }
 
 // Declare variable
 | INT_ VAR                  { Typeset(Int_, $2) }
