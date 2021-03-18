@@ -1,26 +1,7 @@
-func void functionname (inputname) 
+func void functionname (variable, variable2) 
 {
-    # I am a comment
-    Fancy123_Name = _black;
-    pixel x;
-    string s;
-    s = "Hello";
-    x = -4 - 3;
-    x = _red;
-    x = _green;
-    x = _blue;
-    x = _cyan;
-    x = _magenta;
-    x = _yellow;
-    float x;
-    print(x);
-    x = 23.5 / (14 + 255) * 7;
-    9 > 8 & x <= 2 || 4 > x & 6 >= 2 * x & !!true;
-    x = [1, 2, 3];
-    x = pixel[800][600];
-    x[3][1] = 2;
-    x.callFunc(1, 2 + 3);
-    x = null;
+    for (i = 1; x < 4; i = 1) {
+        x = 1;
+    }
 }
 
-functionname(value);

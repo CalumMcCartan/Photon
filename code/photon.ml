@@ -119,9 +119,9 @@ let rec reads = function
 
 let rec fdel = function
 | Fdel(typ, name, input, stmts) ->
-  print_list ["Function Start"; name; input] ;
+  print_list ["Function Start"; name] ;
   let result = reads stmts in
-  print_list ["Function End"; name; input; stmts_to_string result]; None
+  print_list ["Function End"; name; stmts_to_string result]; None
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in

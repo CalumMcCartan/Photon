@@ -8,11 +8,9 @@
 %token <bool> BOOL
 %token <string> VAR STR
 %token NULL
-%token RPAREN LPAREN RCURL LCURL
 %token FDECL IF ELSE WHILE FOR
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
 %token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_ VOID_
-
 %token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR COMMA QUOTE
 
 %left SEMI
@@ -35,7 +33,7 @@ program:
 | fdel program             { $1 }
 
 fdel:
-| FDECL return_types VAR LPAREN VAR RPAREN
+| FDECL return_types VAR LPAREN vars RPAREN
     LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
 
 stmts:
@@ -48,12 +46,16 @@ stmt:
   ELSE LCURL stmt RCURL     { IfStmt($3, $6, $10) }
 | WHILE LPAREN expr RPAREN
     LCURL stmt RCURL        { While($3, $6) }
-| FOR LPAREN expr COLON expr COLON expr RPAREN
+| FOR LPAREN expr SEMI expr SEMI expr RPAREN
     LCURL stmt RCURL        { For($3, $5, $7, $10) }
-| expr SEMI                { Expr($1) }
+| expr SEMI                 { Expr($1) }
+
+vars:
+  var COMMA vars           { "" }
+| var                      { "" }
 
 var:
-| VAR                      { Var($1) }
+  VAR                      { Var($1) }
 | var LSQR expr RSQR       { $1 }
 
 types:
