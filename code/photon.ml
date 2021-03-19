@@ -60,6 +60,7 @@ let rec eval = function
     | Img_ -> "Image"
     | Pint_ -> "pint"
     | Pix_ -> "pixel"
+    | Void_ -> "void"
     ) in
   print_list ["Set type of"; var; "to"; type_name] ; 0
 | Expr(expr) ->
@@ -122,6 +123,7 @@ let rec fdel = function
   print_list ["Function Start"; name] ;
   let result = reads stmts in
   print_list ["Function End"; name; stmts_to_string result]; None
+| NoFdel -> None
 
 let _ =
   let lexbuf = Lexing.from_channel stdin in
