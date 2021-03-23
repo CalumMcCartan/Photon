@@ -9,6 +9,7 @@ build:
 
 run:
 	./photon.native < input.txt
+	./photon.native < helloworld.txt
 
 clean :
 	rm -rf _build photon.native parser.ml parser.mli
