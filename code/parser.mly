@@ -129,6 +129,14 @@ expr:
 | PIX_ VAR                  { Typeset(Pix_, $2) }
 | IMG_ VAR                  { Typeset(Img_, $2) }
 
+| INT_ VAR ASSIGN expr      { Typeset(Int_, $2) }
+| FLOAT_ VAR ASSIGN expr    { Typeset(Float_, $2) }
+| STR_ VAR ASSIGN expr      { Typeset(Str_, $2) }
+| BOOL_ VAR ASSIGN expr     { Typeset(Bool_, $2) }
+| PINT_ VAR ASSIGN expr     { Typeset(Pint_, $2) }
+| PIX_ VAR ASSIGN expr      { Typeset(Pix_, $2) }
+| IMG_ VAR ASSIGN expr      { Typeset(Img_, $2) }
+
 // Other
 | var ASSIGN expr           { AssignOp($1, $3) }
 | var                       { $1 }
