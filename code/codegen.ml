@@ -7,7 +7,8 @@ Project Name: Photon
 
 module L = Llvm
 module A = Ast
-open Sast 
+
+open Sast
 
 module StringMap = Map.Make(String)
 
@@ -26,9 +27,9 @@ let translate (globals, functions) =
 
   (* Convert Photon types to LLVM types *)
   let ltype_of_typ = function
-      A.Int   -> i32_t
-    | A.Str -> str_t
-  in
+    A.Int_   -> i32_t
+    | A.Str_ -> str_t
+  in 
 
   (* Create a map of global variables after creating each *)
   let global_vars : L.llvalue StringMap.t =
@@ -43,7 +44,7 @@ let translate (globals, functions) =
       L.declare_function "printf" printf_t the_module 
 
   in
-  let string_format_str = L.build_global_stringptr "%s\n" "fmt" builder
+  let string_format_str = L.build_global_stringptr "%s\n" "fmt"
 
 in
 
@@ -76,9 +77,9 @@ in
   (* Construct code for an expression; return its value *)
 
     let rec expr builder ((_, e) : sexpr) = match e with
-    Int i  -> L.const_int i32_t i
-    | Str s -> L.build_global_stringptr s "tmp" builder
-    | ObjFunc(print, e) -> L.build_call printf_func [| string_format_str ; (expr builder e) |]
+    SInt i  -> L.const_int i32_t i
+    | SStr s -> L.build_global_stringptr s "tmp" builder
+    | SObjFunc(print, e) -> L.build_call printf_func [| string_format_str ; (expr builder e) |]
     (* "printf" builder *)
 
   in

@@ -1,33 +1,33 @@
+open Ast
 
 type sexpr = var_type * sx
-
-type sx =
-    Binop of sexpr * operator * sexpr
-  | Uniop of uni_operator * sexpr
-  | AssignOp of sexpr * sespr
-  | Int of int
-  | Float of float
-  | Bool of bool
-  | Str of string
-  | Null
-  | Array of sexpr
-  | Var of string
-  | Expr of sexpr
-  | Color of colors
-  | Typeset of var_type * string
-  | Binf of string * sexpr
-  | ObjFunc of string * string
+and sx =
+    SBinop of sexpr * operator * sexpr
+  | SUniop of uni_operator * sexpr
+  | SAssignOp of sexpr * sexpr
+  | SInt of int
+  | SFloat of float
+  | SBool of bool
+  | SStr of string
+  | SNull
+  | SArray of sexpr
+  | SVar of string
+  | SExpr of sexpr
+  | SColor of colors
+  | STypeset of var_type * string
+  | SBinf of string * sexpr
+  | SObjFunc of string * string
 
 type sstmt = 
-  Expr of sexpr
-| IfStmt of sexpr * sstmt * sstmt
-| While of sexpr * sstmt
-| For of sexpr * sexpr * sexpr * sstmt
+  SExpr of sexpr
+| SIfStmt of sexpr * sstmt * sstmt
+| SWhile of sexpr * sstmt
+| SFor of sexpr * sexpr * sexpr * sstmt
 
 type sstmts =
-| Repeated of sstmts * sstmt
-| None
+| SRepeated of sstmts * sstmt
+| SNone
 
 type sfdel = 
-    Fdel of var_type * string * string * sstmts
-|   NoFdel
+    SFdel of var_type * string * string * sstmts
+|   SNoFdel

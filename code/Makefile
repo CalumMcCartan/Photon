@@ -5,7 +5,7 @@ parser: clean
 	ocamlyacc parser.mly
 
 build: 
-	ocamlbuild photon.native
+	ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis -cflags -w,+a-4 photon.native
 
 run:
 	./photon.native < input.txt
