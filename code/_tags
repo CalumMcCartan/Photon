@@ -1,0 +1,2 @@
+# Include the llvm and llvm.analysis packages while compiling
+true: package(llvm), package(llvm.analysis)
