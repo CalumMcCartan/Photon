@@ -38,7 +38,7 @@ decls:
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 vdecl:
-  types STR SEMI { ($1, $2) }
+  types VAR SEMI { ($1, $2) }
 
 fdecl:
 | FDECL return_types VAR LPAREN vars RPAREN 
@@ -50,8 +50,8 @@ fdecl:
 	 body = [] } }
 
 stmts:
-   /* empty */               { None }
-// | stmts stmt                { Repeated($1, $2) }
+   /* empty */               { [] }
+// | stmts stmt                { ($2 :: $1) }
 
 // stmt:
 // | IF LPAREN expr RPAREN

@@ -1,4 +1,6 @@
 
+int x;
+
 func int main() { }
 
 func float myFunc() { }
