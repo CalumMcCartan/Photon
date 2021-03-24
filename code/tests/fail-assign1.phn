@@ -1,11 +1,10 @@
+int i;
+bool b;
+
 func int main()
 {
-  int i;
-  bool b;
-
-  i = 42;
-  i = 10;
-  b = true;
+  i = 1;
+  b = 2;
   b = false;
-  i = false; /* Fail: assigning a bool to an integer */
+  
 }

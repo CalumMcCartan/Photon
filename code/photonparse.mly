@@ -130,7 +130,7 @@ expr:
 // // Literals
 | INT                       { Literal($1) }
 // | FLOAT                     { Fliteral($1) }
-// | BOOL                      { BoolLit($1) }
+| BOOL                      { BoolLit($1) }
 // | array                     { Array($1) }
 | STRLIT                     { StrLiteral($1) }
 // | NULL                      { Null }
@@ -153,7 +153,7 @@ expr:
 // | IMG_ VAR ASSIGN expr      { Typeset(Img_, $2) }
 
 // // Other
-// | var ASSIGN expr           { AssignOp($1, $3) }
+  | VAR ASSIGN expr   { Assign($1, $3)         }
 // | var                       { $1 }
 // | LPAREN expr RPAREN        { $2 }
 
