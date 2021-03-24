@@ -33,30 +33,24 @@ program:
   decls EOF { $1 }
 
 decls:
-   /* nothing */ { ([])       }
- | decls vdecl { (($2 :: $1)) }
+   /* nothing */ { ([], [])               }
+ | decls vdecl { (($2 :: fst $1), snd $1) }
+ | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 vdecl:
-   types STR SEMI { ($1, $2) }
+  types STR SEMI { ($1, $2) }
 
+fdecl:
+| FDECL return_types VAR LPAREN vars RPAREN 
+  LCURL stmts RCURL
+  { { typ = $2;
+	 fname = $3;
+	 formals = [];
+	 locals = [];
+	 body = [] } }
 
-
-
-
-// program:
-//   types expr SEMI
-
-// program:
-//   /* empty */              { NoFdel }
-// | stmt program             { NoFdel }
-// | fdel program             { $1 }
-
-// fdel:
-// | FDECL return_types VAR LPAREN vars RPAREN
-//     LCURL stmts RCURL       { Fdel($2, $3, $5, $8) }
-
-// stmts:
-//   /* empty */               { None }
+stmts:
+   /* empty */               { None }
 // | stmts stmt                { Repeated($1, $2) }
 
 // stmt:
@@ -69,8 +63,9 @@ vdecl:
 //     LCURL stmt RCURL        { For($3, $5, $7, $10) }
 // | expr SEMI                 { Expr($1) }
 
-// vars:
-//   var COMMA vars           { "" }
+vars:
+    /* empty */               { None }
+// | var COMMA vars           { "" }
 // | var                      { "" }
 
 // var:
@@ -86,9 +81,9 @@ types:
 | PIX_                     { Pix_ }
 | IMG_                     { Img_ }
 
-// return_types:
-// | types                    { $1 }
-// | VOID_                    { Void_ }
+return_types:
+| types                    { $1 }
+| VOID_                    { Void_ }
 
 // // Arrays
 // array:

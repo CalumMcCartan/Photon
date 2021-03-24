@@ -28,15 +28,15 @@ type stmt =
   | For of expr * expr * expr * stmt
   | While of expr * stmt
 
-(* type func_decl = {
+type func_decl = {
     typ : typ;
     fname : string;
     formals : bind list;
     locals : bind list;
     body : stmt list;
-  } *)
-
-type program = bind list
+  }
+  
+type program = bind list * func_decl list
 
 (* Pretty-printing functions *)
 
@@ -93,17 +93,17 @@ let string_of_typ = function
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
-(* let string_of_fdecl fdecl =
+let string_of_fdecl fdecl =
   string_of_typ fdecl.typ ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n" *)
+  "}\n"
 
-let string_of_program (vars) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n"
-  (* ^ String.concat "\n" (List.map string_of_fdecl funcs) *)
+let string_of_program (vars, funcs) =
+  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
+  String.concat "\n" (List.map string_of_fdecl funcs)
 
 
 

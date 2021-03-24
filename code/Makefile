@@ -6,6 +6,7 @@ test : all testall.sh
 
 retest:
 	dos2unix testall.sh
+	make clean
 	clear
 	make test
 

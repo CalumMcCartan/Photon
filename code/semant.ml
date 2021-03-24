@@ -10,8 +10,7 @@ module StringMap = Map.Make(String)
 
    Check each global variable, then check each function *)
 
-(* let check (globals, functions) = *)
-let check (globals) =
+let check (globals, functions) =
 
   (* Verify a list of bindings has no void types or duplicate names *)
   let check_binds (kind : string) (binds : bind list) =
@@ -33,16 +32,16 @@ let check (globals) =
   (**** Check functions ****)
 
   (* Collect function declarations for built-in functions: no bodies *)
-  (* let built_in_decls = 
+  let built_in_decls = 
     let add_bind map (name, ty) = StringMap.add name {
       typ = Void_;
       fname = name; 
       formals = [(ty, "x")];
       locals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int);
-			                         ("printb", Bool);
-			                         ("printf", Float);
-			                         ("printbig", Int) ]
+    in List.fold_left add_bind StringMap.empty [ ("print", Int_);
+			                         ("printb", Bool_);
+			                         ("printf", Float_);
+			                         ("printbig", Int_) ]
   in
 
   (* Add function name to symbol table *)
@@ -93,9 +92,9 @@ let check (globals) =
 
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
-        Literal  l -> (Int, SLiteral l)
-      | Fliteral l -> (Float, SFliteral l)
-      | BoolLit l  -> (Bool, SBoolLit l)
+        Literal  l -> (Int_, SLiteral l)
+      | Fliteral l -> (Float_, SFliteral l)
+      | BoolLit l  -> (Bool_, SBoolLit l)
       | Noexpr     -> (Void_, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
       | Assign(var, e) as ex -> 
@@ -107,8 +106,8 @@ let check (globals) =
       | Unop(op, e) as ex -> 
           let (t, e') = expr e in
           let ty = match op with
-            Neg when t = Int || t = Float -> t
-          | Not when t = Bool -> Bool
+            Neg when t = Int_ || t = Float_ -> t
+          | Not when t = Bool_ -> Bool_
           | _ -> raise (Failure ("illegal unary operator " ^ 
                                  string_of_uop op ^ string_of_typ t ^
                                  " in " ^ string_of_expr ex))
@@ -120,12 +119,12 @@ let check (globals) =
           let same = t1 = t2 in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
-            Add | Sub | Mult | Div when same && t1 = Int   -> Int
-          | Add | Sub | Mult | Div when same && t1 = Float -> Float
-          | Equal | Neq            when same               -> Bool
+            Add | Sub | Mult | Div when same && t1 = Int_   -> Int_
+          | Add | Sub | Mult | Div when same && t1 = Float_ -> Float_
+          | Equal | Neq            when same               -> Bool_
           | Less | Leq | Greater | Geq
-                     when same && (t1 = Int || t1 = Float) -> Bool
-          | And | Or when same && t1 = Bool -> Bool
+                     when same && (t1 = Int_ || t1 = Float_) -> Bool_
+          | And | Or when same && t1 = Bool_ -> Bool_
           | _ -> raise (
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
@@ -150,7 +149,7 @@ let check (globals) =
     let check_bool_expr e = 
       let (t', e') = expr e
       and err = "expected Boolean expression in " ^ string_of_expr e
-      in if t' != Bool then raise (Failure err) else (t', e') 
+      in if t' != Bool_ then raise (Failure err) else (t', e') 
     in
 
     (* Return a semantically-checked statement i.e. containing sexprs *)
@@ -186,5 +185,4 @@ let check (globals) =
 	SBlock(sl) -> sl
       | _ -> raise (Failure ("internal error: block didn't become a block?"))
     }
-  in (globals, List.map check_function functions) *)
-  globals
+  in (globals, List.map check_function functions)
