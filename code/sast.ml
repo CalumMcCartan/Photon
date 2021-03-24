@@ -72,6 +72,7 @@ let string_of_sfdecl fdecl =
   String.concat "" (List.map string_of_sstmt fdecl.sbody) ^
   "}\n"
 
-let string_of_sprogram (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_sfdecl funcs)
+(* let string_of_sprogram (vars, funcs) = *)
+let string_of_sprogram (vars) =
+  String.concat "" (List.map string_of_vdecl vars) ^ "\n"
+  (* ^ String.concat "\n" (List.map string_of_sfdecl funcs) *)

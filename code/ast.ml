@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void
+type typ = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_ | Void_
 
 type bind = typ * string
 
@@ -28,15 +28,15 @@ type stmt =
   | For of expr * expr * expr * stmt
   | While of expr * stmt
 
-type func_decl = {
+(* type func_decl = {
     typ : typ;
     fname : string;
     formals : bind list;
     locals : bind list;
     body : stmt list;
-  }
+  } *)
 
-type program = bind list * func_decl list
+type program = bind list
 
 (* Pretty-printing functions *)
 
@@ -86,24 +86,24 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
 let string_of_typ = function
-    Int -> "int"
-  | Bool -> "bool"
-  | Float -> "float"
-  | Void -> "void"
+    _Int -> "int"
+  | _Bool -> "bool"
+  | _Float -> "float"
+  | _Void -> "void"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
-let string_of_fdecl fdecl =
+(* let string_of_fdecl fdecl =
   string_of_typ fdecl.typ ^ " " ^
   fdecl.fname ^ "(" ^ String.concat ", " (List.map snd fdecl.formals) ^
   ")\n{\n" ^
   String.concat "" (List.map string_of_vdecl fdecl.locals) ^
   String.concat "" (List.map string_of_stmt fdecl.body) ^
-  "}\n"
+  "}\n" *)
 
-let string_of_program (vars, funcs) =
-  String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
-  String.concat "\n" (List.map string_of_fdecl funcs)
+let string_of_program (vars) =
+  String.concat "" (List.map string_of_vdecl vars) ^ "\n"
+  (* ^ String.concat "\n" (List.map string_of_fdecl funcs) *)
 
 
 
@@ -114,11 +114,11 @@ let string_of_program (vars, funcs) =
     Add | Sub | Mul | Div |
     Eql | Gre | Les | GreEql | LesEql | And | Or
 
-type uni_operator = Not | Negate
+type uni_operator = Not | Negate *)
 
-type var_type = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_ | Void_
+(* type typ = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_ | Void_ *)
 
-type colors =
+(* type colors =
     Black | White | Red | Green | Blue | Cyan | Magenta | Yellow
 
 type expr =
@@ -134,7 +134,7 @@ type expr =
   | Var of string
   | Expr of expr
   | Color of colors
-  | Typeset of var_type * string
+  | Typeset of typ * string
   | Binf of string * expr
   | ObjFunc of string * string
 
@@ -149,7 +149,7 @@ type stmts =
 | None
 
 type fdel = 
-    Fdel of var_type * string * string * stmts
+    Fdel of typ * string * string * stmts
 |   NoFdel
 
 type program = Program *)

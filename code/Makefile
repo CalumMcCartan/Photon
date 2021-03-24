@@ -4,6 +4,11 @@
 test : all testall.sh
 	./testall.sh
 
+retest:
+	dos2unix testall.sh
+	clear
+	make test
+
 # "make all" builds the executable as well as the "printbig" library designed
 # to test linking external code
 
@@ -25,8 +30,8 @@ photon.native :
 
 .PHONY : clean
 clean :
+	rm -rf testall.log ocamlllvm *.diff _build photon.native printbig.o
 	ocamlbuild -clean
-	rm -rf testall.log ocamlllvm *.diff
 
 # Testing the "printbig" example
 

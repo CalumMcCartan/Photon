@@ -33,11 +33,11 @@ program:
   decls EOF { $1 }
 
 decls:
-   /* nothing */ { ([], [])               }
- | decls vdecl { (($2 :: fst $1), snd $1) }
+   /* nothing */ { ([])       }
+ | decls vdecl { (($2 :: $1)) }
 
 vdecl:
-   typ STR SEMI { ($1, $2) }
+   types STR SEMI { ($1, $2) }
 
 
 
@@ -103,7 +103,7 @@ types:
 // | expr_list COMMA expr      { $1 }
 // | expr                      { $1 }
 
-expr:
+// expr:
 // // Math Operators
 // | expr PLUS expr            { Binop($1, Add, $3) }
 // | expr MINUS expr           { Binop($1, Sub, $3) }
@@ -132,7 +132,7 @@ expr:
 // | YELLOW                    { Color(Yellow) }
 
 // // Literals
-| INT                       { Int($1) }
+// | INT                       { Int($1) }
 // | FLOAT                     { Float($1) }
 // | BOOL                      { Bool($1) }
 // | array                     { Array($1) }

@@ -20,6 +20,7 @@ module StringMap = Map.Make(String)
 
 (* translate : Sast.program -> Llvm.module *)
 let translate (globals, functions) =
+(* let translate (globals) = *)
   let context    = L.global_context () in
   
   (* Create the LLVM compilation module into which
@@ -35,17 +36,17 @@ let translate (globals, functions) =
 
   (* Return the LLVM type for a Photon type *)
   let ltype_of_typ = function
-      A.Int   -> i32_t
-    | A.Bool  -> i1_t
-    | A.Float -> float_t
-    | A.Void  -> void_t
+      A.Int_   -> i32_t
+    | A.Bool_  -> i1_t
+    | A.Float_ -> float_t
+    | A.Void_  -> void_t
   in
 
   (* Create a map of global variables after creating each *)
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) = 
       let init = match t with
-          A.Float -> L.const_float (ltype_of_typ t) 0.0
+          A.Float_ -> L.const_float (ltype_of_typ t) 0.0
         | _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
@@ -116,7 +117,7 @@ let translate (globals, functions) =
       | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
-      | SBinop ((A.Float,_ ) as e1, op, e2) ->
+      | SBinop ((A.Float_,_ ) as e1, op, e2) ->
 	  let e1' = expr builder e1
 	  and e2' = expr builder e2 in
 	  (match op with 
@@ -153,7 +154,7 @@ let translate (globals, functions) =
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in
 	  (match op with
-	    A.Neg when t = A.Float -> L.build_fneg 
+	    A.Neg when t = A.Float_ -> L.build_fneg 
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
@@ -168,7 +169,7 @@ let translate (globals, functions) =
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
 	 let result = (match fdecl.styp with 
-                        A.Void -> ""
+                        A.Void_ -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
     in
@@ -191,7 +192,7 @@ let translate (globals, functions) =
       | SExpr e -> ignore(expr builder e); builder 
       | SReturn e -> ignore(match fdecl.styp with
                               (* Special "return nothing" instr *)
-                              A.Void -> L.build_ret_void builder 
+                              A.Void_ -> L.build_ret_void builder 
                               (* Build return statement *)
                             | _ -> L.build_ret (expr builder e) builder );
                      builder
@@ -236,8 +237,8 @@ let translate (globals, functions) =
 
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
-        A.Void -> L.build_ret_void
-      | A.Float -> L.build_ret (L.const_float float_t 0.0)
+        A.Void_ -> L.build_ret_void
+      | A.Float_ -> L.build_ret (L.const_float float_t 0.0)
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 
