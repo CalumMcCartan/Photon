@@ -90,6 +90,7 @@ let string_of_typ = function
   | _Bool -> "bool"
   | _Float -> "float"
   | _Void -> "void"
+  | _Pint -> "pint"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

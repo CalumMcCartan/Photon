@@ -47,13 +47,13 @@ fdecl:
 	 fname = $3;
 	 formals = [];
 	 locals = [];
-	 body = [] } }
+	 body = List.rev $8 } }
 
 stmts:
    /* empty */               { [] }
-// | stmts stmt                { ($2 :: $1) }
+| stmts stmt                { ($2 :: $1) }
 
-// stmt:
+stmt:
 // | IF LPAREN expr RPAREN
 //     LCURL stmt RCURL
 //   ELSE LCURL stmt RCURL     { IfStmt($3, $6, $10) }
@@ -61,7 +61,7 @@ stmts:
 //     LCURL stmt RCURL        { While($3, $6) }
 // | FOR LPAREN expr SEMI expr SEMI expr RPAREN
 //     LCURL stmt RCURL        { For($3, $5, $7, $10) }
-// | expr SEMI                 { Expr($1) }
+| expr SEMI                 { Expr($1) }
 
 vars:
     /* empty */               { None }
@@ -98,7 +98,7 @@ return_types:
 // | expr_list COMMA expr      { $1 }
 // | expr                      { $1 }
 
-// expr:
+expr:
 // // Math Operators
 // | expr PLUS expr            { Binop($1, Add, $3) }
 // | expr MINUS expr           { Binop($1, Sub, $3) }
@@ -127,9 +127,9 @@ return_types:
 // | YELLOW                    { Color(Yellow) }
 
 // // Literals
-// | INT                       { Int($1) }
-// | FLOAT                     { Float($1) }
-// | BOOL                      { Bool($1) }
+| INT                       { Literal($1) }
+// | FLOAT                     { Fliteral($1) }
+// | BOOL                      { BoolLit($1) }
 // | array                     { Array($1) }
 // | STR                       { Str($1) }
 // | NULL                      { Null }

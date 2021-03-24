@@ -1,6 +1,6 @@
 
-int x;
+pint x;
 
-func int main() { }
+func int main() { 1; }
 
-func float myFunc() { }
+func pint myFunc() { }

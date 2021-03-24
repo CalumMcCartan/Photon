@@ -40,6 +40,7 @@ let translate (globals, functions) =
     | A.Bool_  -> i1_t
     | A.Float_ -> float_t
     | A.Void_  -> void_t
+    | A.Pint_  -> i8_t
   in
 
   (* Create a map of global variables after creating each *)
