@@ -32,7 +32,10 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context
   and float_t    = L.double_type context
-  and void_t     = L.void_type   context in
+  and void_t     = L.void_type   context 
+  and string_t   = L.pointer_type (L.i8_type context)
+  (* ^ adds string type *)
+in
 
   (* Return the LLVM type for a Photon type *)
   let ltype_of_typ = function
@@ -41,6 +44,8 @@ let translate (globals, functions) =
     | A.Float_ -> float_t
     | A.Void_  -> void_t
     | A.Pint_  -> i8_t
+    | A.Str_ -> string_t
+    
   in
 
   (* Create a map of global variables after creating each *)
@@ -79,6 +84,7 @@ let translate (globals, functions) =
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
+    and str_format_str = L.build_global_stringptr "%s" "fmt" builder
     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
@@ -114,8 +120,9 @@ let translate (globals, functions) =
 	SLiteral i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SFliteral l -> L.const_float_of_string float_t l
+      | SStrLiteral s   -> L.build_global_stringptr s "str" builder (* STRING LITERALS *)
       | SNoexpr     -> L.const_int i32_t 0
-      | SId s       -> L.build_load (lookup s) s builder
+      | SVar s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
       | SBinop ((A.Float_,_ ) as e1, op, e2) ->
@@ -161,6 +168,9 @@ let translate (globals, functions) =
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
 	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
+      | SCall ("prints",[e]) ->
+        L.build_call printf_func [| str_format_str ; (expr builder e) |]
+          "printf" builder (* BUILT IN PRINT FOR STRINGS *)
       | SCall ("printbig", [e]) ->
 	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
       | SCall ("printf", [e]) -> 

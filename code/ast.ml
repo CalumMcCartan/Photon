@@ -13,7 +13,8 @@ type expr =
     Literal of int
   | Fliteral of string
   | BoolLit of bool
-  | Id of string
+  | StrLiteral of string
+  | Var of string
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of string * expr
@@ -61,9 +62,10 @@ let string_of_uop = function
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Fliteral(l) -> l
+  | StrLiteral(l) -> "\"" ^ l ^ "\""
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
-  | Id(s) -> s
+  | Var(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
@@ -91,6 +93,7 @@ let string_of_typ = function
   | _Float -> "float"
   | _Void -> "void"
   | _Pint -> "pint"
+  | _Str -> "string" (* not sure why this is _str and not str_ *)
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

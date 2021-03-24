@@ -41,6 +41,7 @@ let check (globals, functions) =
     in List.fold_left add_bind StringMap.empty [ ("print", Int_);
 			                         ("printb", Bool_);
 			                         ("printf", Float_);
+                               ("prints", Str_);
 			                         ("printbig", Int_) ]
   in
 
@@ -94,9 +95,10 @@ let check (globals, functions) =
     let rec expr = function
         Literal  l -> (Int_, SLiteral l)
       | Fliteral l -> (Float_, SFliteral l)
+      | StrLiteral l -> (Str_, SStrLiteral l)
       | BoolLit l  -> (Bool_, SBoolLit l)
       | Noexpr     -> (Void_, SNoexpr)
-      | Id s       -> (type_of_identifier s, SId s)
+      | Var s       -> (type_of_identifier s, SVar s)
       | Assign(var, e) as ex -> 
           let lt = type_of_identifier var
           and (rt, e') = expr e in

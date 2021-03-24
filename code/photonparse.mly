@@ -6,7 +6,7 @@
 %token <int> INT
 %token <float> FLOAT
 %token <bool> BOOL
-%token <string> VAR STR
+%token <string> VAR STRLIT
 %token NULL
 %token FDECL IF ELSE WHILE FOR
 %token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
@@ -68,7 +68,7 @@ vars:
 // | var COMMA vars           { "" }
 // | var                      { "" }
 
-// var:
+//  var:
 //   VAR                      { Var($1) }
 // | var LSQR expr RSQR       { $1 }
 
@@ -126,12 +126,13 @@ expr:
 // | MAGENTA                   { Color(Magenta) }
 // | YELLOW                    { Color(Yellow) }
 
+| VAR                       { Var ($1)}
 // // Literals
 | INT                       { Literal($1) }
 // | FLOAT                     { Fliteral($1) }
 // | BOOL                      { BoolLit($1) }
 // | array                     { Array($1) }
-// | STR                       { Str($1) }
+| STRLIT                     { StrLiteral($1) }
 // | NULL                      { Null }
 
 // // Declare variable
@@ -159,3 +160,15 @@ expr:
 // // Built-In Functions
 // | VAR LPAREN expr_list RPAREN    { Binf($1, $3) }
 // | VAR PERIOD VAR LPAREN expr_list RPAREN   { ObjFunc($1, $3)}
+
+
+  | VAR LPAREN args_opt RPAREN { Call($1, $3)  }
+  | LPAREN expr RPAREN { $2                   }
+
+args_opt:
+    /* nothing */ { [] }
+  | args_list  { List.rev $1 }
+
+args_list:
+    expr                    { [$1] }
+  | args_list COMMA expr { $3 :: $1 }
