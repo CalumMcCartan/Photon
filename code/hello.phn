@@ -1,5 +1,5 @@
 int main()
 {
-  prints("hello");
+  prints("hello world");
   return 0;
 }
