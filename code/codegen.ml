@@ -20,7 +20,6 @@ module StringMap = Map.Make(String)
 
 (* translate : Sast.program -> Llvm.module *)
 let translate (globals, functions) =
-(* let translate (globals) = *)
   let context    = L.global_context () in
   
   (* Create the LLVM compilation module into which
@@ -32,27 +31,21 @@ let translate (globals, functions) =
   and i8_t       = L.i8_type     context
   and i1_t       = L.i1_type     context
   and float_t    = L.double_type context
-  and void_t     = L.void_type   context 
-  and string_t   = L.pointer_type (L.i8_type context)
-  (* ^ adds string type *)
-in
+  and void_t     = L.void_type   context in
 
   (* Return the LLVM type for a Photon type *)
   let ltype_of_typ = function
-      A.Int_   -> i32_t
-    | A.Bool_  -> i1_t
-    | A.Float_ -> float_t
-    | A.Void_  -> void_t
-    | A.Pint_  -> i8_t
-    | A.Str_ -> string_t
-    
+      A.Int   -> i32_t
+    | A.Bool  -> i1_t
+    | A.Float -> float_t
+    | A.Void  -> void_t
   in
 
   (* Create a map of global variables after creating each *)
   let global_vars : L.llvalue StringMap.t =
     let global_var m (t, n) = 
       let init = match t with
-          A.Float_ -> L.const_float (ltype_of_typ t) 0.0
+          A.Float -> L.const_float (ltype_of_typ t) 0.0
         | _ -> L.const_int (ltype_of_typ t) 0
       in StringMap.add n (L.define_global n init the_module) m in
     List.fold_left global_var StringMap.empty globals in
@@ -84,7 +77,6 @@ in
     let builder = L.builder_at_end context (L.entry_block the_function) in
 
     let int_format_str = L.build_global_stringptr "%d\n" "fmt" builder
-    and str_format_str = L.build_global_stringptr "%s" "fmt" builder
     and float_format_str = L.build_global_stringptr "%g\n" "fmt" builder in
 
     (* Construct the function's "locals": formal arguments and locally
@@ -120,12 +112,11 @@ in
 	SLiteral i  -> L.const_int i32_t i
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SFliteral l -> L.const_float_of_string float_t l
-      | SStrLiteral s   -> L.build_global_stringptr s "str" builder (* STRING LITERALS *)
       | SNoexpr     -> L.const_int i32_t 0
-      | SVar s       -> L.build_load (lookup s) s builder
+      | SId s       -> L.build_load (lookup s) s builder
       | SAssign (s, e) -> let e' = expr builder e in
                           ignore(L.build_store e' (lookup s) builder); e'
-      | SBinop ((A.Float_,_ ) as e1, op, e2) ->
+      | SBinop ((A.Float,_ ) as e1, op, e2) ->
 	  let e1' = expr builder e1
 	  and e2' = expr builder e2 in
 	  (match op with 
@@ -162,15 +153,12 @@ in
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in
 	  (match op with
-	    A.Neg when t = A.Float_ -> L.build_fneg 
+	    A.Neg when t = A.Float -> L.build_fneg 
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
 	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
-      | SCall ("prints",[e]) ->
-        L.build_call printf_func [| str_format_str ; (expr builder e) |]
-          "printf" builder (* BUILT IN PRINT FOR STRINGS *)
       | SCall ("printbig", [e]) ->
 	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
       | SCall ("printf", [e]) -> 
@@ -180,7 +168,7 @@ in
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in
 	 let result = (match fdecl.styp with 
-                        A.Void_ -> ""
+                        A.Void -> ""
                       | _ -> f ^ "_result") in
          L.build_call fdef (Array.of_list llargs) result builder
     in
@@ -203,7 +191,7 @@ in
       | SExpr e -> ignore(expr builder e); builder 
       | SReturn e -> ignore(match fdecl.styp with
                               (* Special "return nothing" instr *)
-                              A.Void_ -> L.build_ret_void builder 
+                              A.Void -> L.build_ret_void builder 
                               (* Build return statement *)
                             | _ -> L.build_ret (expr builder e) builder );
                      builder
@@ -248,8 +236,8 @@ in
 
     (* Add a return if the last block falls off the end *)
     add_terminal builder (match fdecl.styp with
-        A.Void_ -> L.build_ret_void
-      | A.Float_ -> L.build_ret (L.const_float float_t 0.0)
+        A.Void -> L.build_ret_void
+      | A.Float -> L.build_ret (L.const_float float_t 0.0)
       | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 

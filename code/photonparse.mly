@@ -1,33 +1,32 @@
-%{ open Ast %}
+/* Ocamlyacc parser for Photon */
 
-%token PLUS MINUS TIMES DIVIDE
-%token EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL AND OR NOT
-%token EOF SEMI ASSIGN COLON
-%token <int> INT
-%token <float> FLOAT
-%token <bool> BOOL
-%token <string> VAR STRLIT
-%token NULL
-%token FDECL IF ELSE WHILE FOR
-%token BLACK WHITE RED GREEN BLUE CYAN MAGENTA YELLOW
-%token INT_ FLOAT_ STR_ BOOL_ PINT_ PIX_ IMG_ VOID_
-%token RPAREN LPAREN RCURL LCURL PERIOD LSQR RSQR COMMA QUOTE
+%{
+open Ast
+%}
 
-%left SEMI
-%right ASSIGN
-%left OR
-%left AND
-%left EQUAL GREATER GREATER_EQUAL LESS LESS_EQUAL
-%left PLUS MINUS
-%left TIMES DIVIDE
-%right NOT 
+%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
+%token NOT EQ NEQ LT LEQ GT GEQ AND OR
+%token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID
+%token <int> LITERAL
+%token <bool> BLIT
+%token <string> ID FLIT
+%token EOF
 
 %start program
 %type <Ast.program> program
 
+%nonassoc NOELSE
+%nonassoc ELSE
+%right ASSIGN
+%left OR
+%left AND
+%left EQ NEQ
+%left LT GT LEQ GEQ
+%left PLUS MINUS
+%left TIMES DIVIDE
+%right NOT
+
 %%
-
-
 
 program:
   decls EOF { $1 }
@@ -37,132 +36,74 @@ decls:
  | decls vdecl { (($2 :: fst $1), snd $1) }
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
-vdecl:
-  types VAR SEMI { ($1, $2) }
-
 fdecl:
-| FDECL return_types VAR LPAREN vars RPAREN 
-  LCURL stmts RCURL
-  { { typ = $2;
-	 fname = $3;
-	 formals = [];
-	 locals = [];
+   typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+     { { typ = $1;
+	 fname = $2;
+	 formals = List.rev $4;
+	 locals = List.rev $7;
 	 body = List.rev $8 } }
 
-stmts:
-   /* empty */               { [] }
-| stmts stmt                { ($2 :: $1) }
+formals_opt:
+    /* nothing */ { [] }
+  | formal_list   { $1 }
+
+formal_list:
+    typ ID                   { [($1,$2)]     }
+  | formal_list COMMA typ ID { ($3,$4) :: $1 }
+
+typ:
+    INT   { Int   }
+  | BOOL  { Bool  }
+  | FLOAT { Float }
+  | VOID  { Void  }
+
+vdecl_list:
+    /* nothing */    { [] }
+  | vdecl_list vdecl { $2 :: $1 }
+
+vdecl:
+   typ ID SEMI { ($1, $2) }
+
+stmt_list:
+    /* nothing */  { [] }
+  | stmt_list stmt { $2 :: $1 }
 
 stmt:
-// | IF LPAREN expr RPAREN
-//     LCURL stmt RCURL
-//   ELSE LCURL stmt RCURL     { IfStmt($3, $6, $10) }
-// | WHILE LPAREN expr RPAREN
-//     LCURL stmt RCURL        { While($3, $6) }
-// | FOR LPAREN expr SEMI expr SEMI expr RPAREN
-//     LCURL stmt RCURL        { For($3, $5, $7, $10) }
-| expr SEMI                 { Expr($1) }
+    expr SEMI                               { Expr $1               }
+  | RETURN expr_opt SEMI                    { Return $2             }
+  | LBRACE stmt_list RBRACE                 { Block(List.rev $2)    }
+  | IF LPAREN expr RPAREN stmt %prec NOELSE { If($3, $5, Block([])) }
+  | IF LPAREN expr RPAREN stmt ELSE stmt    { If($3, $5, $7)        }
+  | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
+                                            { For($3, $5, $7, $9)   }
+  | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
 
-vars:
-    /* empty */               { None }
-// | var COMMA vars           { "" }
-// | var                      { "" }
-
-//  var:
-//   VAR                      { Var($1) }
-// | var LSQR expr RSQR       { $1 }
-
-types:
-| INT_                     { Int_ }
-| FLOAT_                   { Float_ }
-| STR_                     { Str_ }
-| BOOL_                    { Bool_ }
-| PINT_                    { Pint_ }
-| PIX_                     { Pix_ }
-| IMG_                     { Img_ }
-
-return_types:
-| types                    { $1 }
-| VOID_                    { Void_ }
-
-// // Arrays
-// array:
-// | LSQR expr_list RSQR      { $2 }
-// | types array_size          { $2 }
-
-// array_size:
-// | array_size LSQR expr RSQR  { $3 }
-// | LSQR expr RSQR             { $2 }
-
-// expr_list:
-// | expr_list COMMA expr      { $1 }
-// | expr                      { $1 }
+expr_opt:
+    /* nothing */ { Noexpr }
+  | expr          { $1 }
 
 expr:
-// // Math Operators
-// | expr PLUS expr            { Binop($1, Add, $3) }
-// | expr MINUS expr           { Binop($1, Sub, $3) }
-// | expr TIMES expr           { Binop($1, Mul, $3) }
-// | expr DIVIDE expr          { Binop($1, Div, $3) }
-
-// // Bool Operators
-// | expr EQUAL expr           { Binop($1, Eql, $3) }
-// | expr GREATER expr         { Binop($1, Gre, $3) }
-// | expr GREATER_EQUAL expr   { Binop($1, GreEql, $3) }
-// | expr LESS expr            { Binop($1, Les, $3) }
-// | expr LESS_EQUAL expr      { Binop($1, LesEql, $3) }
-// | expr AND expr             { Binop($1, And, $3) }
-// | expr OR expr              { Binop($1, Or, $3) }
-// | NOT expr                  { Uniop(Not, $2) }
-// | MINUS expr                { Uniop(Negate, $2) }
-
-// // Color Keywords
-// | BLACK                     { Color(Black) }
-// | WHITE                     { Color(White) }
-// | RED                       { Color(Red) }
-// | GREEN                     { Color(Green) }
-// | BLUE                      { Color(Blue) }
-// | CYAN                      { Color(Cyan) }
-// | MAGENTA                   { Color(Magenta) }
-// | YELLOW                    { Color(Yellow) }
-
-| VAR                       { Var ($1)}
-// // Literals
-| INT                       { Literal($1) }
-// | FLOAT                     { Fliteral($1) }
-| BOOL                      { BoolLit($1) }
-// | array                     { Array($1) }
-| STRLIT                     { StrLiteral($1) }
-// | NULL                      { Null }
-
-// // Declare variable
-// | INT_ VAR                  { Typeset(Int_, $2) }
-// | FLOAT_ VAR                { Typeset(Float_, $2) }
-// | STR_ VAR                  { Typeset(Str_, $2) }
-// | BOOL_ VAR                 { Typeset(Bool_, $2) }
-// | PINT_ VAR                 { Typeset(Pint_, $2) }
-// | PIX_ VAR                  { Typeset(Pix_, $2) }
-// | IMG_ VAR                  { Typeset(Img_, $2) }
-
-// | INT_ VAR ASSIGN expr      { Typeset(Int_, $2) }
-// | FLOAT_ VAR ASSIGN expr    { Typeset(Float_, $2) }
-// | STR_ VAR ASSIGN expr      { Typeset(Str_, $2) }
-// | BOOL_ VAR ASSIGN expr     { Typeset(Bool_, $2) }
-// | PINT_ VAR ASSIGN expr     { Typeset(Pint_, $2) }
-// | PIX_ VAR ASSIGN expr      { Typeset(Pix_, $2) }
-// | IMG_ VAR ASSIGN expr      { Typeset(Img_, $2) }
-
-// // Other
-  | VAR ASSIGN expr   { Assign($1, $3)         }
-// | var                       { $1 }
-// | LPAREN expr RPAREN        { $2 }
-
-// // Built-In Functions
-// | VAR LPAREN expr_list RPAREN    { Binf($1, $3) }
-// | VAR PERIOD VAR LPAREN expr_list RPAREN   { ObjFunc($1, $3)}
-
-
-  | VAR LPAREN args_opt RPAREN { Call($1, $3)  }
+    LITERAL          { Literal($1)            }
+  | FLIT	     { Fliteral($1)           }
+  | BLIT             { BoolLit($1)            }
+  | ID               { Id($1)                 }
+  | expr PLUS   expr { Binop($1, Add,   $3)   }
+  | expr MINUS  expr { Binop($1, Sub,   $3)   }
+  | expr TIMES  expr { Binop($1, Mult,  $3)   }
+  | expr DIVIDE expr { Binop($1, Div,   $3)   }
+  | expr EQ     expr { Binop($1, Equal, $3)   }
+  | expr NEQ    expr { Binop($1, Neq,   $3)   }
+  | expr LT     expr { Binop($1, Less,  $3)   }
+  | expr LEQ    expr { Binop($1, Leq,   $3)   }
+  | expr GT     expr { Binop($1, Greater, $3) }
+  | expr GEQ    expr { Binop($1, Geq,   $3)   }
+  | expr AND    expr { Binop($1, And,   $3)   }
+  | expr OR     expr { Binop($1, Or,    $3)   }
+  | MINUS expr %prec NOT { Unop(Neg, $2)      }
+  | NOT expr         { Unop(Not, $2)          }
+  | ID ASSIGN expr   { Assign($1, $3)         }
+  | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
 
 args_opt:

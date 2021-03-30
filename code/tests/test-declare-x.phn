@@ -1,8 +1,0 @@
-
-int x;
-
-func int main() {
-    x=1;
-}
-
-func pint myFunc() { }

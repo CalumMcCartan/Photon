@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_ | Void_
+type typ = Int | Bool | Float | Void
 
 type bind = typ * string
 
@@ -13,8 +13,7 @@ type expr =
     Literal of int
   | Fliteral of string
   | BoolLit of bool
-  | StrLiteral of string
-  | Var of string
+  | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
   | Assign of string * expr
@@ -36,7 +35,7 @@ type func_decl = {
     locals : bind list;
     body : stmt list;
   }
-  
+
 type program = bind list * func_decl list
 
 (* Pretty-printing functions *)
@@ -62,10 +61,9 @@ let string_of_uop = function
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
   | Fliteral(l) -> l
-  | StrLiteral(l) -> "\"" ^ l ^ "\""
   | BoolLit(true) -> "true"
   | BoolLit(false) -> "false"
-  | Var(s) -> s
+  | Id(s) -> s
   | Binop(e1, o, e2) ->
       string_of_expr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_expr e2
   | Unop(o, e) -> string_of_uop o ^ string_of_expr e
@@ -88,12 +86,10 @@ let rec string_of_stmt = function
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
 
 let string_of_typ = function
-    _Int -> "int"
-  | _Bool -> "bool"
-  | _Float -> "float"
-  | _Void -> "void"
-  | _Pint -> "pint"
-  | _Str -> "string" (* not sure why this is _str and not str_ *)
+    Int -> "int"
+  | Bool -> "bool"
+  | Float -> "float"
+  | Void -> "void"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 
@@ -108,52 +104,3 @@ let string_of_fdecl fdecl =
 let string_of_program (vars, funcs) =
   String.concat "" (List.map string_of_vdecl vars) ^ "\n" ^
   String.concat "\n" (List.map string_of_fdecl funcs)
-
-
-
-  
-(* PHOTON AST *)
-
-(* type operator = 
-    Add | Sub | Mul | Div |
-    Eql | Gre | Les | GreEql | LesEql | And | Or
-
-type uni_operator = Not | Negate *)
-
-(* type typ = Int_ | Float_ | Str_ | Bool_ | Pint_ | Pix_ | Img_ | Void_ *)
-
-(* type colors =
-    Black | White | Red | Green | Blue | Cyan | Magenta | Yellow
-
-type expr =
-    Binop of expr * operator * expr
-  | Uniop of uni_operator * expr
-  | AssignOp of expr * expr
-  | Int of int
-  | Float of float
-  | Bool of bool
-  | Str of string
-  | Null
-  | Array of expr
-  | Var of string
-  | Expr of expr
-  | Color of colors
-  | Typeset of typ * string
-  | Binf of string * expr
-  | ObjFunc of string * string
-
-type stmt = 
-  Expr of expr
-| IfStmt of expr * stmt * stmt
-| While of expr * stmt
-| For of expr * expr * expr * stmt
-
-type stmts =
-| Repeated of stmts * stmt
-| None
-
-type fdel = 
-    Fdel of typ * string * string * stmts
-|   NoFdel
-
-type program = Program *)

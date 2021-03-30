@@ -7,8 +7,7 @@ and sx =
     SLiteral of int
   | SFliteral of string
   | SBoolLit of bool
-  | SStrLiteral of string
-  | SVar of string
+  | SId of string
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
@@ -41,8 +40,7 @@ let rec string_of_sexpr (t, e) =
   | SBoolLit(true) -> "true"
   | SBoolLit(false) -> "false"
   | SFliteral(l) -> l
-  | SStrLiteral(l) -> l
-  | SVar(s) -> s
+  | SId(s) -> s
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
   | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
