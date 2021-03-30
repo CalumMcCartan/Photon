@@ -31,25 +31,22 @@ or run ocamlbuild like this:
 
 opam config exec -- ocamlbuild <args>
 ------------------------------
-Installation using Docker
+Using Docker
 
 * Install Docker on whatever operating system you're on
 
    Under Ubuntu,
    apt install docker.io
 
-   You'll likely need to add yourself to the "docker" group:
-  
-   sudo usermod -aG docker <username>
-
-   Log out and back in for this to take effect.  Run "groups" to
-   make sure you're part of the "docker" group.
-
 * Test your installation
 
    docker run hello-world
 
   If this fails, you will need to correct your installation.
+
+  Under Ubuntu, add yourself to the "docker" group:
+  
+  sudo usermod -aG docker <username>
 
 * Move to where you unpacked the photon source:
 
@@ -72,44 +69,50 @@ Installation using Docker
   # make clean
 
 ------------------------------
-Installation under Ubuntu 20.04
-
-Use LLVM 10. Install the matching version of the OCaml LLVM bindings:
-
-sudo apt install ocaml llvm-10.0 llvm-10.0-dev llvm-runtime m4 opam
-opam init
-opam install llvm.10.0.0
-eval `opam config env`
-
-make
-./testall.sh
-------------------------------
-Installation under Ubuntu 18.04
-
-Use LLVM 9. Install the matching version of the OCaml LLVM bindings:
-
-sudo apt install ocaml llvm-9 llvm-9-dev llvm-runtime m4 opam cmake
-opam init
-opam update
-opam install llvm.9.0.0
-eval `opam config env`
-
-make
-./testall.sh
-
-------------------------------
 Installation under Ubuntu 16.04
 
 LLVM 3.8 is the default under 16.04. Install the matching version of
 the OCaml LLVM bindings:
 
-sudo apt install ocaml llvm llvm-runtime m4 opam cmake
+sudo apt install ocaml llvm llvm-runtime m4 opam
 opam init
 opam install llvm.3.8
 eval `opam config env`
 
 make
 ./testall.sh
+
+------------------------------
+Installation under Ubuntu 15.10
+
+LLVM 3.6 is the default under 15.10, so we ask for a matching version of the
+OCaml library.
+
+sudo apt-get install -y ocaml m4 llvm opam
+opam init
+opam install llvm.3.6 ocamlfind
+eval `opam config env`
+
+make
+./testall.sh
+
+------------------------------
+Installation under Ubuntu 14.04
+
+The default LLVM package is 3.4, so we install the matching OCaml
+library using opam.  The default version of opam under 14.04 is too
+old; we need to use a newer package.
+
+sudo apt-get install m4 llvm software-properties-common
+
+sudo add-apt-repository --yes ppa:avsm/ppa
+sudo apt-get update -qq
+sudo apt-get install -y opam
+opam init
+
+eval `opam config env`
+
+opam install llvm.3.4 ocamlfind
 
 ------------------------------
 Installation under OS X

@@ -17,8 +17,8 @@ CC="cc"
 
 # Path to the photon compiler.  Usually "./photon.native"
 # Try "_build/photon.native" if ocamlbuild was unable to create a symbolic link.
-PHOTON="./photon.native"
-#PHOTON="_build/photon.native"
+Photon="./photon.native"
+#Photon="_build/photon.native"
 
 # Set time limit for all operations
 ulimit -t 30
@@ -92,7 +92,7 @@ Check() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.ll ${basename}.s ${basename}.exe ${basename}.out" &&
-    Run "$PHOTON" "$1" ">" "${basename}.ll" &&
+    Run "$Photon" "$1" ">" "${basename}.ll" &&
     Run "$LLC" "-relocation-model=pic" "${basename}.ll" ">" "${basename}.s" &&
     Run "$CC" "-o" "${basename}.exe" "${basename}.s" "printbig.o" &&
     Run "./${basename}.exe" > "${basename}.out" &&
@@ -127,7 +127,7 @@ CheckFail() {
     generatedfiles=""
 
     generatedfiles="$generatedfiles ${basename}.err ${basename}.diff" &&
-    RunFail "$PHOTON" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
+    RunFail "$Photon" "<" $1 "2>" "${basename}.err" ">>" $globallog &&
     Compare ${basename}.err ${reffile}.err ${basename}.diff
 
     # Report the status and clean up the generated files
