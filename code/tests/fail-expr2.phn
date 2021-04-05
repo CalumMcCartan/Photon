@@ -5,7 +5,7 @@ void foo(int c, bool d)
 {
   int d;
   bool e;
-  b + a; /* Error: bool + int */
+  b + a; # Error: bool + int 
 }
 
 int main()

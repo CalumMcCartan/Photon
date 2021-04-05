@@ -7,7 +7,7 @@ let digits = digit+
 
 rule token = parse
   [' ' '\t' '\r' '\n'] { token lexbuf } (* Whitespace *)
-| "/*"     { comment lexbuf }           (* Comments *)
+| "#"     { comment lexbuf }           (* Comments *)
 | '('      { LPAREN }
 | ')'      { RPAREN }
 | '{'      { LBRACE }
@@ -48,5 +48,5 @@ rule token = parse
 | _ as char { raise (Failure("illegal character " ^ Char.escaped char)) }
 
 and comment = parse
-  "*/" { token lexbuf }
+  "\n" { token lexbuf }
 | _    { comment lexbuf }

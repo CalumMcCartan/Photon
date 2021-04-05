@@ -3,6 +3,6 @@ int main()
   if (true) {
     42;
   } else {
-    bar; /* Error: undeclared variable */
+    bar; # Error: undeclared variable
   }
 }

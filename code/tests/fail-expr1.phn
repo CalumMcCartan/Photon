@@ -9,7 +9,7 @@ void foo(int c, bool d)
   c - a;
   a * 3;
   c / 2;
-  d + a; /* Error: bool + int */
+  d + a; # Error: bool + int
 }
 
 int main()
