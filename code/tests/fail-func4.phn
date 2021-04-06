@@ -1,12 +1,12 @@
-int foo() {}
+func int foo() {}
 
-void bar() {}
+func void bar() {}
 
-int print() {} # Should not be able to define print
+func int print() {} # Should not be able to define print
 
-void baz() {}
+func void baz() {}
 
-int main()
+func int main()
 {
   return 0;
 }

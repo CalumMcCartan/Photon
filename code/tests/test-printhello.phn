@@ -1,4 +1,4 @@
-int main()
+func int main()
 {
   #whatever
   prints("hello world");

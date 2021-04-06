@@ -1,8 +1,8 @@
-void foo(int a, bool b)
+func void foo(int a, bool b)
 {
 }
 
-int main()
+func int main()
 {
   foo(42, true);
   foo(42, true, false); # Wrong number of arguments

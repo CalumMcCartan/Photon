@@ -28,6 +28,7 @@ rule token = parse
 | "&&"     { AND }
 | "||"     { OR }
 | "!"      { NOT }
+| "func"   { FUNC }
 | "if"     { IF }
 | "else"   { ELSE }
 | "for"    { FOR }

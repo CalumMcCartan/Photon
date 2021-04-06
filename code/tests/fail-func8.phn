@@ -1,12 +1,12 @@
-void foo(int a, bool b)
+func void foo(int a, bool b)
 {
 }
 
-void bar()
+func void bar()
 {
 }
 
-int main()
+func int main()
 {
   foo(42, true);
   foo(42, bar()); # int and void, not int and bool
