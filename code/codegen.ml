@@ -37,6 +37,7 @@ let translate (globals, functions) =
   (* Return the LLVM type for a Photon type *)
   let ltype_of_typ = function
       A.Int   -> i32_t
+    | A.Pint  -> i8_t 
     | A.Bool  -> i1_t
     | A.Float -> float_t
     | A.Void  -> void_t
@@ -128,6 +129,7 @@ let translate (globals, functions) =
     (* Construct code for an expression; return its value *)
     let rec expr builder ((_, e) : sexpr) = match e with
 	SLiteral i  -> L.const_int i32_t i
+      | SPintLit p  -> L.const_int i8_t p
       | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
       | SFliteral l -> L.const_float_of_string float_t l
       | SStrLiteral s   -> L.build_global_stringptr s "str" builder
@@ -177,13 +179,13 @@ let translate (globals, functions) =
 	  | A.Neg                  -> L.build_neg
           | A.Not                  -> L.build_not) e' "tmp" builder
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
-	    "printf" builder
+	  L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
       | SCall ("printbig", [e]) ->
 	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+      | SCall ("printp",[e]) ->
+    L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
       | SCall ("printf", [e]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
+	  L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
       | SCall ("prints",[e]) ->
         L.build_call printf_func [| str_format_str ; (expr builder e) |] "printf" builder
       | SCall ("min", [e1; e2]) ->

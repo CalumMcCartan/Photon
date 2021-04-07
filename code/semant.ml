@@ -46,6 +46,7 @@ let check (globals, functions) =
 			                         ("printf", [(Float, "x")], Void);
                                ("prints", [(String, "x")], Void);
                                ("printbig", [(Int, "x")], Void);
+                               ("printp", [(Pint, "x")], Void);
                                ("min", [(Int, "x");(Int, "y")], Int);
                                ("max", [(Int, "x");(Int, "y")], Int);
                                ("sqrt", [(Float, "x")], Float) ]
@@ -83,7 +84,9 @@ let check (globals, functions) =
     (* Raise an exception if the given rvalue type cannot be assigned to
        the given lvalue type *)
     let check_assign lvaluet rvaluet err =
-       if lvaluet = rvaluet then lvaluet else raise (Failure err)
+       if (lvaluet = rvaluet) || 
+          (lvaluet = Pint && rvaluet = Int) 
+       then lvaluet else raise (Failure err)
     in   
 
     (* Build local symbol table of variables for this function *)
@@ -97,6 +100,14 @@ let check (globals, functions) =
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
+    (* Automatically convert the type of the result of an expression *)
+    (* ((type, value), target_type) -> (target_type, value) *)
+    let type_convert_expr = function
+      | ((Int, SLiteral(v)), Pint) -> (Pint, SPintLit v)
+      | ((Pint, SPintLit(v)), Int) -> (Int, SLiteral v)
+      | (expr, _) -> expr
+    in
+
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literal  l -> (Int, SLiteral l)
@@ -106,8 +117,8 @@ let check (globals, functions) =
       | Noexpr     -> (Void, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
       | Assign(var, e) as ex -> 
-          let lt = type_of_identifier var
-          and (rt, e') = expr e in
+          let lt = type_of_identifier var in
+          let (rt, e') = type_convert_expr ((expr e), lt) in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in (check_assign lt rt err, SAssign(var, (rt, e')))
@@ -124,7 +135,9 @@ let check (globals, functions) =
           let (t1, e1') = expr e1 
           and (t2, e2') = expr e2 in
           (* All binary operators require operands of the same type *)
-          let same = t1 = t2 in
+          (* Exceptions: int with pint *)
+          (* let same = t1 = t2 in *)
+          let same = (t1 = t2) || (t1 = Int && t2 = Pint) || (t1 = Pint && t2 = Int) in
           (* Determine expression type based on operator and operand types *)
           let ty = match op with
             Add | Sub | Mult | Div when same && t1 = Int   -> Int
