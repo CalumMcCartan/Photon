@@ -1,0 +1,18 @@
+func int main()
+{
+    pint x;
+    x = 5;
+    printp(x);
+    
+    printp(pintFunc());
+
+    return 0;
+}
+
+func pint pintFunc()
+{
+    pint y;
+    y = 3;
+
+    return y;
+}

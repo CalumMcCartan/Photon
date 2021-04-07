@@ -35,6 +35,7 @@ rule token = parse
 | "while"  { WHILE }
 | "return" { RETURN }
 | "int"    { INT }
+| "pint"   { PINT }
 | "bool"   { BOOL }
 | "float"  { FLOAT }
 | "void"   { VOID }

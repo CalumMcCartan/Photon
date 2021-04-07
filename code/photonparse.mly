@@ -7,6 +7,7 @@ open Ast
 %token SEMI LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID STRING FUNC
+%token RETURN IF ELSE FOR WHILE INT PINT BOOL FLOAT VOID STRING
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID FLIT STRLIT
@@ -54,6 +55,7 @@ formal_list:
 
 typ:
     INT   { Int   }
+  | PINT  { Pint  }
   | BOOL  { Bool  }
   | FLOAT { Float }
   | VOID  { Void  }
