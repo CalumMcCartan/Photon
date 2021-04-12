@@ -10,6 +10,15 @@ retest:
 	clear
 	make test
 
+imagetest:
+	gcc -std=c17 -Wall Image.c ImageRun.c -o ImageRun -lm
+	./ImageRun
+
+imageclean:
+	rm ImageRun
+	rm Shapes_gray.png
+	rm sky_gray.jpg
+
 # "make all" builds the executable as well as the "printbig" library designed
 # to test linking external code
 
