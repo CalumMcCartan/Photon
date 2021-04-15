@@ -48,6 +48,25 @@ static const char font[] = {
   0x61, 0x71, 0x79, 0x5d, 0x4f, 0x47, 0x43, 0x00
 };
 
+int get_max(int x, int y) {
+  if (x >= y) {
+    return x;
+  } else {
+    return y;
+  }
+} 
+
+int get_min(int x, int y) {
+  if (x <= y){
+    return x;
+  } else {
+    return y;
+  }
+}
+float get_sqrt(float x) {
+  return x;
+}
+
 void printbig(int c)
 {
   int index = 0;

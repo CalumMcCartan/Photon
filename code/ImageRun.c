@@ -20,6 +20,14 @@ int main(void) {
     Image_save(&img_sky_gray, "sky_gray.jpg");
     Image_save(&img_shapes_gray, "Shapes_gray.png");
 
+    // Test min max
+    int x, y;
+    x = 4;
+    y = 2;
+    printf("get min: %d\n", get_min(x,y));
+    printf("get max: %d\n", get_max(x,y));
+    printf("get sqrt: %d\n", get_sqrt(x));
+
     // Release memory
     Image_free(&img_sky);
     Image_free(&img_sky_gray);

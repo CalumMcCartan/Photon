@@ -61,6 +61,21 @@ let translate (globals, functions) =
       L.function_type i32_t [| i32_t |] in
   let printbig_func : L.llvalue =
       L.declare_function "printbig" printbig_t the_module in
+  
+  let getmin_t : L.lltype =
+    L.function_type i32_t [| i32_t; i32_t |] in
+  let getmin_func : L.llvalue =
+    L.declare_function "get_min" getmin_t the_module in
+  
+  let getmax_t : L.lltype =
+    L.function_type i32_t [| i32_t; i32_t |] in
+  let getmax_func : L.llvalue =
+    L.declare_function "get_max" getmax_t the_module in
+  
+  let getsqrt_t : L.lltype =
+    L.function_type i8_t [| i8_t |] in
+  let getsqrt_func : L.llvalue =
+    L.declare_function "get_sqrt" getsqrt_t the_module in
 
   (* Define each function (arguments and return type) so we can 
      call it even before we've created its body *)
@@ -153,7 +168,8 @@ let translate (globals, functions) =
 	  | A.Leq     -> L.build_icmp L.Icmp.Sle
 	  | A.Greater -> L.build_icmp L.Icmp.Sgt
 	  | A.Geq     -> L.build_icmp L.Icmp.Sge
-	  ) e1' e2' "tmp" builder
+    ) e1' e2' "tmp" builder
+    
       | SUnop(op, ((t, _) as e)) ->
           let e' = expr builder e in
 	  (match op with
@@ -170,6 +186,12 @@ let translate (globals, functions) =
 	    "printf" builder
       | SCall ("prints",[e]) ->
         L.build_call printf_func [| str_format_str ; (expr builder e) |] "printf" builder
+      | SCall ("min", [e1; e2]) ->
+          L.build_call getmin_func [| (expr builder e1); (expr builder e2) |] "get_min" builder
+      | SCall ("max", [e1; e2]) ->
+            L.build_call getmax_func [| (expr builder e1); (expr builder e2) |] "get_max" builder
+      | SCall ("sqrt", [e]) ->
+              L.build_call getsqrt_func [| (expr builder e) |] "get_sqrt" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in

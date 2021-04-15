@@ -32,17 +32,23 @@ let check (globals, functions) =
   (**** Check functions ****)
 
   (* Collect function declarations for built-in functions: no bodies *)
-  let built_in_decls = 
-    let add_bind map (name, ty) = StringMap.add name {
-      typ = Void;
-      fname = name; 
-      formals = [(ty, "x")];
-      locals = []; body = [] } map
-    in List.fold_left add_bind StringMap.empty [ ("print", Int);
-			                         ("printb", Bool);
-			                         ("printf", Float);
-                               ("prints", String);
-			                         ("printbig", Int) ]
+  let built_in_func_decls =
+    let add_bind map (name, formals', rtype) = StringMap.add name {
+        (* object between brackets is func_decl object? *)
+        typ = rtype;
+        fname = name;
+        formals = formals';
+        locals = [];
+        body = []; (* empty list *)
+    } map
+    in List.fold_left add_bind StringMap.empty [ ("print", [(Int, "x")], Void);
+			                         ("printb", [(Bool, "x")], Void);
+			                         ("printf", [(Float, "x")], Void);
+                               ("prints", [(String, "x")], Void);
+                               ("printbig", [(Int, "x")], Void);
+                               ("min", [(Int, "x");(Int, "y")], Int);
+                               ("max", [(Int, "x");(Int, "y")], Int);
+                               ("sqrt", [(Float, "x")], Float) ]
   in
 
   (* Add function name to symbol table *)
@@ -52,13 +58,13 @@ let check (globals, functions) =
     and make_err er = raise (Failure er)
     and n = fd.fname (* Name of the function *)
     in match fd with (* No duplicate functions or redefinitions of built-ins *)
-         _ when StringMap.mem n built_in_decls -> make_err built_in_err
+         _ when StringMap.mem n built_in_func_decls -> make_err built_in_err
        | _ when StringMap.mem n map -> make_err dup_err  
        | _ ->  StringMap.add n fd map 
   in
 
   (* Collect all function names into one symbol table *)
-  let function_decls = List.fold_left add_func built_in_decls functions
+  let function_decls = List.fold_left add_func built_in_func_decls functions
   in
   
   (* Return a function from our symbol table *)

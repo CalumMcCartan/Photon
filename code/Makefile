@@ -11,7 +11,7 @@ retest:
 	make test
 
 imagetest:
-	gcc -std=c17 -Wall Image.c ImageRun.c -o ImageRun -lm
+	gcc -std=c11 -Wall Image.c ImageRun.c -o ImageRun -lm
 	./ImageRun
 
 imageclean:
@@ -23,7 +23,7 @@ imageclean:
 # to test linking external code
 
 .PHONY : all
-all : photon.native printbig.o
+all : photon.native printbig.o Image.o
 
 # "make photon.native" compiles the compiler
 #
@@ -40,7 +40,7 @@ photon.native :
 
 .PHONY : clean
 clean :
-	rm -rf testall.log ocamlllvm *.diff _build photon.native printbig.o
+	rm -rf testall.log ocamlllvm *.diff _build photon.native printbig.o Image.o
 	ocamlbuild -clean
 
 # Testing the "printbig" example

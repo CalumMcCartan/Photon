@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include <math.h>
 
 enum allocation_type {
     NO_ALLOCATION, SELF_ALLOCATED, STB_ALLOCATED
