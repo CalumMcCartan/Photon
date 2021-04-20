@@ -1,0 +1,11 @@
+func int main()
+{
+    string[] a;
+    a = ["dog", "cat", "fish"];
+
+    prints(a[0]);
+    prints(a[1]);
+    prints(a[2]);
+
+  return 0;
+}

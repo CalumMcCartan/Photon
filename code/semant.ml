@@ -97,6 +97,13 @@ let check (globals, functions) =
       with Not_found -> raise (Failure ("undeclared identifier " ^ s))
     in
 
+    let check_array_type id = 
+      match (type_of_identifier id) with 
+         Array t -> t
+       | t -> raise (Failure ("check array type error, typ: " ^ string_of_typ t))
+   in
+    
+    
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literal  l -> (Int, SLiteral l)
@@ -138,6 +145,24 @@ let check (globals, functions) =
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
           in (ty, SBinop((t1, e1'), op, (t2, e2')))
+      | ArrayGet (var, e) -> 
+         let (t, e') = expr e in
+         let ty = match t with 
+             Int -> Int
+             | _ -> raise (Failure ("array_get index must be integer, not " ^ string_of_typ t)) 
+         in let array_type = check_array_type var
+         in (array_type, SArrayGet(array_type, var, (ty, e')))
+      | ArraySize var -> 
+          (Int, SArraySize(check_array_type var, var))
+      | ArrayFind (var, e) ->
+         let (t, e') = expr e in
+         (Int, SArrayFind(check_array_type var, var, (t, e')))
+      | ArrayLiteral vals ->
+         let (t', _) = expr (List.hd vals) in
+         let map_func lit = expr lit in
+         let vals' = List.map map_func vals in
+         (* TODO: check that all vals are of the same type *)
+         (Array t', SArrayLiteral(t', vals'))
       | Call(fname, args) as call -> 
           let fd = find_func fname in
           let param_length = List.length fd.formals in
@@ -159,10 +184,26 @@ let check (globals, functions) =
       and err = "expected Boolean expression in " ^ string_of_expr e
       in if t' != Bool then raise (Failure err) else (t', e') 
     in
-
+    let check_int_expr e = 
+      let (t', e') = expr e
+      and err = "expected Integer expression in " ^ string_of_expr e
+      in if t' != Int then raise (Failure err) else (t', e') 
+    in
+  
+  let check_match_array_type_expr l e = 
+   let (t', e') as e'' = expr e
+    in let err = "array type and expression type do not match " ^ (string_of_typ t') ^ ", " ^ (string_of_sexpr e'')
+    in if t' != (check_array_type l) then raise (Failure err) else (t', e') 
+  
+  in
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
+        | ArraySet (var, e1, e2) ->
+          SArraySet(check_array_type var, var, check_int_expr e1, check_match_array_type_expr var e2)
+        | ArrayPush (var, e) -> 
+          let _ = check_array_type var in
+          SArrayPush(var, check_match_array_type_expr var e)
       | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
       | For(e1, e2, e3, st) ->
 	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)

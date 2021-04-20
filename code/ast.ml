@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void | String
+type typ = Int | Bool | Float | Void | String | Array of typ
 
 type bind = typ * string
 
@@ -19,6 +19,10 @@ type expr =
   | Unop of uop * expr
   | Assign of string * expr
   | Call of string * expr list
+  | ArrayGet of string * expr
+  | ArraySize of string
+  | ArrayFind of string * expr
+  | ArrayLiteral of expr list
   | Noexpr
 
 type stmt =
@@ -28,6 +32,8 @@ type stmt =
   | If of expr * stmt * stmt
   | For of expr * expr * expr * stmt
   | While of expr * stmt
+  | ArraySet of string * expr * expr
+  | ArrayPush of string * expr
 
 type func_decl = {
     typ : typ;
@@ -73,6 +79,10 @@ let rec string_of_expr = function
   | Call(f, el) ->
       f ^ "(" ^ String.concat ", " (List.map string_of_expr el) ^ ")"
   | Noexpr -> ""
+  | ArrayGet(id, e) -> "array_get " ^ id ^ ", " ^ (string_of_expr e)
+  | ArraySize(id) -> "array_size " ^ id
+  | ArrayFind(id, e) -> "array_find " ^ id ^ ", " ^ (string_of_expr e)
+  | ArrayLiteral(_) -> "array_literal"
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -86,13 +96,17 @@ let rec string_of_stmt = function
       "for (" ^ string_of_expr e1  ^ " ; " ^ string_of_expr e2 ^ " ; " ^
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
+  | ArraySet(id, e1, e2) -> "array_set " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
+  | ArrayPush(id, e) -> "array_push " ^ id ^ ", " ^ string_of_expr e
+  
 
-let string_of_typ = function
+let rec string_of_typ = function
     Int -> "int"
   | Bool -> "bool"
   | Float -> "float"
   | Void -> "void"
   | String -> "string"
+  | Array x -> (string_of_typ x) ^ "[]"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"
 

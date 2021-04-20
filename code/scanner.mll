@@ -10,9 +10,12 @@ rule token = parse
 | "#"     { comment lexbuf }           (* Comments *)
 | '('      { LPAREN }
 | ')'      { RPAREN }
+| '['      { LBRACK }
+| ']'      { RBRACK }
 | '{'      { LBRACE }
 | '}'      { RBRACE }
 | ';'      { SEMI }
+| '.'      { PERIOD }
 | ','      { COMMA }
 | '+'      { PLUS }
 | '-'      { MINUS }
@@ -41,6 +44,8 @@ rule token = parse
 | "string" { STRING }
 | "true"   { BLIT(true)  }
 | "false"  { BLIT(false) }
+| "arr" 		{ ARRAY }
+| "length"  { LENGTH }
 | digits as lxm { LITERAL(int_of_string lxm) }
 | '"' ([^ '"']* as str) '"'         { STRLIT(str) }
 | digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lxm { FLIT(lxm) }

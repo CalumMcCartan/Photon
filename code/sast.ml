@@ -14,6 +14,10 @@ and sx =
   | SAssign of string * sexpr
   | SCall of string * sexpr list
   | SNoexpr
+  | SArrayGet of typ * string * sexpr
+  | SArrayFind of typ * string * sexpr
+  | SArrayLiteral of typ * sexpr list
+  | SArraySize of typ * string
 
 type sstmt =
     SBlock of sstmt list
@@ -22,6 +26,8 @@ type sstmt =
   | SIf of sexpr * sstmt * sstmt
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
+  | SArraySet of typ * string * sexpr * sexpr
+  | SArrayPush of string * sexpr
 
 type sfunc_decl = {
     styp : typ;
@@ -42,6 +48,10 @@ let rec string_of_sexpr (t, e) =
   | SBoolLit(false) -> "false"
   | SFliteral(l) -> l
   | SStrLiteral(l) -> l
+  | SArrayGet(_, id, e) -> "array_get " ^ id ^ ", " ^ (string_of_sexpr e)
+  | SArraySize(_, id) -> "array_size " ^ id
+  | SArrayFind(_, id, e) -> "array_find " ^ id ^ ", " ^ (string_of_sexpr e)
+  | SArrayLiteral(_) -> "array_literal"
   | SId(s) -> s
   | SBinop(e1, o, e2) ->
       string_of_sexpr e1 ^ " " ^ string_of_op o ^ " " ^ string_of_sexpr e2
@@ -65,6 +75,8 @@ let rec string_of_sstmt = function
       "for (" ^ string_of_sexpr e1  ^ " ; " ^ string_of_sexpr e2 ^ " ; " ^
       string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
+  | SArraySet(_, id, e1, e2) -> "array_set " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
+  | SArrayPush(id, e) -> "array_push " ^ id ^ ", " ^ string_of_sexpr e
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.styp ^ " " ^

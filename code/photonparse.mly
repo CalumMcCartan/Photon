@@ -4,12 +4,14 @@
 open Ast
 %}
 
-%token SEMI LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
+%token SEMI LBRACK RBRACK LPAREN RPAREN LBRACE RBRACE COMMA PLUS MINUS TIMES DIVIDE ASSIGN
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
 %token RETURN IF ELSE FOR WHILE INT BOOL FLOAT VOID STRING FUNC
+%token ARRAY_PUSH ARRAY_GET ARRAY_SET ARRAY_SIZE PERIOD LENGTH ARRAY_FIND 
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID FLIT STRLIT
+%token ARRAY
 %token EOF
 
 %start program
@@ -58,6 +60,7 @@ typ:
   | FLOAT { Float }
   | VOID  { Void  }
   | STRING { String }
+  | typ LBRACK RBRACK  { Array($1) }
 
 vdecl_list:
     /* nothing */    { [] }
@@ -79,6 +82,8 @@ stmt:
   | FOR LPAREN expr_opt SEMI expr SEMI expr_opt RPAREN stmt
                                             { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
+  | ID LBRACK expr RBRACK ASSIGN expr SEMI        { ArraySet($1, $3, $6) }
+  
 
 expr_opt:
     /* nothing */ { Noexpr }
@@ -107,6 +112,10 @@ expr:
   | ID ASSIGN expr   { Assign($1, $3)         }
   | ID LPAREN args_opt RPAREN { Call($1, $3)  }
   | LPAREN expr RPAREN { $2                   }
+  | ID LBRACK expr RBRACK                   { ArrayGet($1, $3) }
+  | LBRACK args_opt RBRACK                  { ArrayLiteral($2) }
+  | ID PERIOD LENGTH                         { ArraySize($1) }
+
 
 args_opt:
     /* nothing */ { [] }
