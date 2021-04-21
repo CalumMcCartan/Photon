@@ -1,0 +1,25 @@
+func int main()
+{
+
+    pint p;
+    p = 5;
+
+    200 + p;
+
+    # printp(p);
+
+
+ #   pint p;
+  #  int i;
+
+   # p = 3;
+   # i = p;
+   # p = i;
+    #p = p + 5;
+
+    #printp(p);
+    #print(i);
+
+    return 0;
+}
+
