@@ -512,18 +512,18 @@ let translate (globals, functions) =
       L.builder_at_end context merge_bb
 
     (* Implement for loops as while loops *)
-    | SFor (e1, e2, e3, body) -> stmt builder
-	    ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
-    in
+    | SFor (e1, e2, e3, body) -> 
+      stmt builder ( SBlock [SExpr e1 ; SWhile (e2, SBlock [body ; SExpr e3]) ] )
+  in
 
-    (* Build the code for each statement in the function *)
-    let builder = stmt builder (SBlock fdecl.sbody) in
+  (* Build the code for each statement in the function *)
+  let builder = stmt builder (SBlock fdecl.sbody) in
 
-    (* Add a return if the last block falls off the end *)
-    add_terminal builder (match fdecl.styp with
-        A.Void -> L.build_ret_void
-      | A.Float -> L.build_ret (L.const_float float_t 0.0)
-      | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
+  (* Add a return if the last block falls off the end *)
+  add_terminal builder (match fdecl.styp with
+      A.Void -> L.build_ret_void
+    | A.Float -> L.build_ret (L.const_float float_t 0.0)
+    | t -> L.build_ret (L.const_int (ltype_of_typ t) 0))
   in
 
   List.iter build_function_body functions;
