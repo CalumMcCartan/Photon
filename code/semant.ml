@@ -30,6 +30,7 @@ let check (globals, functions) =
 
   (**** Check functions ****)
 
+  
   (* Collect function declarations for built-in functions: no bodies *)
   let built_in_decls =
     let add_bind map (name, formals', rtype) = StringMap.add name {
