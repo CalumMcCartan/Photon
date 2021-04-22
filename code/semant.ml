@@ -100,14 +100,19 @@ let check (globals, functions) =
 
     let check_array_type id = 
       match (type_of_identifier id) with 
-         Array t -> t
-       | t -> raise (Failure ("check array type error, typ: " ^ string_of_typ t))
-   in
-    
+          Array t -> t
+        | t -> raise (Failure ("check array type error, typ: " ^ string_of_typ t))
+    in
+
+    let match_binop_types = function
+      | (Fliteral l1, op, Literal l2) -> (Fliteral l1, op, Fliteral (string_of_int l2))
+      | (Literal l1, op, Fliteral l2) -> (Fliteral (string_of_int l1), op, Fliteral l2)
+      | (e1, op, e2) -> (e1, op, e2)
+    in    
     
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
-        Literal  l -> (Int, SLiteral l)
+        Literal l -> (Int, SLiteral l)
       | Fliteral l -> (Float, SFliteral l)
       | StrLiteral l -> (String, SStrLiteral l)
       | BoolLit l  -> (Bool, SBoolLit l)
@@ -129,6 +134,7 @@ let check (globals, functions) =
                                  " in " ^ string_of_expr ex))
           in (ty, SUnop(op, (t, e')))
       | Binop(e1, op, e2) as e -> 
+          let (e1, op, e2) = match_binop_types (e1, op, e2) in
           let (t1, e1') = expr e1 
           and (t2, e2') = expr e2 in
           (* All binary operators require operands of the same type *)
