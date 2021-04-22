@@ -48,7 +48,8 @@ let check (globals, functions) =
                                ("printbig", [(Int, "x")], Void);
                                ("min", [(Int, "x");(Int, "y")], Int);
                                ("max", [(Int, "x");(Int, "y")], Int);
-                               ("sqrt", [(Float, "x")], Float) ]
+                               ("sqrt", [(Float, "x")], Float);
+                               ("load", [(String, "x")], Image) ]
   in
 
   (* Add function name to symbol table *)

@@ -33,6 +33,7 @@ let translate (globals, functions) =
   and float_t    = L.double_type context
   and string_t   = L.pointer_type (L.i8_type context)
   and void_t     = L.void_type   context 
+  and image_t   = L.pointer_type (L.named_struct_type context "PImage")
   and array_t t   = L.struct_type context [| L.pointer_type (L.i32_type context); (L.pointer_type t) |]
   in
 
@@ -43,6 +44,7 @@ let translate (globals, functions) =
     | A.Float -> float_t
     | A.Void  -> void_t
     | A.String -> string_t
+    | A.Image -> image_t
     | A.Array t -> array_t (ltype_of_typ t)
 in
   let type_str t = 
@@ -85,8 +87,14 @@ in
   let getsqrt_t : L.lltype =
     L.function_type i8_t [| i8_t |] in
   let getsqrt_func : L.llvalue =
-    L.declare_function "get_sqrt" getsqrt_t the_module 
-  
+    L.declare_function "get_sqrt" getsqrt_t the_module in
+
+  let loadimage_t : L.lltype =
+    L.function_type image_t [| string_t |] in
+  let loadimage_func : L.llvalue =
+    L.declare_function "Image_load" loadimage_t the_module 
+
+
   in
 
     (* LLVM insists each basic block end with exactly one "terminator" 
@@ -299,6 +307,8 @@ let array_find : L.llvalue StringMap.t =
      StringMap.add def_name def m in 
    List.fold_left array_find_ty StringMap.empty [ A.Bool; A.Int; A.Float ] in
 
+  (*Image Functions*)
+
 
   (* Define each function (arguments and return type) so we can 
      call it even before we've created its body *)
@@ -431,13 +441,13 @@ let array_find : L.llvalue StringMap.t =
        L.build_load new_array_ptr "new_array" builder
       
       | SCall ("print", [e]) | SCall ("printb", [e]) ->
-	  L.build_call printf_func [| int_format_str ; (expr builder e) |]
+	      L.build_call printf_func [| int_format_str ; (expr builder e) |]
 	    "printf" builder
       | SCall ("printbig", [e]) ->
-	  L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+        L.build_call printbig_func [| (expr builder e) |] "printbig" builder
       | SCall ("printf", [e]) -> 
-	  L.build_call printf_func [| float_format_str ; (expr builder e) |]
-	    "printf" builder
+        L.build_call printf_func [| float_format_str ; (expr builder e) |]
+          "printf" builder
       | SCall ("prints",[e]) ->
         L.build_call printf_func [| str_format_str ; (expr builder e) |] "printf" builder
       | SCall ("min", [e1; e2]) ->
@@ -446,6 +456,8 @@ let array_find : L.llvalue StringMap.t =
             L.build_call getmax_func [| (expr builder e1); (expr builder e2) |] "get_max" builder
       | SCall ("sqrt", [e]) ->
               L.build_call getsqrt_func [| (expr builder e) |] "get_sqrt" builder
+      | SCall ("load", [e]) ->
+          L.build_call loadimage_func [| (str_format_str) |] "load" builder
       | SCall (f, args) ->
          let (fdef, fdecl) = StringMap.find f function_decls in
 	 let llargs = List.rev (List.map (expr builder) (List.rev args)) in

@@ -4,9 +4,8 @@
 #include "utils.h"
 
 int main(void) {
-    Image img_sky, img_shapes;
-
-    Image_load(&img_sky, "sky.jpg");
+    Image* img = Image_load("sky.jpg");
+    /*
     ON_ERROR_EXIT(img_sky.data == NULL, "Error in loading the image");
     Image_load(&img_shapes, "Shapes.png");
     ON_ERROR_EXIT(img_shapes.data == NULL, "Error in loading the image");
@@ -34,4 +33,5 @@ int main(void) {
 
     Image_free(&img_shapes);
     Image_free(&img_shapes_gray);
+    */
 }

@@ -7,13 +7,17 @@
 #define STB_IMAGE_WRITE_IMPLEMENTATION
 #include "stb_image/stb_image_write.h"
 
-void Image_load(Image *img, const char *fname) {
+Image* Image_load(const char *fname) {
+    Image Img;
+    Image* img = &Img;
     if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 0)) != NULL) {
         img->size = img->width * img->height * img->channels;
         img->allocation_ = STB_ALLOCATED;
     }
+    return img;
 }
 
+/*
 void Image_create(Image *img, int width, int height, int channels, bool zeroed) {
     size_t size = width * height * channels;
     if(zeroed) {
@@ -70,3 +74,4 @@ void Image_to_gray(const Image *orig, Image *gray) {
         }
     }
 }
+*/

@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void | String | Array of typ
+type typ = Int | Bool | Float | Void | String | Array of typ | Image 
 
 type bind = typ * string
 
@@ -97,8 +97,7 @@ let rec string_of_stmt = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | ArraySet(id, e1, e2) -> "array_set " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
-  | ArrayPush(id, e) -> "array_push " ^ id ^ ", " ^ string_of_expr e
-  
+  | ArrayPush(id, e) -> "array_push " ^ id ^ ", " ^ string_of_expr e  
 
 let rec string_of_typ = function
     Int -> "int"
@@ -106,6 +105,7 @@ let rec string_of_typ = function
   | Float -> "float"
   | Void -> "void"
   | String -> "string"
+  | Image -> "image"
   | Array x -> (string_of_typ x) ^ "[]"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"

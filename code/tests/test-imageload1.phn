@@ -1,0 +1,6 @@
+func int main()
+{
+  #whatever
+  load("sky.png");
+  return 0;
+}

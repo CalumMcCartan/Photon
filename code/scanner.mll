@@ -46,6 +46,7 @@ rule token = parse
 | "false"  { BLIT(false) }
 | "arr" 		{ ARRAY }
 | "length"  { LENGTH }
+| "image"  { IMAGE }
 | digits as lxm { LITERAL(int_of_string lxm) }
 | '"' ([^ '"']* as str) '"'         { STRLIT(str) }
 | digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lxm { FLIT(lxm) }
