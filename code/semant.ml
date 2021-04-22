@@ -13,14 +13,13 @@ module StringMap = Map.Make(String)
 let check (globals, functions) =
 
   (* Verify a list of bindings has no void types or duplicate names *)
-  let check_binds (kind : string) (binds : bind list) =
-    List.iter (function
-	(Void, b) -> raise (Failure ("illegal void " ^ kind ^ " " ^ b))
-      | _ -> ()) binds;
+  let check_binds (kind : string) (binds : bind list) = List.iter (function
+	  | (Void, b) -> raise (Failure ("illegal void " ^ kind ^ " " ^ b))
+    | _ -> ()
+    ) binds;
     let rec dups = function
-        [] -> ()
-      |	((_,n1) :: (_,n2) :: _) when n1 = n2 ->
-	  raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
+      | [] -> ()
+      |	((_,n1) :: (_,n2) :: _) when n1 = n2 -> raise (Failure ("duplicate " ^ kind ^ " " ^ n1))
       | _ :: t -> dups t
     in dups (List.sort (fun (_,a) (_,b) -> compare a b) binds)
   in
@@ -41,15 +40,16 @@ let check (globals, functions) =
         locals = [];
         body = []; (* empty list *)
     } map
-    in List.fold_left add_bind StringMap.empty [ ("print", [(Int, "x")], Void);
-			                         ("printb", [(Bool, "x")], Void);
-			                         ("printf", [(Float, "x")], Void);
-                               ("prints", [(String, "x")], Void);
-                               ("printbig", [(Int, "x")], Void);
-                               ("min", [(Int, "x");(Int, "y")], Int);
-                               ("max", [(Int, "x");(Int, "y")], Int);
-                               ("sqrt", [(Float, "x")], Float);
-                               ("load", [(String, "x")], Image) ]
+    in List.fold_left add_bind StringMap.empty [ 
+      ("print", [(Int, "x")], Void);
+      ("printb", [(Bool, "x")], Void);
+      ("printf", [(Float, "x")], Void);
+      ("prints", [(String, "x")], Void);
+      ("printbig", [(Int, "x")], Void);
+      ("min", [(Int, "x");(Int, "y")], Int);
+      ("max", [(Int, "x");(Int, "y")], Int);
+      ("sqrt", [(Float, "x")], Float);
+      ("load", [(String, "x")], Image) ]
   in
 
   (* Add function name to symbol table *)
@@ -82,14 +82,14 @@ let check (globals, functions) =
     check_binds "local" func.locals;
 
     (* Raise an exception if the given rvalue type cannot be assigned to
-       the given lvalue type *)
+      the given lvalue type *)
     let check_assign lvaluet rvaluet err =
-       if lvaluet = rvaluet then lvaluet else raise (Failure err)
+      if lvaluet = rvaluet then lvaluet else raise (Failure err)
     in   
 
     (* Build local symbol table of variables for this function *)
     let symbols = List.fold_left (fun m (ty, name) -> StringMap.add name ty m)
-	                StringMap.empty (globals @ func.formals @ func.locals )
+      StringMap.empty (globals @ func.formals @ func.locals )
     in
 
     (* Return a variable from our local symbol table *)
@@ -197,12 +197,12 @@ let check (globals, functions) =
       in if t' != Int then raise (Failure err) else (t', e') 
     in
   
-  let check_match_array_type_expr l e = 
-   let (t', e') as e'' = expr e
-    in let err = "array type and expression type do not match " ^ (string_of_typ t') ^ ", " ^ (string_of_sexpr e'')
-    in if t' != (check_array_type l) then raise (Failure err) else (t', e') 
-  
-  in
+    let check_match_array_type_expr l e = 
+      let (t', e') as e'' = expr e in
+      let err = "array type and expression type do not match " ^ (string_of_typ t') ^ ", " ^ (string_of_sexpr e'') in
+      if t' != (check_array_type l) then raise (Failure err) else (t', e') 
+    in
+
     (* Return a semantically-checked statement i.e. containing sexprs *)
     let rec check_stmt = function
         Expr e -> SExpr (expr e)
@@ -217,9 +217,8 @@ let check (globals, functions) =
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
         if t = func.typ then SReturn (t, e') 
-        else raise (
-	  Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-		   string_of_typ func.typ ^ " in " ^ string_of_expr e))
+        else raise (Failure ("return gives " ^ string_of_typ t ^ " expected " ^
+		    string_of_typ func.typ ^ " in " ^ string_of_expr e))
 	    
 	    (* A block is correct if each statement is correct and nothing
 	       follows any Return statement.  Nested blocks are flattened. *)
@@ -238,7 +237,7 @@ let check (globals, functions) =
       sformals = func.formals;
       slocals  = func.locals;
       sbody = match check_stmt (Block func.body) with
-	SBlock(sl) -> sl
-      | _ -> raise (Failure ("internal error: block didn't become a block?"))
+        | SBlock(sl) -> sl
+        | _ -> raise (Failure ("internal error: block didn't become a block?"))
     }
   in (globals, List.map check_function functions)
