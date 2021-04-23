@@ -113,10 +113,13 @@ let check (globals, functions) =
         | t -> raise (Failure ("check array type error, typ: " ^ string_of_typ t))
     in
 
-    let match_binop_types = function
-      | (Fliteral l1, op, Literal l2) -> (Fliteral l1, op, Fliteral (string_of_int l2))
-      | (Literal l1, op, Fliteral l2) -> (Fliteral (string_of_int l1), op, Fliteral l2)
-      | (e1, op, e2) -> (e1, op, e2)
+    let combine_numeric_types t1 t2 =
+      if t1 = t2 then t1 else match t1, t2 with
+        (* Use the more precise type *)
+        | Int, Float  | Float, Int  -> Float
+        | Pint, Float | Float, Pint -> Float
+        | Pint, Int   | Int, Pint   -> Int
+        | _ -> raise (Failure ("cannot combine numeric types " ^ string_of_typ t1 ^ " & " ^ string_of_typ t2))
     in
 
     (* Return a semantically-checked expression, i.e., with a type *)
@@ -143,21 +146,20 @@ let check (globals, functions) =
                                  " in " ^ string_of_expr ex))
           in (ty, SUnop(op, (t, e')))
       | Binop(e1, op, e2) as e -> 
-          let (e1, op, e2) = match_binop_types (e1, op, e2) in
           let (t1, e1') = expr e1 
           and (t2, e2') = expr e2 in
-          (* All binary operators require operands of the same type *)
-          (* Exceptions: int with pint *)
-          (* let same = t1 = t2 in *)
-          let same = (t1 = t2) || (t1 = Int && t2 = Pint) || (t1 = Pint && t2 = Int) in
+          let same = t1 = t2 in
+          let both_numeric = 
+            ((t1 = Int) || (t1 = Pint) || (t1 = Float)) &&
+            ((t2 = Int) || (t2 = Pint) || (t2 = Float))
+          in
           (* Determine expression type based on operator and operand types *)
+          (* Math ops require any two numeric types, logical ops require two bools *)
           let ty = match op with
-            Add | Sub | Mult | Div when same && t1 = Int   -> Int
-          | Add | Sub | Mult | Div when same && t1 = Float -> Float
-          | Equal | Neq            when same               -> Bool
-          | Less | Leq | Greater | Geq
-                     when same && (t1 = Int || t1 = Float) -> Bool
-          | And | Or when same && t1 = Bool -> Bool
+          | Add | Sub | Mult | Div       when both_numeric -> combine_numeric_types t1 t2
+          | Less | Leq | Greater | Geq   when both_numeric -> Bool
+          | Equal | Neq                  when same || both_numeric -> Bool
+          | And | Or                     when same && t1 = Bool -> Bool
           | _ -> raise (
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
