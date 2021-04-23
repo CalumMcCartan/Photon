@@ -229,9 +229,9 @@ let check (globals, functions) =
 	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
       | While(p, s) -> SWhile(check_bool_expr p, check_stmt s)
       | Return e -> let (t, e') = expr e in
-        if t = func.typ then SReturn (t, e') 
-        else raise (Failure ("return gives " ^ string_of_typ t ^ " expected " ^
-		    string_of_typ func.typ ^ " in " ^ string_of_expr e))
+        let err = ("return gives " ^ string_of_typ t ^ " expected " ^ string_of_typ func.typ ^ " in " ^ string_of_expr e) in
+        if check_assign func.typ t err = func.typ then SReturn (t, e')
+        else raise (Failure err)
 	    
 	    (* A block is correct if each statement is correct and nothing
 	       follows any Return statement.  Nested blocks are flattened. *)

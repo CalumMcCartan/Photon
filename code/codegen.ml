@@ -503,12 +503,14 @@ let translate (globals, functions) =
     | SArraySet (array_type, id, e1, e2) ->
         ignore(L.build_call (StringMap.find (type_str array_type) array_set) [| (lookup id); (expr builder e1); (expr builder e2) |] "" builder); builder
     | SExpr e -> ignore(expr builder e); builder 
-    | SReturn e -> 
+    | SReturn (t, e) -> 
         ignore(match fdecl.styp with
           (* Special "return nothing" instr *)
           | A.Void -> L.build_ret_void builder 
           (* Build return statement *)
-          | _ -> L.build_ret (expr builder e) builder 
+          | _ -> let e' = expr builder (t, e) in
+              let e' = cast_expr e' fdecl.styp t builder in
+              L.build_ret e' builder 
         ); builder
     | SIf (predicate, then_stmt, else_stmt) ->
         let bool_val = expr builder predicate in
