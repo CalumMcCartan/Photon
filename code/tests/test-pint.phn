@@ -2,14 +2,14 @@ func int main()
 {
     pint x;
     x = 5;
-    printp(x);
+    print(x);
     
-    printp(pintFunc());
+    print(pintFunc(x));
 
     return 0;
 }
 
-func pint pintFunc()
+func pint pintFunc(int x)
 {
     pint y;
     y = 3;

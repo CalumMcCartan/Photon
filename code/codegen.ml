@@ -463,32 +463,32 @@ let translate (globals, functions) =
       let _ = List.rev (List.map map_func literals) in
       L.build_load new_array_ptr "new_array" builder
       
-    (* built in functions *)
-    | SCall ("print", [e]) | SCall ("printb", [e]) ->
-      L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
-    | SCall ("printbig", [e]) ->
-      L.build_call printbig_func [| (expr builder e) |] "printbig" builder
-    | SCall ("printp",[e]) ->
-      L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
-    | SCall ("printf", [e]) -> 
-      L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
-    | SCall ("prints",[e]) ->
-      L.build_call printf_func [| str_format_str ; (expr builder e) |] "printf" builder
-    | SCall ("min", [e1; e2]) ->
-      L.build_call getmin_func [| (expr builder e1); (expr builder e2) |] "get_min" builder
-    | SCall ("max", [e1; e2]) ->
-      L.build_call getmax_func [| (expr builder e1); (expr builder e2) |] "get_max" builder
-    | SCall ("sqrt", [e]) ->
-      L.build_call getsqrt_func [| (expr builder e) |] "get_sqrt" builder
-    | SCall ("load", [e]) ->
-      L.build_call loadimage_func [| (str_format_str) |] "load" builder
-    | SCall (f, args) ->
-      let (fdef, fdecl) = StringMap.find f function_decls in
-      let llargs = List.rev (List.map (expr builder) (List.rev args)) in
-      let result = (match fdecl.styp with 
-        | A.Void -> ""
-        | _ -> f ^ "_result"
-      ) in L.build_call fdef (Array.of_list llargs) result builder
+    | SCall (fname, f_args) ->
+      let cast_arg (lt, (rt, e)) = 
+        let e' = expr builder (rt, e) in 
+        cast_expr e' lt rt builder
+      in
+      let args = Array.of_list (List.rev (List.map (cast_arg) (List.rev f_args))) in 
+      let (fdef, args', result) = match fname with
+        (* Built in functions *)
+        | "printb"
+        | "print"    -> printf_func,     [| int_format_str ; args.(0) |],   "printf"
+        | "printbig" -> printbig_func,   [| args.(0) |],                    "printbig"
+        | "printf"   -> printf_func,     [| float_format_str ; args.(0) |], "printf"
+        | "prints"   -> printf_func,     [| str_format_str ; args.(0) |],   "printf"
+        | "min"      -> getmin_func,     [| args.(0); args.(1) |],          "get_min"
+        | "max"      -> getmax_func,     [| args.(0); args.(1) |],          "get_max"
+        | "sqrt"     -> getsqrt_func,    [| args.(0) |],                    "get_sqrt"
+        | "load"     -> loadimage_func,  [| (str_format_str) |],            "load"
+        (* User defined function *)
+        | _ ->
+            let (fdef, fdecl) = StringMap.find fname function_decls in
+            let result = (match fdecl.styp with 
+              | A.Void -> ""
+              | _ -> fname ^ "_result") 
+            in fdef, args, result
+      in
+      L.build_call fdef args' result builder
   in
   
   

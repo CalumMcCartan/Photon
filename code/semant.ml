@@ -47,7 +47,6 @@ let check (globals, functions) =
       ("printf", [(Float, "x")], Void);
       ("prints", [(String, "x")], Void);
       ("printbig", [(Int, "x")], Void);
-      ("printp", [(Pint, "x")], Void);
       ("min", [(Int, "x");(Int, "y")], Int);
       ("max", [(Int, "x");(Int, "y")], Int);
       ("sqrt", [(Float, "x")], Float);
@@ -193,7 +192,7 @@ let check (globals, functions) =
             let (et, e') = expr e in 
             let err = "illegal argument found " ^ string_of_typ et ^
               " expected " ^ string_of_typ ft ^ " in " ^ string_of_expr e
-            in (check_assign ft et err, e')
+            in (check_assign ft et err, (et, e'))
           in 
           let args' = List.map2 check_call fd.formals args
           in (fd.typ, SCall(fname, args'))

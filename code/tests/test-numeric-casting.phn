@@ -8,7 +8,7 @@ func int main()
     i = returnPintAsInt();
     f = 9;
 
-    printp(p);
+    print(p);
     print(i);
     printf(f);
 
@@ -16,12 +16,13 @@ func int main()
     i = p;
     f = i + 1;
 
-    printp(p);
+    print(p);
     print(i);
     printf(f);
 
     f = p;
     printf(f);
+    useIntForFloatArg(i);
 
     return 0;
 }
@@ -32,3 +33,5 @@ func int returnPintAsInt() {
     return p;
 }
 
+func void useIntForFloatArg(float f) {
+}

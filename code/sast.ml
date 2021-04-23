@@ -3,6 +3,7 @@
 open Ast
 
 type sexpr = typ * sx
+and sarg = typ * sexpr
 and sx =
     SLiteral of int
   | SPintLit of int
@@ -13,7 +14,7 @@ and sx =
   | SBinop of sexpr * op * sexpr
   | SUnop of uop * sexpr
   | SAssign of string * sexpr
-  | SCall of string * sexpr list
+  | SCall of string * sarg list
   | SNoexpr
   | SArrayGet of typ * string * sexpr
   | SArrayFind of typ * string * sexpr
@@ -60,6 +61,7 @@ let rec string_of_sexpr (t, e) =
   | SUnop(o, e) -> string_of_uop o ^ string_of_sexpr e
   | SAssign(v, e) -> v ^ " = " ^ string_of_sexpr e
   | SCall(f, el) ->
+      let el = List.map snd el in
       f ^ "(" ^ String.concat ", " (List.map string_of_sexpr el) ^ ")"
   | SNoexpr -> ""
 				  ) ^ ")"				     
