@@ -1,24 +1,17 @@
 func int main()
 {
 
+    int i;
     pint p;
-    p = 5;
 
-    200 + p;
+    i = 10;
 
-    # printp(p);
+    p = 7 + 8;
+    printp(p);
+    p = 3 * i;
+    printp(p);
+    printp(i);
 
-
- #   pint p;
-  #  int i;
-
-   # p = 3;
-   # i = p;
-   # p = i;
-    #p = p + 5;
-
-    #printp(p);
-    #print(i);
 
     return 0;
 }

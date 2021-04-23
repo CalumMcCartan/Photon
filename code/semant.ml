@@ -113,15 +113,7 @@ let check (globals, functions) =
       | (Literal l1, op, Fliteral l2) -> (Fliteral (string_of_int l1), op, Fliteral l2)
       | (e1, op, e2) -> (e1, op, e2)
     in
-    
-    (* Automatically convert the type of the result of an expression *)
-    (* ((type, value), target_type) -> (target_type, value) *)
-    let type_convert_expr = function
-      | ((Int, SLiteral(v)), Pint) -> (Pint, SPintLit v)
-      | ((Pint, SPintLit(v)), Int) -> (Int, SLiteral v)
-      | (expr, _) -> expr
-    in
-    
+
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literal l -> (Int, SLiteral l)
@@ -131,8 +123,8 @@ let check (globals, functions) =
       | Noexpr     -> (Void, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
       | Assign(var, e) as ex -> 
-          let lt = type_of_identifier var in
-          let (rt, e') = type_convert_expr ((expr e), lt) in
+          let lt = type_of_identifier var
+          and (rt, e') = expr e in
           let err = "illegal assignment " ^ string_of_typ lt ^ " = " ^ 
             string_of_typ rt ^ " in " ^ string_of_expr ex
           in (check_assign lt rt err, SAssign(var, (rt, e')))

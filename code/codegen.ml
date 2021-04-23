@@ -51,6 +51,7 @@ let translate (globals, functions) =
   let type_str t = 
     match t with
        A.Int -> "int"
+     | A.Pint -> "pint"
      | A.Bool -> "bool"
      | A.Float -> "float"
      | A.String -> "str"
@@ -364,14 +365,19 @@ let translate (globals, functions) =
         in List.fold_left add_local formals fdecl.slocals 
       in
 
-  (* Return the value for a variable or formal argument.
-      Check local names first, then global names *)
+  (* Return the value for a variable or formal argument. Check local names first, then global names *)
   let lookup n = 
     try StringMap.find n local_vars with Not_found -> StringMap.find n global_vars
   in
 
+  (* Convert an evaluated expression e to type t, if possible *)
+  let type_convert_expr e t builder = match t with
+    | A.Pint -> L.build_trunc e (ltype_of_typ t) "tmpCast" builder
+    | _ -> e
+  in
+
   (* Construct code for an expression; return its value *)
-  let rec expr builder ((_, e) : sexpr) = match e with
+  let rec expr builder ((t, e) : sexpr) = match e with
     | SLiteral i  -> L.const_int i32_t i
     | SPintLit p  -> L.const_int i8_t p
     | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
@@ -379,7 +385,9 @@ let translate (globals, functions) =
     | SStrLiteral s   -> L.build_global_stringptr s "str" builder
     | SNoexpr     -> L.const_int i32_t 0
     | SId s       -> L.build_load (lookup s) s builder
-    | SAssign (s, e) -> let e' = expr builder e in ignore(L.build_store e' (lookup s) builder); e'
+    | SAssign (s, e) -> 
+        let e' = type_convert_expr (expr builder e) t builder in 
+        ignore(L.build_store e' (lookup s) builder); e'
     | SBinop ((A.Float,_ ) as e1, op, e2) ->
       (* Binop on float *)
       let e1' = expr builder e1
