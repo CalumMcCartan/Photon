@@ -1,0 +1,28 @@
+func int main()
+{
+    int i;
+    pint p;
+    float f;
+
+    p = 3;
+    i = 6;
+    f = 9;
+
+    printp(p);
+    print(i);
+    printf(f);
+
+    p = i;
+    i = p;
+    f = i + 1;
+
+    printp(p);
+    print(i);
+    printf(f);
+
+    f = p;
+    printf(f);
+
+    return 0;
+}
+

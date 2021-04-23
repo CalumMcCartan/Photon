@@ -40,6 +40,7 @@ let translate (globals, functions) =
   (* Return the LLVM type for a Photon type *)
   let rec ltype_of_typ = function
       A.Int   -> i32_t
+    | A.Pint  -> i8_t 
     | A.Bool  -> i1_t
     | A.Float -> float_t
     | A.Void  -> void_t
@@ -50,6 +51,7 @@ let translate (globals, functions) =
   let type_str t = 
     match t with
        A.Int -> "int"
+     | A.Pint -> "pint"
      | A.Bool -> "bool"
      | A.Float -> "float"
      | A.String -> "str"
@@ -363,29 +365,58 @@ let translate (globals, functions) =
         in List.fold_left add_local formals fdecl.slocals 
       in
 
-  (* Return the value for a variable or formal argument.
-      Check local names first, then global names *)
+  let clamp v min max =
+    if v > max then max else
+    if v < min then min else v
+  in
+
+  (* Return the value for a variable or formal argument. Check local names first, then global names *)
   let lookup n = 
     try StringMap.find n local_vars with Not_found -> StringMap.find n global_vars
   in
 
+  (* Cast an evaluated expression 'e' from type 'rt' to type 'lt' *)
+  let cast_expr e lt rt builder = 
+    if lt = rt then e else
+    let llt = ltype_of_typ lt in
+    match lt, rt with
+      | A.Pint, A.Int   -> L.build_trunc e llt "pintCast" builder
+      | A.Int, A.Pint   -> L.build_zext e llt "intCast" builder
+      | A.Float, A.Pint -> L.build_uitofp e llt "floatCast" builder
+      | A.Float, A.Int  -> L.build_sitofp e llt "floatCast" builder
+      | _ -> raise (Failure "internal error: semant should have rejected an unsupported type conversion")
+  in
+
   (* Construct code for an expression; return its value *)
-  let rec expr builder ((_, e) : sexpr) = match e with
+  let rec expr builder ((t, e) : sexpr) = match e with
     | SLiteral i  -> L.const_int i32_t i
+    | SPintLit p  -> L.const_int i8_t (clamp p 0 255)
     | SBoolLit b  -> L.const_int i1_t (if b then 1 else 0)
     | SFliteral l -> L.const_float_of_string float_t l
     | SStrLiteral s   -> L.build_global_stringptr s "str" builder
     | SNoexpr     -> L.const_int i32_t 0
     | SId s       -> L.build_load (lookup s) s builder
-    | SAssign (s, e) -> let e' = expr builder e in ignore(L.build_store e' (lookup s) builder); e'
-    | SBinop ((A.Float,_ ) as e1, op, e2) ->
-      (* Binop on float *)
-      let e1' = expr builder e1
-      and e2' = expr builder e2 in (match op with 
-          A.Add     -> L.build_fadd
+    | SAssign (s, (rt, e)) -> 
+        let e' = expr builder (rt, e) in
+        let e' = cast_expr e' t rt builder in 
+        ignore(L.build_store e' (lookup s) builder); e'
+    | SBinop ((rt1, e1), op, (rt2, e2)) -> 
+      (* If binop type is a bool, then cast both expressions to float for comparision *)
+      let cast_t = if t = A.Bool then 
+        if rt1 = rt2 then rt1 else A.Float 
+        else t 
+      in
+      (* Evaluate both expressions and cast to same type 'cast_t' *)
+      let e1' = expr builder (rt1, e1)
+      and e2' = expr builder (rt2, e2) in 
+      let e1' = cast_expr e1' cast_t rt1 builder
+      and e2' = cast_expr e2' cast_t rt2 builder in
+
+      if cast_t = A.Float then (match op with
+        | A.Add     -> L.build_fadd
         | A.Sub     -> L.build_fsub
         | A.Mult    -> L.build_fmul
-        | A.Div     -> L.build_fdiv 
+        | A.Div     -> L.build_fdiv
         | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
         | A.Neq     -> L.build_fcmp L.Fcmp.One
         | A.Less    -> L.build_fcmp L.Fcmp.Olt
@@ -393,12 +424,9 @@ let translate (globals, functions) =
         | A.Greater -> L.build_fcmp L.Fcmp.Ogt
         | A.Geq     -> L.build_fcmp L.Fcmp.Oge
         | A.And | A.Or -> raise (Failure "internal error: semant should have rejected and/or on float")
-      ) e1' e2' "tmp" builder
-    | SBinop (e1, op, e2) ->
-      (* Binop on non-float *)
-      let e1' = expr builder e1
-      and e2' = expr builder e2 in (match op with
-          A.Add     -> L.build_add
+        ) e1' e2' "floatBinop" builder
+      else (match op with
+        | A.Add     -> L.build_add
         | A.Sub     -> L.build_sub
         | A.Mult    -> L.build_mul
         | A.Div     -> L.build_sdiv
@@ -410,7 +438,7 @@ let translate (globals, functions) =
         | A.Leq     -> L.build_icmp L.Icmp.Sle
         | A.Greater -> L.build_icmp L.Icmp.Sgt
         | A.Geq     -> L.build_icmp L.Icmp.Sge
-      ) e1' e2' "tmp" builder
+        ) e1' e2' "nonFloatBinop" builder
     | SUnop(op, ((t, _) as e)) ->
       (* Unop *)
       let e' = expr builder e in (match op with
@@ -440,6 +468,8 @@ let translate (globals, functions) =
       L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
     | SCall ("printbig", [e]) ->
       L.build_call printbig_func [| (expr builder e) |] "printbig" builder
+    | SCall ("printp",[e]) ->
+      L.build_call printf_func [| int_format_str ; (expr builder e) |] "printf" builder
     | SCall ("printf", [e]) -> 
       L.build_call printf_func [| float_format_str ; (expr builder e) |] "printf" builder
     | SCall ("prints",[e]) ->

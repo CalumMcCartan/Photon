@@ -5,7 +5,7 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Bool | Float | Void | String | Array of typ | Image 
+type typ = Int | Pint | Bool | Float | Void | String | Array of typ | Image 
 
 type bind = typ * string
 
@@ -101,6 +101,7 @@ let rec string_of_stmt = function
 
 let rec string_of_typ = function
     Int -> "int"
+  | Pint -> "pint"
   | Bool -> "bool"
   | Float -> "float"
   | Void -> "void"

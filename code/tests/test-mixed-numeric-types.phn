@@ -1,0 +1,19 @@
+func int main()
+{
+
+    int i;
+    pint p;
+    float f;
+
+    p = 10;
+    f = 0.5;
+    i = 4;
+
+    printf((p * 2) / i + f);
+    print(p + i);
+    printb(p > i);
+
+
+    return 0;
+}
+
