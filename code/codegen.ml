@@ -371,9 +371,15 @@ let translate (globals, functions) =
   in
 
   (* Convert an evaluated expression e to type t, if possible *)
-  let type_convert_expr e t builder = match t with
-    | A.Pint -> L.build_trunc e (ltype_of_typ t) "tmpCast" builder
-    | _ -> e
+  let type_convert_expr e lt rt builder = 
+    if lt = rt then e else
+    let llt = ltype_of_typ lt in
+    match lt, rt with
+      | A.Pint, A.Int   -> L.build_trunc e llt "pintCast" builder
+      | A.Int, A.Pint   -> L.build_zext e llt "intCast" builder
+      | A.Float, A.Pint -> L.build_uitofp e llt "floatCast" builder
+      | A.Float, A.Int  -> L.build_sitofp e llt "floatCast" builder
+      | _ -> raise (Failure "internal error: semant should have rejected an unsupported type conversion")
   in
 
   (* Construct code for an expression; return its value *)
@@ -385,8 +391,9 @@ let translate (globals, functions) =
     | SStrLiteral s   -> L.build_global_stringptr s "str" builder
     | SNoexpr     -> L.const_int i32_t 0
     | SId s       -> L.build_load (lookup s) s builder
-    | SAssign (s, e) -> 
-        let e' = type_convert_expr (expr builder e) t builder in 
+    | SAssign (s, (rt, e)) -> 
+        let e' = expr builder (rt, e) in
+        let e' = type_convert_expr e' t rt builder in 
         ignore(L.build_store e' (lookup s) builder); e'
     | SBinop ((A.Float,_ ) as e1, op, e2) ->
       (* Binop on float *)
