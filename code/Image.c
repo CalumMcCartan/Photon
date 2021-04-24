@@ -13,8 +13,18 @@ Image* Image_load(const char *fname) {
     if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 0)) != NULL) {
         img->size = img->width * img->height * img->channels;
         img->allocation_ = STB_ALLOCATED;
+    } else {
+        printf("Failed to load image %s\n", fname);
     }
     return img;
+}
+
+int Image_width(Image *img) {
+    return img->width;
+}
+
+int Image_height(Image *img) {
+    return img->height;
 }
 
 /*

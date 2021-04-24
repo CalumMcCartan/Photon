@@ -98,6 +98,18 @@ let translate (globals, functions) =
     L.declare_function "Image_load" loadimage_t the_module 
   in
 
+  let imagewidth_t : L.lltype =
+    L.function_type i32_t [| image_t |] in
+  let imagewidth_func : L.llvalue =
+    L.declare_function "Image_width" imagewidth_t the_module 
+  in
+
+  let imageheight_t : L.lltype =
+    L.function_type i32_t [| image_t |] in
+  let imageheight_func : L.llvalue =
+    L.declare_function "Image_height" imageheight_t the_module 
+  in
+
   (* LLVM insists each basic block end with exactly one "terminator" 
       instruction that transfers control.  This function runs "instr builder"
       if the current block does not already have a terminator.  Used,
@@ -479,7 +491,9 @@ let translate (globals, functions) =
         | "min"      -> getmin_func,     [| args.(0); args.(1) |],          "get_min"
         | "max"      -> getmax_func,     [| args.(0); args.(1) |],          "get_max"
         | "sqrt"     -> getsqrt_func,    [| args.(0) |],                    "get_sqrt"
-        | "load"     -> loadimage_func,  [| (str_format_str) |],            "load"
+        | "load"     -> loadimage_func,  [| (args.(0)) |],                  "load"
+        | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
+        | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in

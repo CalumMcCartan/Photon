@@ -50,7 +50,10 @@ let check (globals, functions) =
       ("min", [(Int, "x");(Int, "y")], Int);
       ("max", [(Int, "x");(Int, "y")], Int);
       ("sqrt", [(Float, "x")], Float);
-      ("load", [(String, "x")], Image) ]
+      ("load", [(String, "x")], Image); 
+      ("width", [(Image, "img")], Int);
+      ("height", [(Image, "img")], Int)
+      ]
   in
 
   (* Add function name to symbol table *)
