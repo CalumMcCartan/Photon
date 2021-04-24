@@ -28,7 +28,7 @@ type sstmt =
   | SFor of sexpr * sexpr * sexpr * sstmt
   | SWhile of sexpr * sstmt
   | SArraySet of typ * string * sexpr * sexpr
-  | SArrayPush of string * sexpr
+  | SArrayAdd of string * sexpr
 
 type sfunc_decl = {
     styp : typ;
@@ -78,7 +78,7 @@ let rec string_of_sstmt = function
       string_of_sexpr e3  ^ ") " ^ string_of_sstmt s
   | SWhile(e, s) -> "while (" ^ string_of_sexpr e ^ ") " ^ string_of_sstmt s
   | SArraySet(_, id, e1, e2) -> "array_set " ^ id ^ ", " ^ (string_of_sexpr e1) ^ ", " ^ (string_of_sexpr e2)
-  | SArrayPush(id, e) -> "array_push " ^ id ^ ", " ^ string_of_sexpr e
+  | SArrayAdd(id, e) -> "array_add " ^ id ^ ", " ^ string_of_sexpr e
 
 let string_of_sfdecl fdecl =
   string_of_typ fdecl.styp ^ " " ^

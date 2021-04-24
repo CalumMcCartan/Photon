@@ -32,7 +32,7 @@ type stmt =
   | For of expr * expr * expr * stmt
   | While of expr * stmt
   | ArraySet of string * expr * expr
-  | ArrayPush of string * expr
+  | ArrayAdd of string * expr
 
 type func_decl = {
     typ : typ;
@@ -95,7 +95,7 @@ let rec string_of_stmt = function
       string_of_expr e3  ^ ") " ^ string_of_stmt s
   | While(e, s) -> "while (" ^ string_of_expr e ^ ") " ^ string_of_stmt s
   | ArraySet(id, e1, e2) -> "array_set " ^ id ^ ", " ^ (string_of_expr e1) ^ ", " ^ (string_of_expr e2)
-  | ArrayPush(id, e) -> "array_push " ^ id ^ ", " ^ string_of_expr e  
+  | ArrayAdd(id, e) -> "array_add " ^ id ^ ", " ^ string_of_expr e  
 
 let rec string_of_typ = function
     Int -> "int"

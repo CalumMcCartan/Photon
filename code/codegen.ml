@@ -67,6 +67,8 @@ let translate (globals, functions) =
     in List.fold_left global_var StringMap.empty globals 
   in
 
+  (* built-in functions *)
+
   let printf_t : L.lltype = 
       L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
   let printf_func : L.llvalue = 
@@ -123,9 +125,7 @@ let translate (globals, functions) =
 
   (* array functions *)
 
-  (* 
-    ltype array_get(array a, i32_t index) 
-  *)
+  (* ltype array_get(array a, i32_t index) *)
   let array_get : L.llvalue StringMap.t = 
     let array_get_ty m typ = 
       let ltype = (ltype_of_typ typ) in 
@@ -180,11 +180,11 @@ let translate (globals, functions) =
      StringMap.add def_name def m in 
   List.fold_left array_set_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
 
-  (* void array_push(array, ltype value) *) 
-  let array_push_ty m typ =
+  (* void array_add(array, ltype value) *) 
+  let array_add_ty m typ =
     let ltype = (ltype_of_typ typ) in 
       let def_name = (type_str typ) in
-      let def = L.define_function ("array_push" ^ def_name) (L.function_type void_t [| L.pointer_type (array_t ltype); ltype |]) the_module in
+      let def = L.define_function ("array_add" ^ def_name) (L.function_type void_t [| L.pointer_type (array_t ltype); ltype |]) the_module in
       let build = L.builder_at_end context (L.entry_block def) in
       let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
       ignore(L.build_store (L.param def 0) array_ptr build);
@@ -205,29 +205,29 @@ let translate (globals, functions) =
       let _ = L.build_store (L.build_load valPtr "val" build) next_element_ptr build in
       let _ = L.build_ret_void build in
       StringMap.add def_name def m in 
-    let array_push : L.llvalue StringMap.t =
-      List.fold_left array_push_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+    let array_add : L.llvalue StringMap.t =
+      List.fold_left array_add_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
  
   (* i32_t array_size(array a) *)
   let array_size : L.llvalue StringMap.t = 
     let array_size_ty m typ =
-    let ltype = (ltype_of_typ typ) in 
-    let def_name = (type_str typ) in
+      let ltype = (ltype_of_typ typ) in 
+      let def_name = (type_str typ) in
 
-    let def = L.define_function ("array_size" ^ def_name) (L.function_type i32_t [| L.pointer_type (array_t ltype) |]) the_module in
-    let build = L.builder_at_end context (L.entry_block def) in
+      let def = L.define_function ("array_size" ^ def_name) (L.function_type i32_t [| L.pointer_type (array_t ltype) |]) the_module in
+      let build = L.builder_at_end context (L.entry_block def) in
 
-    let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
-    ignore(L.build_store (L.param def 0) array_ptr build);
+      let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
+      ignore(L.build_store (L.param def 0) array_ptr build);
 
-    let array_load = L.build_load array_ptr "array_load" build in
-    
-    let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
-    let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
-    let array_size = L.build_load array_size_ptr "array_size" build in
-    ignore(L.build_ret array_size build);
-    StringMap.add def_name def m in 
-    List.fold_left array_size_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+      let array_load = L.build_load array_ptr "array_load" build in
+      
+      let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
+      let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
+      let array_size = L.build_load array_size_ptr "array_size" build in
+      ignore(L.build_ret array_size build);
+      StringMap.add def_name def m in 
+      List.fold_left array_size_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
 
   (* building the array *)
   let init_array builder array_ptr array_type = 
@@ -388,7 +388,7 @@ let translate (globals, functions) =
       let new_array_ptr = L.build_alloca (array_t ltype) "new_array_ptr" builder in
       let _ = init_array builder new_array_ptr array_type in
       let map_func literal = 
-          ignore(L.build_call (StringMap.find (type_str array_type) array_push) [| new_array_ptr; (expr builder literal) |] "" builder);
+          ignore(L.build_call (StringMap.find (type_str array_type) array_add) [| new_array_ptr; (expr builder literal) |] "" builder);
       in
       let _ = List.rev (List.map map_func literals) in
       L.build_load new_array_ptr "new_array" builder
@@ -430,8 +430,8 @@ let translate (globals, functions) =
 
   let rec stmt builder = function
 	  | SBlock sl -> List.fold_left stmt builder sl
-    | SArrayPush (id, e) -> 
-        ignore(L.build_call (StringMap.find (type_str (fst e)) array_push) [| (lookup id); (expr builder e) |] "" builder); builder 
+    | SArrayAdd (id, e) -> 
+        ignore(L.build_call (StringMap.find (type_str (fst e)) array_add) [| (lookup id); (expr builder e) |] "" builder); builder 
     | SArraySet (array_type, id, e1, e2) ->
         ignore(L.build_call (StringMap.find (type_str array_type) array_set) [| (lookup id); (expr builder e1); (expr builder e2) |] "" builder); builder
     | SExpr e -> ignore(expr builder e); builder 

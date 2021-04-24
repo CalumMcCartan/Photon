@@ -46,6 +46,7 @@ rule token = parse
 | "true"   { BLIT(true)  }
 | "false"  { BLIT(false) }
 | "arr" 		{ ARRAY }
+| "array_add" { ARRAY_ADD }
 | "length"  { LENGTH }
 | "image"  { IMAGE }
 | digits as lxm { LITERAL(int_of_string lxm) }

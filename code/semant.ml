@@ -220,9 +220,9 @@ let check (globals, functions) =
         Expr e -> SExpr (expr e)
         | ArraySet (var, e1, e2) ->
           SArraySet(check_array_type var, var, check_int_expr e1, check_match_array_type_expr var e2)
-        | ArrayPush (var, e) -> 
+        | ArrayAdd (var, e) -> 
           let _ = check_array_type var in
-          SArrayPush(var, check_match_array_type_expr var e)
+          SArrayAdd(var, check_match_array_type_expr var e)
       | If(p, b1, b2) -> SIf(check_bool_expr p, check_stmt b1, check_stmt b2)
       | For(e1, e2, e3, st) ->
 	  SFor(expr e1, check_bool_expr e2, expr e3, check_stmt st)
