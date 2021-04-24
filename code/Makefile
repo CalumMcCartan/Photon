@@ -19,11 +19,11 @@ imageclean:
 	rm Shapes_gray.png
 	rm sky_gray.jpg
 
-# "make all" builds the executable as well as the "printbig" library designed
+# "make all" builds the executable as well as the built-in library designed
 # to test linking external code
 
 .PHONY : all
-all : photon.native printbig.o Image.o
+all : photon.native utils.o Image.o
 
 # "make photon.native" compiles the compiler
 #
@@ -40,13 +40,11 @@ photon.native :
 
 .PHONY : clean
 clean :
-	rm -rf testall.log ocamlllvm *.diff _build photon.native printbig.o Image.o
+	rm -rf testall.log ocamlllvm *.diff _build photon.native utils.o Image.o
 	ocamlbuild -clean
 
-# Testing the "printbig" example
-
-printbig : printbig.c
-	cc -o printbig -DBUILD_TEST printbig.c
+utils : utils.c
+	cc -o utils -DBUILD_TEST utils.c
 
 # Building the tarball
 
@@ -67,7 +65,7 @@ TESTFILES = $(TESTS:%=test-%.phn) $(TESTS:%=test-%.out) \
 
 TARFILES = ast.ml sast.ml codegen.ml Makefile _tags photon.ml photonparse.mly \
 	README scanner.mll semant.ml testall.sh \
-	printbig.c arcade-font.pbm font2c \
+	utils.c arcade-font.pbm font2c \
 	Dockerfile \
 	$(TESTFILES:%=tests/%) 
 
