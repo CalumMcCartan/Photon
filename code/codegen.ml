@@ -420,7 +420,7 @@ let translate (globals, functions) =
         | "load"     -> loadimage_func,  [| (args.(0)) |],                  "load"
         | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
         | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
-        | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],                 "get_pixel"
+        | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],          "get_pixel"
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in

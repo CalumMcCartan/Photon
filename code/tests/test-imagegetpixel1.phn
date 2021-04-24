@@ -1,0 +1,31 @@
+func int main()
+{
+  #whatever
+  image img;
+  
+  int index;
+  int p;
+  int x;
+  int y;
+  int position;
+  int channels;
+
+  
+  img = load("sky.jpg");
+
+  #for gettign a specific pixel, input what you want
+  x = 1;
+  y = 0;
+
+  #array math, assumes 4 channels
+  channels = 4;
+  position = (x + (width(img) * y) ) * channels;  
+
+  for( index = position; index < position + 4; index = index+1 ) {
+    p = get_pixel(img, index);
+    print(p);
+    img = load("sky.jpg");
+  }
+
+  return 0;
+}
