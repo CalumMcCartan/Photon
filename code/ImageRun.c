@@ -5,6 +5,16 @@
 
 int main(void) {
     Image* img = Image_load("sky.jpg");
+    printf("%d \n", img->channels);
+    printf("%d \n", img->data[0]);
+    printf("%d \n", img->data[1]);
+    printf("%d \n", img->data[2]);
+    printf("%d \n", img->data[3]);
+
+    printf("%d \n", img->data[4]);
+    printf("%d \n", img->data[5]);
+    printf("%d \n", img->data[6]);
+    printf("%d \n", img->data[7]);
     /*
     ON_ERROR_EXIT(img_sky.data == NULL, "Error in loading the image");
     Image_load(&img_shapes, "Shapes.png");

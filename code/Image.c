@@ -10,7 +10,7 @@
 Image* Image_load(const char *fname) {
     Image Img;
     Image* img = &Img;
-    if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 0)) != NULL) {
+    if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 4)) != NULL) {
         img->size = img->width * img->height * img->channels;
         img->allocation_ = STB_ALLOCATED;
     } else {
