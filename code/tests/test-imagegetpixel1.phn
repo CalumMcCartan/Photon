@@ -1,0 +1,12 @@
+func int main()
+{
+  #whatever
+  image img;
+  int pixelval;
+
+  img = load("sky.jpg");
+  pixelval = get_pixel(img);
+  print(pixelval);
+
+  return 0;
+}

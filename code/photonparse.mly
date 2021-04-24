@@ -86,7 +86,7 @@ stmt:
                                             { For($3, $5, $7, $9)   }
   | WHILE LPAREN expr RPAREN stmt           { While($3, $5)         }
   | ID LBRACK expr RBRACK ASSIGN expr SEMI        { ArraySet($1, $3, $6) }
-  | ARRAY_ADD LPAREN ID COMMA expr RPAREN SEMI { ArrayAdd($3, $5) }
+  | ARRAY_ADD LPAREN ID COMMA expr RPAREN SEMI    { ArrayAdd($3, $5) }
   
 
 expr_opt:
@@ -95,8 +95,8 @@ expr_opt:
 
 expr:
     LITERAL          { Literal($1)            }
-  | FLIT	     { Fliteral($1)           }
-  | STRLIT        { StrLiteral($1)}
+  | FLIT	           { Fliteral($1)           }
+  | STRLIT           { StrLiteral($1)}
   | BLIT             { BoolLit($1)            }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
@@ -118,7 +118,7 @@ expr:
   | LPAREN expr RPAREN { $2                   }
   | ID LBRACK expr RBRACK                   { ArrayGet($1, $3) }
   | LBRACK args_opt RBRACK                  { ArrayLiteral($2) }
-  | ID PERIOD LENGTH                         { ArraySize($1) }
+  | ID PERIOD LENGTH                        { ArraySize($1)    }
 
 
 args_opt:

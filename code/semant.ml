@@ -51,8 +51,10 @@ let check (globals, functions) =
       ("max", [(Int, "x");(Int, "y")], Int);
       ("sqrt", [(Float, "x")], Float);
       ("load", [(String, "x")], Image); 
+      ("get_pixel", [(Image, "img")], Int);
       ("width", [(Image, "img")], Int);
       ("height", [(Image, "img")], Int)
+
       ]
   in
 

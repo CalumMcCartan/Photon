@@ -109,7 +109,15 @@ let translate (globals, functions) =
   let imageheight_t : L.lltype =
     L.function_type i32_t [| image_t |] in
   let imageheight_func : L.llvalue =
-    L.declare_function "Image_height" imageheight_t the_module 
+    L.declare_function "Image_height" imageheight_t the_module
+  in
+
+  let getpixel_t : L.lltype =
+    L.function_type i32_t [| image_t |] in
+  let getpixel_func : L.llvalue =
+    L.declare_function "get_pixel" getpixel_t the_module
+    
+  
   in
 
   (* LLVM insists each basic block end with exactly one "terminator" 
@@ -412,6 +420,7 @@ let translate (globals, functions) =
         | "load"     -> loadimage_func,  [| (args.(0)) |],                  "load"
         | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
         | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
+        | "get_pixel"   -> getpixel_func, [| (args.(0)) |],                 "get_pixel"
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in

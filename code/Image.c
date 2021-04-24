@@ -28,6 +28,39 @@ int Image_height(Image *img) {
 }
 
 /*
+at the moment, get_pixel returns the value of the first two pixels in the image
+*/
+int get_pixel(Image *img) {
+    unsigned char *p = img->data;
+
+    unsigned char pixchar = p[0];
+    int r = pixchar - 0;
+    
+    pixchar = p[1];
+    int g = pixchar - 0;
+
+    pixchar = p[2];
+    int b = pixchar - 0;
+
+    pixchar = p[3];
+    int r2 = pixchar - 0;
+
+    pixchar = p[4];
+    int g2 = pixchar - 0;
+
+    pixchar = p[5];
+    int b2 = pixchar - 0;
+
+
+    
+    printf("pixels are %d, %d, %d, and second pixel is %d,%d,%d done", r, g, b,r2,g2,b2);
+    printf("\n");
+    return r; 
+}
+
+
+
+/*
 void Image_create(Image *img, int width, int height, int channels, bool zeroed) {
     size_t size = width * height * channels;
     if(zeroed) {
