@@ -1,0 +1,13 @@
+func int main()
+{
+    pixel a;
+    a = _magenta;
+
+    print(a[0]);
+    print(a[1]);
+    print(a[2]);
+    print(a[3]);
+    print(a.length);
+
+    return 0;
+}

@@ -8,7 +8,7 @@ open Ast
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
 %token RETURN IF ELSE FOR WHILE INT PINT BOOL FLOAT VOID STRING FUNC
 %token ARRAY_ADD ARRAY_GET ARRAY_SET ARRAY_SIZE PERIOD LENGTH
-%token IMAGE
+%token IMAGE PIXEL
 %token <int> LITERAL
 %token <bool> BLIT
 %token <string> ID FLIT STRLIT ALIAS
@@ -68,6 +68,7 @@ typ:
   | VOID  { Void  }
   | STRING { String }
   | IMAGE { Image }
+  | PIXEL { Array(Int) }
   | typ LBRACK RBRACK  { Array($1) }
 
 vdecl:

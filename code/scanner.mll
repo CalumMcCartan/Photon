@@ -48,6 +48,7 @@ rule token = parse
 | "arr" 		{ ARRAY }
 | "array_add" { ARRAY_ADD }
 | "length"  { LENGTH }
+| "pixel"  { PIXEL }
 | "image"  { IMAGE }
 | ('_' ['a'-'z']*) as str { ALIAS(str) }
 | digits as lxm { LITERAL(int_of_string lxm) }
