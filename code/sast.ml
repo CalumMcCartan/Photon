@@ -17,7 +17,6 @@ and sx =
   | SCall of string * sarg list
   | SNoexpr
   | SArrayGet of typ * string * sexpr
-  | SArrayFind of typ * string * sexpr
   | SArrayLiteral of typ * sexpr list
   | SArraySize of typ * string
 
@@ -53,7 +52,6 @@ let rec string_of_sexpr (t, e) =
   | SStrLiteral(l) -> l
   | SArrayGet(_, id, e) -> "array_get " ^ id ^ ", " ^ (string_of_sexpr e)
   | SArraySize(_, id) -> "array_size " ^ id
-  | SArrayFind(_, id, e) -> "array_find " ^ id ^ ", " ^ (string_of_sexpr e)
   | SArrayLiteral(_) -> "array_literal"
   | SId(s) -> s
   | SBinop(e1, o, e2) ->

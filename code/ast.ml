@@ -21,7 +21,6 @@ type expr =
   | Call of string * expr list
   | ArrayGet of string * expr
   | ArraySize of string
-  | ArrayFind of string * expr
   | ArrayLiteral of expr list
   | Noexpr
 
@@ -81,7 +80,6 @@ let rec string_of_expr = function
   | Noexpr -> ""
   | ArrayGet(id, e) -> "array_get " ^ id ^ ", " ^ (string_of_expr e)
   | ArraySize(id) -> "array_size " ^ id
-  | ArrayFind(id, e) -> "array_find " ^ id ^ ", " ^ (string_of_expr e)
   | ArrayLiteral(_) -> "array_literal"
 
 let rec string_of_stmt = function

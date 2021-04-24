@@ -176,9 +176,6 @@ let check (globals, functions) =
          in (array_type, SArrayGet(array_type, var, (ty, e')))
       | ArraySize var -> 
           (Int, SArraySize(check_array_type var, var))
-      | ArrayFind (var, e) ->
-         let (t, e') = expr e in
-         (Int, SArrayFind(check_array_type var, var, (t, e')))
       | ArrayLiteral vals ->
          let (t', _) = expr (List.hd vals) in
          let map_func lit = expr lit in

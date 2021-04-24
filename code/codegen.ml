@@ -121,40 +121,6 @@ let translate (globals, functions) =
       | None -> ignore (instr builder) 
   in
 
-  (*construct necessary dependencies for built in array functions *)
-
-  let build_while builder build_predicate build_body func_def =
-    let pred_bb = L.append_block context "while" func_def in
-    ignore(L.build_br pred_bb builder);
-
-    let body_bb = L.append_block context "while_body" func_def in
-    add_terminal (build_body (L.builder_at_end context body_bb)) (L.build_br pred_bb);
-
-    let pred_builder = L.builder_at_end context pred_bb in
-    let bool_val = build_predicate pred_builder in
-
-    let merge_bb = L.append_block context "merge" func_def in
-    ignore(L.build_cond_br bool_val body_bb merge_bb pred_builder);
-    L.builder_at_end context merge_bb
-  in
-
-  let build_if builder build_predicate build_then_stmt build_else_stmt func_def =
-    let bool_val = build_predicate builder in
-    let merge_bb = L.append_block context "merge" func_def in
-    let build_br_merge = L.build_br merge_bb in (* partial function *)
-
-    let then_bb = L.append_block context "then" func_def in
-    add_terminal (build_then_stmt (L.builder_at_end context then_bb)) 
-    build_br_merge;
-
-    let else_bb = L.append_block context "else" func_def in
-    add_terminal (build_else_stmt (L.builder_at_end context else_bb)) 
-    build_br_merge;
-
-    ignore(L.build_cond_br bool_val then_bb else_bb builder);
-    L.builder_at_end context merge_bb
-  in
-
   (* array functions *)
 
   (* 
@@ -164,24 +130,30 @@ let translate (globals, functions) =
     let array_get_ty m typ = 
       let ltype = (ltype_of_typ typ) in 
 
+      (* define the function type *)
       let def_name = (type_str typ) in
       let def = L.define_function ("array_get" ^ def_name) (L.function_type ltype [| L.pointer_type (array_t ltype); i32_t |]) the_module in
 
+      (* create array pointer *)
       let build = L.builder_at_end context (L.entry_block def) in
       let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
-
       let _ = L.build_store (L.param def 0) array_ptr build in
-      let index_ptr = L.build_alloca i32_t "index_alloc" build in
 
+      (* create index pointer *)
+      let index_ptr = L.build_alloca i32_t "index_alloc" build in
       let _ = L.build_store (L.param def 1) index_ptr build in
+
+      (* more building and allocating *)
       let array_load = L.build_load array_ptr "array_load" build in
       let array_ar_ptr = L.build_struct_gep array_load 1 "array_ar_ptr" build in
       let array_ar_load = L.build_load array_ar_ptr "array_load" build in
+      
+      (* get return value *)
       let index = L.build_load index_ptr "index_load" build in
-
       let array_ar_elem_ptr = L.build_gep array_ar_load [| index |] "list_arry_element_ptr" build in
       let ele_val = L.build_load array_ar_elem_ptr "array_ar_elem_ptr" build in
       let _ = L.build_ret ele_val build in
+      
       StringMap.add def_name def m in
      
   List.fold_left array_get_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
@@ -191,9 +163,7 @@ let translate (globals, functions) =
     let array_set_ty m typ =
 
      let ltype = (ltype_of_typ typ) in 
-
      let def_name = (type_str typ) in
-
      let def = L.define_function ("array_set" ^ def_name) (L.function_type void_t [| L.pointer_type (array_t ltype); i32_t; ltype |]) the_module in
      let build = L.builder_at_end context (L.entry_block def) in
      
@@ -211,115 +181,65 @@ let translate (globals, functions) =
   List.fold_left array_set_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
 
   (* void array_push(array, ltype value) *) 
-  
   let array_push_ty m typ =
     let ltype = (ltype_of_typ typ) in 
-    let def_name = (type_str typ) in
-    let def = L.define_function ("array_push" ^ def_name) (L.function_type void_t [| L.pointer_type (array_t ltype); ltype |]) the_module in
-    let build = L.builder_at_end context (L.entry_block def) in
-    let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
-    ignore(L.build_store (L.param def 0) array_ptr build);
-    let valPtr = L.build_alloca ltype "val_alloc" build in
-    ignore(L.build_store (L.param def 1) valPtr build);
-    let array_load = L.build_load array_ptr "array_load" build in
+      let def_name = (type_str typ) in
+      let def = L.define_function ("array_push" ^ def_name) (L.function_type void_t [| L.pointer_type (array_t ltype); ltype |]) the_module in
+      let build = L.builder_at_end context (L.entry_block def) in
+      let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
+      ignore(L.build_store (L.param def 0) array_ptr build);
+      let valPtr = L.build_alloca ltype "val_alloc" build in
+      ignore(L.build_store (L.param def 1) valPtr build);
+      let array_load = L.build_load array_ptr "array_load" build in
 
-    let array_ar_ptr = L.build_struct_gep array_load 1 "array_ar_ptr" build in
-    let array_ar_load = L.build_load array_ar_ptr "array_ar_load" build in
-    let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
-    let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
-    let array_size = L.build_load array_size_ptr "array_size" build in
+      let array_ar_ptr = L.build_struct_gep array_load 1 "array_ar_ptr" build in
+      let array_ar_load = L.build_load array_ar_ptr "array_ar_load" build in
+      let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
+      let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
+      let array_size = L.build_load array_size_ptr "array_size" build in
 
-    let next_index = array_size in
-    let next_element_ptr = L.build_gep array_ar_load [| next_index |] "array_ar_next_ele_ptr" build in
-    let next_size = L.build_add array_size (L.const_int i32_t 1) "inc_size" build in
-    let _ = L.build_store next_size array_size_ptr build in
-    let _ = L.build_store (L.build_load valPtr "val" build) next_element_ptr build in
-    let _ = L.build_ret_void build in
-    StringMap.add def_name def m in 
-  let array_push : L.llvalue StringMap.t =
-    List.fold_left array_push_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+      let next_index = array_size in
+      let next_element_ptr = L.build_gep array_ar_load [| next_index |] "array_ar_next_ele_ptr" build in
+      let next_size = L.build_add array_size (L.const_int i32_t 1) "inc_size" build in
+      let _ = L.build_store next_size array_size_ptr build in
+      let _ = L.build_store (L.build_load valPtr "val" build) next_element_ptr build in
+      let _ = L.build_ret_void build in
+      StringMap.add def_name def m in 
+    let array_push : L.llvalue StringMap.t =
+      List.fold_left array_push_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
  
   (* i32_t array_size(array a) *)
   let array_size : L.llvalue StringMap.t = 
-  let array_size_ty m typ =
-  let ltype = (ltype_of_typ typ) in 
-  let def_name = (type_str typ) in
+    let array_size_ty m typ =
+    let ltype = (ltype_of_typ typ) in 
+    let def_name = (type_str typ) in
 
-  let def = L.define_function ("array_size" ^ def_name) (L.function_type i32_t [| L.pointer_type (array_t ltype) |]) the_module in
-  let build = L.builder_at_end context (L.entry_block def) in
+    let def = L.define_function ("array_size" ^ def_name) (L.function_type i32_t [| L.pointer_type (array_t ltype) |]) the_module in
+    let build = L.builder_at_end context (L.entry_block def) in
 
-  let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
-  ignore(L.build_store (L.param def 0) array_ptr build);
+    let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
+    ignore(L.build_store (L.param def 0) array_ptr build);
 
-  let array_load = L.build_load array_ptr "array_load" build in
-
-  let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
-  let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
-  let array_size = L.build_load array_size_ptr "array_size" build in
-  ignore(L.build_ret array_size build);
-  StringMap.add def_name def m in 
-  List.fold_left array_size_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+    let array_load = L.build_load array_ptr "array_load" build in
+    
+    let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
+    let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
+    let array_size = L.build_load array_size_ptr "array_size" build in
+    ignore(L.build_ret array_size build);
+    StringMap.add def_name def m in 
+    List.fold_left array_size_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
 
   (* building the array *)
   let init_array builder array_ptr array_type = 
-    (* initialize size to 0 *)
+    (* set size of the array to 0 *)
     let sizePtrPtr = L.build_struct_gep array_ptr 0 "array_size_ptr" builder in 
       let sizePtr = L.build_alloca i32_t "array_size" builder in
       let _ = L.build_store (L.const_int i32_t 0) sizePtr builder in
       ignore(L.build_store sizePtr sizePtrPtr builder);
-    (* initialize array *)
-    let array_ar_ptr = L.build_struct_gep array_ptr 1 "list.arry" builder in 
-    (* TODO: allocate nothing and have list grow dynamically as necessary when pushing into the list *)
+      (* create the array *)
+      let array_ar_ptr = L.build_struct_gep array_ptr 1 "list.arry" builder in 
       let p = L.build_array_alloca (ltype_of_typ array_type) (L.const_int i32_t 1028) "p" builder in
       ignore(L.build_store p array_ar_ptr builder);
-  in
-
-  (* i32_t array_find(array, val) *)
-  let array_find : L.llvalue StringMap.t = 
-    let array_find_ty m typ =
-      let ltype = (ltype_of_typ typ) in 
-      let def_name = (type_str typ) in
-
-      let def = L.define_function ("array_find" ^ def_name) (L.function_type i32_t [| L.pointer_type (array_t ltype); ltype |]) the_module in
-      let build = L.builder_at_end context (L.entry_block def) in
-      let array_ptr = L.build_alloca (L.pointer_type (array_t ltype)) "array_ptr_alloc" build in
-      ignore(L.build_store (L.param def 0) array_ptr build);
-
-      let find_value_ptr = L.build_alloca ltype "find_val_alloc" build in
-      ignore(L.build_store (L.param def 1) find_value_ptr build);
-      let find_value = L.build_load find_value_ptr "find_val" build in
-
-      let array_load = L.build_load array_ptr "array_load" build in
-      let array_size_ptr_ptr = L.build_struct_gep array_load 0 "array_size_ptr_ptr" build in 
-      let array_size_ptr = L.build_load array_size_ptr_ptr "array_size_ptr" build in
-      let array_size = L.build_load array_size_ptr "array_size" build in
-      let loop_index_ptr = L.build_alloca i32_t "loop_cnt" build in
-      let _ = L.build_store (L.const_int i32_t 0) loop_index_ptr build in
-      let loop_upper_bound = array_size in
-      let loop_cond _builder = 
-          L.build_icmp L.Icmp.Slt (L.build_load loop_index_ptr "loop_iter_cnt" _builder) loop_upper_bound "loop_cond" _builder
-      in
-      let loop_body _builder = 
-        let index = L.build_load loop_index_ptr "to_index" _builder in
-        let get_val = L.build_call (StringMap.find (type_str typ) array_get) [| array_load; index |] "array_get" _builder in
-        let if_cond _builder2 = 
-            (match typ with
-                A.Int | A.Bool -> L.build_icmp L.Icmp.Eq 
-              | A.Float -> L.build_fcmp L.Fcmp.Oeq
-              | _ -> raise (Failure ("array_find does not support this array type"))
-            ) get_val find_value "if_cond" _builder2 
-        in
-        let if_body _builder2 = ignore(L.build_ret index _builder2); _builder2 in
-        let else_body _builder2 = ignore(L.const_int i32_t 0); _builder2 in
-        let if_builder = build_if _builder if_cond if_body else_body def in
-        let index_incr = L.build_add (L.build_load loop_index_ptr "loop_index" if_builder) (L.const_int i32_t 1) "loop_itr" if_builder in
-        let _ = L.build_store index_incr loop_index_ptr if_builder in 
-        if_builder
-      in
-      let while_builder = build_while build loop_cond loop_body def in
-      ignore(L.build_ret (L.const_int i32_t (-1)) while_builder);
-      StringMap.add def_name def m in 
-    List.fold_left array_find_ty StringMap.empty [ A.Bool; A.Int; A.Float ] 
   in
 
   (*Image Functions*)
@@ -463,8 +383,6 @@ let translate (globals, functions) =
       L.build_call (StringMap.find (type_str array_type) array_get) [| (lookup id); (expr builder e) |] "array_get" builder
     | SArraySize (array_type, id) -> 
       L.build_call ((StringMap.find (type_str array_type)) array_size) [| (lookup id) |] "array_size" builder
-    | SArrayFind (array_type, id, e) ->
-      L.build_call (StringMap.find (type_str array_type) array_find) [| (lookup id); (expr builder e) |] "array_find" builder
     | SArrayLiteral (array_type, literals) ->
       let ltype = (ltype_of_typ array_type) in
       let new_array_ptr = L.build_alloca (array_t ltype) "new_array_ptr" builder in
