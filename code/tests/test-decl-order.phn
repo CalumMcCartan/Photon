@@ -1,0 +1,15 @@
+func int main()
+{
+    int x;
+    x = 12;
+    print(x);
+
+    y = 5;
+    int y; # vdecls are hoisted
+
+    int z;
+    z = x + y;
+    print(z);
+
+    return 0;
+}

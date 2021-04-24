@@ -40,12 +40,17 @@ decls:
  | decls fdecl { (fst $1, ($2 :: snd $1)) }
 
 fdecl:
-  FUNC typ ID LPAREN formals_opt RPAREN LBRACE vdecl_list stmt_list RBRACE
+  FUNC typ ID LPAREN formals_opt RPAREN LBRACE fbody RBRACE
      { { typ = $2;
 	 fname = $3;
 	 formals = List.rev $5;
-	 locals = List.rev $8;
-	 body = List.rev $9 } }
+	 locals = List.rev (fst $8);
+	 body = List.rev (snd $8) } }
+
+fbody:
+   /* nothing */ { ([], [])               }
+ | fbody vdecl { (($2 :: fst $1), snd $1) }
+ | fbody stmt { (fst $1, ($2 :: snd $1)) }
 
 formals_opt:
     /* nothing */ { [] }
