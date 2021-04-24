@@ -8,11 +8,10 @@ open Ast
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
 %token RETURN IF ELSE FOR WHILE INT PINT BOOL FLOAT VOID STRING FUNC
 %token ARRAY_ADD ARRAY_GET ARRAY_SET ARRAY_SIZE PERIOD LENGTH
-%token C_RED
 %token IMAGE
 %token <int> LITERAL
 %token <bool> BLIT
-%token <string> ID FLIT STRLIT
+%token <string> ID FLIT STRLIT ALIAS
 %token ARRAY
 %token EOF
 
@@ -99,6 +98,7 @@ expr:
     LITERAL          { Literal($1)            }
   | FLIT	           { Fliteral($1)           }
   | STRLIT           { StrLiteral($1)}
+  | ALIAS            { Alias($1) }
   | BLIT             { BoolLit($1)            }
   | ID               { Id($1)                 }
   | expr PLUS   expr { Binop($1, Add,   $3)   }
@@ -121,7 +121,6 @@ expr:
   | ID LBRACK expr RBRACK                   { ArrayGet($1, $3) }
   | LBRACK args_opt RBRACK                  { ArrayLiteral($2) }
   | ID PERIOD LENGTH                        { ArraySize($1)    }
-  | C_RED  { ArrayLiteral([Literal(255); Literal(0); Literal(0); Literal(255)]) }
 
 
 args_opt:

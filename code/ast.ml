@@ -14,6 +14,7 @@ type expr =
   | Fliteral of string
   | BoolLit of bool
   | StrLiteral of string
+  | Alias of string
   | Id of string
   | Binop of expr * op * expr
   | Unop of uop * expr
@@ -66,6 +67,7 @@ let string_of_uop = function
 
 let rec string_of_expr = function
     Literal(l) -> string_of_int l
+  | Alias(l)
   | Fliteral(l) -> l
   | StrLiteral(l) -> "\"" ^ l ^ "\""
   | BoolLit(true) -> "true"
