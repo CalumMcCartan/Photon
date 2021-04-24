@@ -30,31 +30,38 @@ int Image_height(Image *img) {
 /*
 at the moment, get_pixel returns the value of the first two pixels in the image
 */
-int get_pixel(Image *img) {
+int get_pixel(Image *img, int i) {
     unsigned char *p = img->data;
 
-    unsigned char pixchar = p[0];
+    unsigned char pixchar;
+    
+    /*printf("pixchar is %d\n", pixchar); */
+    pixchar = p[i];
+   
+   /* printf("pixchar is %d\n", pixchar);*/
+    
     int r = pixchar - 0;
-    
-    pixchar = p[1];
-    int g = pixchar - 0;
 
-    pixchar = p[2];
-    int b = pixchar - 0;
-
-    pixchar = p[3];
-    int r2 = pixchar - 0;
-
-    pixchar = p[4];
-    int g2 = pixchar - 0;
-
-    pixchar = p[5];
-    int b2 = pixchar - 0;
-
+    /* 
+    printf("r is %d\n", r); 
+    */
 
     
-    printf("pixels are %d, %d, %d, and second pixel is %d,%d,%d done", r, g, b,r2,g2,b2);
+    pixchar = p[i+1];
+    int g =  pixchar - 0;
+    
+
+    /*
+    printf("g is %d\n", g);
+    */ 
+    
+
+    /*
+    printf("pixels are %d, %d, %d", r, g, b);
     printf("\n");
+    
+    */
+
     return r; 
 }
 
