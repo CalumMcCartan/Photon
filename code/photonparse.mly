@@ -8,6 +8,7 @@ open Ast
 %token NOT EQ NEQ LT LEQ GT GEQ AND OR
 %token RETURN IF ELSE FOR WHILE INT PINT BOOL FLOAT VOID STRING FUNC
 %token ARRAY_ADD ARRAY_GET ARRAY_SET ARRAY_SIZE PERIOD LENGTH
+%token C_RED
 %token IMAGE
 %token <int> LITERAL
 %token <bool> BLIT
@@ -70,10 +71,6 @@ typ:
   | IMAGE { Image }
   | typ LBRACK RBRACK  { Array($1) }
 
-vdecl_list:
-    /* nothing */    { [] }
-  | vdecl_list vdecl { $2 :: $1 }
-
 vdecl:
    typ ID SEMI { ($1, $2) }
 
@@ -124,6 +121,7 @@ expr:
   | ID LBRACK expr RBRACK                   { ArrayGet($1, $3) }
   | LBRACK args_opt RBRACK                  { ArrayLiteral($2) }
   | ID PERIOD LENGTH                        { ArraySize($1)    }
+  | C_RED  { ArrayLiteral([Literal(255); Literal(0); Literal(0); Literal(255)]) }
 
 
 args_opt:

@@ -49,6 +49,7 @@ rule token = parse
 | "array_add" { ARRAY_ADD }
 | "length"  { LENGTH }
 | "image"  { IMAGE }
+| "_red"   { C_RED }
 | digits as lxm { LITERAL(int_of_string lxm) }
 | '"' ([^ '"']* as str) '"'         { STRLIT(str) }
 | digits '.'  digit* ( ['e' 'E'] ['+' '-']? digits )? as lxm { FLIT(lxm) }
