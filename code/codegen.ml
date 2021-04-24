@@ -90,7 +90,7 @@ let translate (globals, functions) =
     L.declare_function "get_max" getmax_t the_module in
   
   let getsqrt_t : L.lltype =
-    L.function_type i8_t [| i8_t |] in
+    L.function_type float_t [| float_t |] in
   let getsqrt_func : L.llvalue =
     L.declare_function "get_sqrt" getsqrt_t the_module in
 

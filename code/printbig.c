@@ -3,6 +3,7 @@
  */
 
 #include <stdio.h>
+#include <math.h>
 
 /*
  * Font information: one byte per row, 8 rows per character
@@ -63,8 +64,8 @@ int get_min(int x, int y) {
     return y;
   }
 }
-float get_sqrt(float x) {
-  return x;
+double get_sqrt(double x) {
+  return sqrt(x);
 }
 
 void printbig(int c)
