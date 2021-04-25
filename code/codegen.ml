@@ -469,26 +469,27 @@ let translate (globals, functions) =
       in
       let args = Array.of_list (List.rev (List.map (cast_arg) (List.rev f_args))) in 
       let (fdef, args', result) = match fname with
-        (* Built in functions *)
+        (* Built in functions with modifed arguments *)
         | "printb"
-        | "print"    -> printf_func,     [| int_format_str ; args.(0) |],   "printf"
-        | "printbig" -> printbig_func,   [| args.(0) |],                    "printbig"
-        | "printf"   -> printf_func,     [| float_format_str ; args.(0) |], "printf"
-        | "prints"   -> printf_func,     [| str_format_str ; args.(0) |],   "printf"
-        | "min"      -> getmin_func,     [| args.(0); args.(1) |],          "get_min"
-        | "max"      -> getmax_func,     [| args.(0); args.(1) |],          "get_max"
-        | "sqrt"     -> getsqrt_func,    [| args.(0) |],                    "get_sqrt"
-        | "load"     -> loadimage_func,  [| (args.(0)) |],                  "load"
-        | "save"     -> saveimage_func,  [| (args.(0)); (args.(1)) |],      "save"
-        | "create"   -> createimage_func,[| (args.(0)); (args.(1)); (args.(2)); (args.(3)); (args.(4)); (args.(5))|], "create"
-        | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
-        | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
-        | "destroy"  -> destroyimage_func, [| (args.(0)) |],                "destroy"
-        | "flip"     -> flipimage_func, [| (args.(0)) |],                   "flip"
-        | "to_gray"  -> grayimage_func, [| (args.(0)) |],                   "to_gray"
-        | "image_paste"  -> imagepaste_func, [| args.(0); args.(1)  |],                   "image_paste"
-        | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],         "get_pixel"
-        | "set_pixel"   -> setpixel_func, [| args.(0); args.(1);args.(2);args.(3);args.(4);args.(5) |],          "set_pixel"
+        | "print"    -> printf_func, [| int_format_str ; args.(0) |],   "printf"
+        | "printf"   -> printf_func, [| float_format_str ; args.(0) |], "printf"
+        | "prints"   -> printf_func, [| str_format_str ; args.(0) |],   "printf"
+        (* Built in functions with unmodifed arguments *)
+        | "printbig" -> printbig_func,       args, "printbig"
+        | "min"      -> getmin_func,         args, "get_min"
+        | "max"      -> getmax_func,         args, "get_max"
+        | "sqrt"     -> getsqrt_func,        args, "get_sqrt"
+        | "load"     -> loadimage_func,      args, "load"
+        | "save"     -> saveimage_func,      args, "save"
+        | "create"   -> createimage_func,    args, "create"
+        | "width"    -> imagewidth_func,     args, "width"
+        | "height"   -> imageheight_func,    args, "height"
+        | "destroy"  -> destroyimage_func,   args, "destroy"
+        | "flip"     -> flipimage_func,      args, "flip"
+        | "to_gray"  -> grayimage_func,      args, "to_gray"
+        | "image_paste"  -> imagepaste_func, args, "image_paste"
+        | "get_pixel"   -> getpixel_func,    args, "get_pixel"
+        | "set_pixel"   -> setpixel_func,    args, "set_pixel"
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in
