@@ -193,6 +193,11 @@ let check (globals, functions) =
       | Binop(e1, op, e2) as e -> 
           let (t1, e1') = expr e1 
           and (t2, e2') = expr e2 in
+          (match(t1, op, t2) with
+            (* Special cases, such as image addition/subtraction *)
+            | (Image, Add, Image) -> expr (Call("image_add", [e1; e2]))
+            | (Image, Sub, Image) -> expr (Call("image_subtract", [e1; e2]))
+            | _ ->
           let same = t1 = t2 in
           let both_numeric = 
             ((t1 = Int) || (t1 = Pint) || (t1 = Float)) &&
@@ -209,7 +214,7 @@ let check (globals, functions) =
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in (ty, SBinop((t1, e1'), op, (t2, e2')))
+          in (ty, SBinop((t1, e1'), op, (t2, e2'))))
       | ArrayGet (var, e) -> 
          let (t, e') = expr e in
          let ty = match t with 
