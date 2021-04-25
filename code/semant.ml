@@ -55,7 +55,6 @@ let check (globals, functions) =
       ("printb", [(Bool, "x")], Void);
       ("printf", [(Float, "x")], Void);
       ("prints", [(String, "x")], Void);
-      ("printbig", [(Int, "x")], Void);
       ("min", [(Int, "x");(Int, "y")], Int);
       ("max", [(Int, "x");(Int, "y")], Int);
       ("sqrt", [(Float, "x")], Float);

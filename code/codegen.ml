@@ -72,8 +72,6 @@ let translate (globals, functions) =
     let (func_t, c_name) = match name with  
       | "printf" -> 
         L.var_arg_function_type i32_t [| L.pointer_type i8_t |], "printf"
-      | "printbig" ->
-        L.function_type i32_t [| i32_t |], "printbig"
       | "min" ->
         L.function_type i32_t [| i32_t; i32_t |], "get_min"
       | "max" ->
@@ -434,7 +432,7 @@ let translate (globals, functions) =
         | "printf"   -> (func_decl "printf"), [| float_format_str ; args.(0) |], "printf"
         | "prints"   -> (func_decl "printf"), [| str_format_str ; args.(0) |],   "printf"
         (* Built in functions with unmodifed arguments *)
-        | "printbig" | "min" | "max" | "sqrt" | "load" | "save" | "create" | "width"
+        | "min" | "max" | "sqrt" | "load" | "save" | "create" | "width"
         | "height" | "destroy" | "flip" | "to_gray" | "image_paste" | "image_add"| "image_subtract"
         | "get_pixel" | "set_pixel" | "pixel" | "pixel_attr"
           -> (func_decl fname), args, fname
