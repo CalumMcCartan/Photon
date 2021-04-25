@@ -1,0 +1,9 @@
+func int main() {
+
+    Image img1;
+    img1 = load("Shapes.png");
+    
+    img1 + 5;
+
+    return 0;
+}

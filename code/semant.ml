@@ -52,7 +52,7 @@ let check (globals, functions) =
       ("sqrt", [(Float, "x")], Float);
       ("load", [(String, "x")], Image); 
       ("save", [(Image, "img"); (String, "fname")], Void); 
-      ("create", [(Int, "w"); (Int, "h"); (Pint, "r"); (Pint, "g"); (Pint, "b"); (Pint, "a");], Image); 
+      ("create", [(Int, "w"); (Int, "h"); (Pixel, "col")], Image); 
       ("destroy", [(Image, "img")], Void); 
       ("flip", [(Image, "img")], Image); 
       ("to_gray", [(Image, "img")], Image); 
@@ -160,15 +160,21 @@ let check (globals, functions) =
       | Id s       -> (type_of_identifier s, SId s)
       | Attr(var, attr) ->
           let lt = type_of_identifier var in
+          let err = var ^ " has no attribute " ^ attr in
           (match lt with
             | Pixel ->
+              (match attr with
+                | "r" -> expr (Call("pixel_attr", [Id(var); Literal(0)]))
+                | "g" -> expr (Call("pixel_attr", [Id(var); Literal(1)]))
+                | "b" -> expr (Call("pixel_attr", [Id(var); Literal(2)]))
+                | "a" -> expr (Call("pixel_attr", [Id(var); Literal(3)]))
+                | _ -> raise (Failure (err)))
+            | Image ->
                 (match attr with
-                  | "r" -> expr (Call("pixel_attr", [Id(var); Literal(0)]))
-                  | "g" -> expr (Call("pixel_attr", [Id(var); Literal(1)]))
-                  | "b" -> expr (Call("pixel_attr", [Id(var); Literal(2)]))
-                  | "a" -> expr (Call("pixel_attr", [Id(var); Literal(3)]))
-                  | _ -> raise (Failure (" has no attribute ")))
-            | _ -> raise (Failure (var ^ " has no attribute " )))
+                | "width" -> expr (Call("width", [Id(var)]))
+                | "height" -> expr (Call("height", [Id(var)]))
+                | _ -> raise (Failure (err)))
+            | _ -> raise (Failure (err)))
       | Assign(var, e) as ex -> 
           let lt = type_of_identifier var
           and (rt, e') = expr e in
@@ -187,6 +193,11 @@ let check (globals, functions) =
       | Binop(e1, op, e2) as e -> 
           let (t1, e1') = expr e1 
           and (t2, e2') = expr e2 in
+          (match(t1, op, t2) with
+            (* Special cases, such as image addition/subtraction *)
+            | (Image, Add, Image) -> expr (Call("image_add", [e1; e2]))
+            | (Image, Sub, Image) -> expr (Call("image_subtract", [e1; e2]))
+            | _ ->
           let same = t1 = t2 in
           let both_numeric = 
             ((t1 = Int) || (t1 = Pint) || (t1 = Float)) &&
@@ -203,7 +214,7 @@ let check (globals, functions) =
 	      Failure ("illegal binary operator " ^
                        string_of_typ t1 ^ " " ^ string_of_op op ^ " " ^
                        string_of_typ t2 ^ " in " ^ string_of_expr e))
-          in (ty, SBinop((t1, e1'), op, (t2, e2')))
+          in (ty, SBinop((t1, e1'), op, (t2, e2'))))
       | ArrayGet (var, e) -> 
          let (t, e') = expr e in
          let ty = match t with 

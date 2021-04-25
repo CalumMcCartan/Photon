@@ -18,5 +18,13 @@ func int main()
 
   save(newimg, "ImgSubtractTest.png");
 
+
+  # Using operators
+  Image newimg2;
+  newimg2 = imgshapes - imgedwards;
+  save(newimg2, "ImgSubtractTest2.png");
+  print(newimg2.width);
+  print(newimg2.height);
+
   return 0;
 } 
