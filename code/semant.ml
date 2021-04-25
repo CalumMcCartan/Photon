@@ -54,6 +54,7 @@ let check (globals, functions) =
       ("save", [(Image, "img"); (String, "fname")], Void); 
       ("create", [(Int, "w"); (Int, "h"); (Pint, "r"); (Pint, "g"); (Pint, "b"); (Pint, "a");], Image); 
       ("destroy", [(Image, "img")], Void); 
+      ("flip", [(Image, "img")], Image); 
       ("to_gray", [(Image, "img")], Image); 
       ("get_pixel", [(Image, "img"); (Int, "x")], Int);
       ("set_pixel", [(Image, "img"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x")], Int);

@@ -5,9 +5,9 @@
 
 int main(void) {
     Image* img = Image_load("Shapes.png");
-    Image* gray = Image_to_gray(img);
-    Image_save(gray, "grayTest.png");
-    Image_free(gray);
+    Image* flipped = Image_flip(img);
+    Image_save(flipped, "flipTest.png");
+    Image_free(flipped);
     /*
     ON_ERROR_EXIT(img_sky.data == NULL, "Error in loading the image");
     Image_load(&img_shapes, "Shapes.png");

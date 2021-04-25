@@ -1,7 +1,5 @@
 func int main()
 {
-  
-
   image img;
   image grayimg;
   int wid;

@@ -130,6 +130,12 @@ let translate (globals, functions) =
     L.declare_function "Image_free" destroyimage_t the_module 
   in
 
+  let flipimage_t : L.lltype =
+    L.function_type image_t [| image_t|] in
+  let flipimage_func : L.llvalue =
+    L.declare_function "Image_flip" flipimage_t the_module 
+  in
+
   let grayimage_t : L.lltype =
     L.function_type image_t [| image_t|] in
   let grayimage_func : L.llvalue =
@@ -472,6 +478,7 @@ let translate (globals, functions) =
         | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
         | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
         | "destroy"  -> destroyimage_func, [| (args.(0)) |],                "destroy"
+        | "flip"     -> flipimage_func, [| (args.(0)) |],                   "flip"
         | "to_gray"  -> grayimage_func, [| (args.(0)) |],                   "to_gray"
         | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],         "get_pixel"
         | "set_pixel"   -> setpixel_func, [| args.(0); args.(1);args.(2);args.(3);args.(4);args.(5) |],          "set_pixel"

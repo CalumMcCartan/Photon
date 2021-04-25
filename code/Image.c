@@ -101,7 +101,6 @@ void Image_free(Image *img) {
 
 Image* Image_to_gray(const Image *orig) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
-    int channels = 4;
     Image* gray = Image_create(orig->width, orig->height, 0, 0, 0, 255);
     ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
     uint8_t gray_p;
@@ -116,4 +115,24 @@ Image* Image_to_gray(const Image *orig) {
         }
     }
     return gray;
+}
+
+Image* Image_flip(const Image *orig) {
+    //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    int channels = 4;
+    Image* flipped = Image_create(orig->width, orig->height, 0, 0, 0, 255);
+    ON_ERROR_EXIT(flipped->data == NULL, "Error in creating the image");
+    int index = 0;
+    int flippedIndex = 0;
+
+    for(int y = 0; y < orig->height; y++) {
+        for (int x = 0; x < orig->width; x++){
+            index = (x + (orig->width * y)) * channels;
+            flippedIndex = ((orig->width - x) + (orig->width * y)) * channels;
+            for (int c = 0; c < channels; c++) {
+                flipped->data[flippedIndex + c] = orig->data[index + c];
+            }
+        }
+    }
+    return flipped;
 }
