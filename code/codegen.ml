@@ -34,7 +34,7 @@ let translate (globals, functions) =
   and string_t   = L.pointer_type (L.i8_type context)
   and void_t     = L.void_type   context 
   and image_t   = L.pointer_type (L.named_struct_type context "PImage")
-  and pixel_t   = L.pointer_type (L.named_struct_type context "PPixel")
+  and pixel_t   = L.i32_type    context
   and array_t t   = L.struct_type context [| L.pointer_type (L.i32_type context); (L.pointer_type t) |]
   in
 

@@ -41,4 +41,4 @@ Image* Image_to_gray(const Image *orig);
 Image* Image_flip(const Image *orig);
 Image* Image_add( Image *img1, Image *img2);
 Image* Image_subtract( Image *img1, Image *img2);
-Pixel* pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
+Pixel pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha);
