@@ -65,6 +65,7 @@ let check (globals, functions) =
       ("flip", [(Image, "img")], Image); 
       ("to_gray", [(Image, "img")], Image); 
       ("image_paste", [(Image, "target"); (Image, "orig") ], Image);
+      ("image_invert", [(Image, "orig") ], Image);
       ("image_add", [(Image, "img1"); (Image, "img2") ], Image);
       ("image_subtract", [(Image, "img1"); (Image, "img2") ], Image);
       ("get_pixel", [(Image, "img"); (Int, "x"); (Int, "y")], Pixel);

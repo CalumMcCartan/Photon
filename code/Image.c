@@ -152,6 +152,25 @@ Image* Image_paste( Image *gray, const Image *orig ) {
     return gray;
 }
 
+Image* Image_invert(Image *orig ) {
+    //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    
+    uint8_t pix;
+    int8_t maxval = 255;
+    int i = 0;
+    for(unsigned char *p = orig->data; p != orig->data + orig->size; p += orig->channels) {
+        pix = *p;
+        *p = maxval - pix;
+
+        pix = *(p+1);
+        *(p + 1) = maxval - pix;
+
+        pix = *(p+2);
+        *(p + 2) = maxval - pix;
+    }
+    return orig;
+}
+
 Image* Image_add( Image *img1, Image *img2) {
     int flag, w, h;
     w = h = 1;
