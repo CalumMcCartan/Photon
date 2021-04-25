@@ -59,8 +59,8 @@ int set_pixel(Image *img, int x, int y, Pixel pix) {
     int pos = get_position(img->width, img-> channels, x,y);
 
     p[pos] = pix.r;
-    p[pos+1] = pix.b;
-    p[pos+2] = pix.g;
+    p[pos+1] = pix.g;
+    p[pos+2] = pix.b;
     p[pos+3] = pix.a;
 
     return 0;
