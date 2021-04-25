@@ -12,20 +12,14 @@ func int main()
   int y;
   int p;
 
-
-
   img = load("Shapes.png");
 
   #for gettign a specific pixel, input the width * height coordinate you want
   x = 0;
-  y = 0;
-
-  #array math, assumes 4 channels
-  channels = 4;
-  position = (x + (width(img) * y) ) * channels;  
-  
+  y = 0;  
   ps = [255,255,255,255];
-  p = set_pixel(img, position,ps[0], ps[1], ps[2], ps[3]);
+
+  p = set_pixel(img, x, y,ps[0], ps[1], ps[2], ps[3]);
 
   save(img, "ShapesSavedMod.png");
 

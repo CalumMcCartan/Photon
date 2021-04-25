@@ -59,7 +59,7 @@ let check (globals, functions) =
       ("image_paste", [(Image, "target"); (Image, "orig") ], Image);
       ("image_add", [(Image, "img1"); (Image, "img2") ], Image);
       ("image_subtract", [(Image, "img1"); (Image, "img2") ], Image);
-      ("get_pixel", [(Image, "img"); (Int, "x")], Int);
+      ("get_pixel", [(Image, "img"); (Int, "x"); (Int, "y")], Int);
       ("set_pixel", [(Image, "img"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x")], Int);
       ("width", [(Image, "img")], Int);
       ("height", [(Image, "img")], Int)
@@ -204,7 +204,6 @@ let check (globals, functions) =
          let (t', _) = expr (List.hd vals) in
          let map_func lit = expr lit in
          let vals' = List.map map_func vals in
-         (* TODO: check that all vals are of the same type *)
          (Array t', SArrayLiteral(t', vals'))
       | Call(fname, args) as call -> 
           let fd = find_func fname in

@@ -104,9 +104,9 @@ let translate (globals, functions) =
       | "image_subtract" ->
           L.function_type image_t [| image_t; image_t|], "Image_subtract"
       | "get_pixel" ->
-        L.function_type i32_t [| image_t; i32_t |], "get_pixel"
+        L.function_type i32_t [| image_t; i32_t; i32_t |], "get_pixel"
       | "set_pixel" ->
-        L.function_type i32_t [| image_t; i32_t;i32_t;i32_t;i32_t;i32_t |], "set_pixel"
+        L.function_type i32_t [| image_t; i32_t; i32_t; i32_t; i32_t; i32_t; i32_t |], "set_pixel"
       | _ -> 
         raise (Failure "internal error: built-in func does not exist ")
       in
@@ -157,7 +157,7 @@ let translate (globals, functions) =
       
       StringMap.add def_name def m in
      
-  List.fold_left array_get_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+  List.fold_left array_get_ty StringMap.empty [ A.Pint; A.Bool; A.Int; A.Float; A.String ] in
 
   (* void array_set(array a, i32_t index, ltype value) *)
   let array_set : L.llvalue StringMap.t = 
@@ -179,7 +179,7 @@ let translate (globals, functions) =
      let _ = L.build_store (L.param def 2) index_element_ptr build in
      let _ = L.build_ret_void build in
      StringMap.add def_name def m in 
-  List.fold_left array_set_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+  List.fold_left array_set_ty StringMap.empty [ A.Pint; A.Bool; A.Int; A.Float; A.String ] in
 
   (* void array_add(array, ltype value) *) 
   let array_add_ty m typ =
@@ -207,7 +207,7 @@ let translate (globals, functions) =
       let _ = L.build_ret_void build in
       StringMap.add def_name def m in 
     let array_add : L.llvalue StringMap.t =
-      List.fold_left array_add_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+      List.fold_left array_add_ty StringMap.empty [ A.Pint; A.Bool; A.Int; A.Float; A.String ] in
  
   (* i32_t array_size(array a) *)
   let array_size : L.llvalue StringMap.t = 
@@ -228,11 +228,11 @@ let translate (globals, functions) =
       let array_size = L.build_load array_size_ptr "array_size" build in
       ignore(L.build_ret array_size build);
       StringMap.add def_name def m in 
-      List.fold_left array_size_ty StringMap.empty [ A.Bool; A.Int; A.Float; A.String ] in
+      List.fold_left array_size_ty StringMap.empty [ A.Pint; A.Bool; A.Int; A.Float; A.String ] in
 
   (* building the array *)
   let init_array builder array_ptr array_type = 
-    (* set size of the array to 0 *)
+    (* make a size pointer and set size of the array to 0 *)
     let sizePtrPtr = L.build_struct_gep array_ptr 0 "array_size_ptr" builder in 
       let sizePtr = L.build_alloca i32_t "array_size" builder in
       let _ = L.build_store (L.const_int i32_t 0) sizePtr builder in

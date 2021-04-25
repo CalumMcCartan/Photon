@@ -12,18 +12,14 @@ func int main()
   int[] ps;
 
   
-  img = load("sky.jpg");
+  img = load("edwards.png");
 
   #for gettign a specific pixel, input what you want
   x = 1;
   y = 0;
 
-  #array math, assumes 4 channels
-  channels = 4;
-  position = (x + (width(img) * y) ) * channels;  
-
-  for( index = position; index < position + 4; index = index+1 ) {
-    p = get_pixel(img, index);
+  for( index = 0; index <  4; index = index+1 ) {
+    p = get_pixel(img, x +index, y);
     array_add(ps,p);
     print(p);
     img = load("sky.jpg");

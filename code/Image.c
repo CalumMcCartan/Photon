@@ -36,21 +36,29 @@ int Image_height(Image *img) {
     return img->height;
 }
 
-/*
-at the moment, get_pixel returns the value of the first two pixels in the image
-*/
-int get_pixel(const Image *img, int i) {
-    unsigned char *p = img->data;
-    unsigned char pixchar = p[i];
-    int r = pixchar - 0;
-    
-    int g = p[i+1] - 0;
-
-    return (int)p[i]; 
+int get_position(int width, int channels, int x, int y) {
+    return (x + (width * y)) * (channels); 
 }
 
-int set_pixel(Image *img, int pos, int r, int g, int b, int a) {
+int get_pixel(const Image *img, int x, int y) {
+
+
+    int pos = get_position(img->width, img-> channels, x,y);
+
+    unsigned char *p = img->data;
+
+    unsigned char pixchar = p[pos];
+    int r = pixchar - 0;
+    
+    int g = p[pos+1] - 0;
+
+    return r; 
+}
+
+int set_pixel(Image *img, int x, int y, int r, int g, int b, int a) {
     unsigned char *p = img -> data;
+    int pos = get_position(img->width, img-> channels, x,y);
+
     unsigned char pixchar = p[pos];
 
     p[pos] = (char)r;
@@ -61,6 +69,7 @@ int set_pixel(Image *img, int pos, int r, int g, int b, int a) {
     return 0;
 
 }
+
 
 Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
     Image* img = malloc(sizeof(Image));
@@ -102,16 +111,11 @@ void Image_free(Image *img) {
 Image* Image_paste( Image *gray, const Image *orig ) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
     
-    /*Image* gray = Image_create(target->width, target->height, 0, 0, 0, 255);
-    ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
-    */
-
     int i = 0;
     for(unsigned char *p = orig->data, *pg = gray->data; p != orig->data + orig->size; p += orig->channels, pg += gray->channels) {
         
         
-        if(i % ((orig-> width)*4) == 0 && i!= 0)
-        {
+        if(i % ((orig-> width)*4) == 0 && i!= 0) {
             pg+= (((gray-> width)*4) - (orig->width *4));
             
         }
