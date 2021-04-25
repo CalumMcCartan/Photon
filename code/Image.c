@@ -2,6 +2,12 @@
 Image library for Photon that implements the stb_image library.
 Image_load, Image_free and Image_save are written by the stb_image 
 library team, the rest is written by the Photon team.
+
+Authors:
+Franky Campuzano (fc2608)
+Akira Higaki (abh2171)
+Calum McCartan (cm4114)
+Phu D Pham (pdp2121)
 */
 
 #include "Image.h"

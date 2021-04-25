@@ -1,4 +1,13 @@
-(* Semantic checking for the Photon compiler *)
+(* 
+  Semantic checking for the Photon compiler 
+  Based on MicroC
+  
+  Authors:
+  Franky Campuzano (fc2608)
+  Akira Higaki (abh2171)
+  Calum McCartan (cm4114)
+  Phu D Pham (pdp2121)
+*)
 
 open Ast
 open Sast

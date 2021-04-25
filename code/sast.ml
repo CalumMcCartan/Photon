@@ -1,4 +1,12 @@
-(* Semantically-checked Abstract Syntax Tree and functions for printing it *)
+(* 
+  Semantically-checked Abstract Syntax Tree and functions for printing it
+  Based on MicroC
+  
+  Authors:
+  Akira Higaki (abh2171)
+  Calum McCartan (cm4114)
+  Franky Campuzano (fc2608)
+*)
 
 open Ast
 

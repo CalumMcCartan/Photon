@@ -1,15 +1,12 @@
-(* Code generation: translate takes a semantically checked AST and
-produces LLVM IR
-
-LLVM tutorial: Make sure to read the OCaml version of the tutorial
-
-http://llvm.org/docs/tutorial/index.html
-
-Detailed documentation on the OCaml LLVM library:
-
-http://llvm.moe/
-http://llvm.moe/ocaml/
-
+(* 
+  Code generation: translate takes a semantically checked AST and produces LLVM IR 
+  Based on MicroC
+  
+  Authors:
+  Akira Higaki (abh2171)
+  Calum McCartan (cm4114)
+  Franky Campuzano (fc2608)
+  Phu D Pham (pdp2121)
 *)
 
 module L = Llvm

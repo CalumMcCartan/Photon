@@ -1,6 +1,10 @@
 /*
- *  A function illustrating how to link C code to code generated from LLVM 
- */
+Utility functions for Photon.
+Based on MicroC
+
+Authors:
+Phu D Pham (pdp2121)
+*/
 
 #include <stdio.h>
 #include <math.h>

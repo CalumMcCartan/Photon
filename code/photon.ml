@@ -1,3 +1,5 @@
+(* This file was copied from MicroC *)
+
 (* Top-level of the Photon compiler: scan & parse the input,
    check the resulting AST and generate an SAST from it, generate LLVM IR,
    and dump the module *)
