@@ -4,7 +4,7 @@ func int main()
   Image img;
   
   int index;
-  int p;
+  Pixel p;
   int x;
   int y;
   int position;
