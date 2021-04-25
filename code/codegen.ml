@@ -106,6 +106,12 @@ let translate (globals, functions) =
     L.declare_function "Image_save" saveimage_t the_module 
   in
 
+  let createimage_t : L.lltype =
+    L.function_type image_t [| i32_t; i32_t; i8_t; i8_t; i8_t; i8_t|] in
+  let createimage_func : L.llvalue =
+    L.declare_function "Image_create" createimage_t the_module 
+  in
+
   let imagewidth_t : L.lltype =
     L.function_type i32_t [| image_t |] in
   let imagewidth_func : L.llvalue =
@@ -443,10 +449,11 @@ let translate (globals, functions) =
         | "max"      -> getmax_func,     [| args.(0); args.(1) |],          "get_max"
         | "sqrt"     -> getsqrt_func,    [| args.(0) |],                    "get_sqrt"
         | "load"     -> loadimage_func,  [| (args.(0)) |],                  "load"
-        | "save"     -> saveimage_func,  [| (args.(0)); (args.(1)) |],                  "save"
+        | "save"     -> saveimage_func,  [| (args.(0)); (args.(1)) |],      "save"
+        | "create"   -> createimage_func,[| (args.(0)); (args.(1)); (args.(2)); (args.(3)); (args.(4)); (args.(5))|], "create"
         | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
         | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
-        | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],          "get_pixel"
+        | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],         "get_pixel"
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in

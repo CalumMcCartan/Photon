@@ -54,36 +54,31 @@ int get_pixel(const Image *img, int i) {
     return (int)p[i]; 
 }
 
-
-
-/*
-void Image_create(Image *img, int width, int height, int channels, bool zeroed) {
-    size_t size = width * height * channels;
-    if(zeroed) {
-        img->data = calloc(size, 1);
-    } else {
-        img->data = malloc(size);
-    }
+Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+    Image* img = malloc(sizeof(Image));
+    size_t size = width * height * 4;
+    img->data = malloc(size);
 
     if(img->data != NULL) {
         img->width = width;
         img->height = height;
         img->size = size;
-        img->channels = channels;
+        img->channels = 4;
         img->allocation_ = SELF_ALLOCATED;
     }
+
+    for(unsigned char *p = img->data; p != img->data + img->size; p += img->channels) {
+        *p = red;
+        *(p + 1) = green;
+        *(p + 2) = blue;
+        *(p + 3) = alpha;
+    }
+    return img;
 }
 
-void Image_save(const Image *img, const char *fname) {
-    // Check if the file name ends in one of the .jpg/.JPG/.jpeg/.JPEG or .png/.PNG
-    if(str_ends_in(fname, ".jpg") || str_ends_in(fname, ".JPG") || str_ends_in(fname, ".jpeg") || str_ends_in(fname, ".JPEG")) {
-        stbi_write_jpg(fname, img->width, img->height, img->channels, img->data, 100);
-    } else if(str_ends_in(fname, ".png") || str_ends_in(fname, ".PNG")) {
-        stbi_write_png(fname, img->width, img->height, img->channels, img->data, img->width * img->channels);
-    } else {
-        ON_ERROR_EXIT(false, "");
-    }
-}
+
+/*
+
 
 void Image_free(Image *img) {
     if(img->allocation_ != NO_ALLOCATION && img->data != NULL) {

@@ -52,6 +52,7 @@ let check (globals, functions) =
       ("sqrt", [(Float, "x")], Float);
       ("load", [(String, "x")], Image); 
       ("save", [(Image, "img"); (String, "fname")], Void); 
+      ("create", [(Int, "w"); (Int, "h"); (Pint, "r"); (Pint, "g"); (Pint, "b"); (Pint, "a");], Image); 
       ("get_pixel", [(Image, "img"); (Int, "x")], Int);
       ("width", [(Image, "img")], Int);
       ("height", [(Image, "img")], Int)
