@@ -1,7 +1,0 @@
-func void functionname (variable, variable2) 
-{
-    for (i = 1; x < 4; i = 1) {
-        x = 1;
-    }
-}
-

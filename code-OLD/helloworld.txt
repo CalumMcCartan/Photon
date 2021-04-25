@@ -1,4 +1,0 @@
-func void main (nothing) 
-{
-   print("Hello world");
-}
