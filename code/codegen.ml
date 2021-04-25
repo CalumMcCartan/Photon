@@ -96,6 +96,8 @@ let translate (globals, functions) =
         L.function_type  image_t [| image_t|], "Image_to_gray"
       | "image_paste" ->
         L.function_type image_t [| image_t; image_t|], "Image_paste"
+      | "image_invert" ->
+        L.function_type image_t [| image_t|], "Image_invert" 
       | "image_add" ->
           L.function_type image_t [| image_t; image_t|], "Image_add"
       | "image_subtract" ->
@@ -433,7 +435,7 @@ let translate (globals, functions) =
         | "prints"   -> (func_decl "printf"), [| str_format_str ; args.(0) |],   "printf"
         (* Built in functions with unmodifed arguments *)
         | "min" | "max" | "sqrt" | "load" | "save" | "create" | "width"
-        | "height" | "destroy" | "flip" | "to_gray" | "image_paste" | "image_add"| "image_subtract"
+        | "height" | "destroy" | "flip" | "to_gray" | "image_paste" | "image_invert"| "image_add"| "image_subtract"
         | "get_pixel" | "set_pixel" | "pixel" | "pixel_attr"
           -> (func_decl fname), args, fname
         (* User defined function *)
