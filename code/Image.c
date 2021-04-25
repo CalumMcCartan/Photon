@@ -45,13 +45,21 @@ int get_pixel(const Image *img, int i) {
     int r = pixchar - 0;
     
     int g = p[i+1] - 0;
-    
-    
-
-
-    
 
     return (int)p[i]; 
+}
+
+int set_pixel(Image *img, int pos, int r, int g, int b, int a) {
+    unsigned char *p = img -> data;
+    unsigned char pixchar = p[pos];
+
+    p[pos] = (char)r;
+    p[pos+1] = (char) b;
+    p[pos+2] = (char) g;
+    p[pos+3] = (char) a;
+
+    return 0;
+
 }
 
 

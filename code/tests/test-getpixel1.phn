@@ -9,6 +9,7 @@ func int main()
   int y;
   int position;
   int channels;
+  int[] ps;
 
   
   img = load("sky.jpg");
@@ -23,8 +24,13 @@ func int main()
 
   for( index = position; index < position + 4; index = index+1 ) {
     p = get_pixel(img, index);
+    array_add(ps,p);
     print(p);
     img = load("sky.jpg");
+  }
+
+  for ( index = 0; index < ps.length; index = index+1) {
+    print(ps[index]);
   }
 
   return 0;

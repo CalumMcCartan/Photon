@@ -53,6 +53,7 @@ let check (globals, functions) =
       ("load", [(String, "x")], Image); 
       ("save", [(Image, "img"); (String, "fname")], Void); 
       ("get_pixel", [(Image, "img"); (Int, "x")], Int);
+      ("set_pixel", [(Image, "img"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x")], Int);
       ("width", [(Image, "img")], Int);
       ("height", [(Image, "img")], Int)
 

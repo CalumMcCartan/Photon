@@ -122,6 +122,12 @@ let translate (globals, functions) =
     L.function_type i32_t [| image_t; i32_t |] in
   let getpixel_func : L.llvalue =
     L.declare_function "get_pixel" getpixel_t the_module
+  in
+
+  let setpixel_t : L.lltype =
+    L.function_type i32_t [| image_t; i32_t;i32_t;i32_t;i32_t;i32_t |] in
+  let setpixel_func : L.llvalue =
+    L.declare_function "set_pixel" setpixel_t the_module    
     
   
   in
@@ -447,6 +453,7 @@ let translate (globals, functions) =
         | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
         | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
         | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],          "get_pixel"
+        | "set_pixel"   -> setpixel_func, [| args.(0); args.(1);args.(2);args.(3);args.(4);args.(5) |],          "set_pixel"
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in
