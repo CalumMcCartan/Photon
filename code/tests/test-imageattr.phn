@@ -1,0 +1,9 @@
+func int main() {
+    Image img;
+    img = load("Shapes.png");
+
+    print(img.width);
+    print(img.height);
+
+    return 0;
+}

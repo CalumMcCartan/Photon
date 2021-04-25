@@ -160,15 +160,21 @@ let check (globals, functions) =
       | Id s       -> (type_of_identifier s, SId s)
       | Attr(var, attr) ->
           let lt = type_of_identifier var in
+          let err = var ^ " has no attribute " ^ attr in
           (match lt with
             | Pixel ->
+              (match attr with
+                | "r" -> expr (Call("pixel_attr", [Id(var); Literal(0)]))
+                | "g" -> expr (Call("pixel_attr", [Id(var); Literal(1)]))
+                | "b" -> expr (Call("pixel_attr", [Id(var); Literal(2)]))
+                | "a" -> expr (Call("pixel_attr", [Id(var); Literal(3)]))
+                | _ -> raise (Failure (err)))
+            | Image ->
                 (match attr with
-                  | "r" -> expr (Call("pixel_attr", [Id(var); Literal(0)]))
-                  | "g" -> expr (Call("pixel_attr", [Id(var); Literal(1)]))
-                  | "b" -> expr (Call("pixel_attr", [Id(var); Literal(2)]))
-                  | "a" -> expr (Call("pixel_attr", [Id(var); Literal(3)]))
-                  | _ -> raise (Failure (" has no attribute ")))
-            | _ -> raise (Failure (var ^ " has no attribute " )))
+                | "width" -> expr (Call("width", [Id(var)]))
+                | "height" -> expr (Call("height", [Id(var)]))
+                | _ -> raise (Failure (err)))
+            | _ -> raise (Failure (err)))
       | Assign(var, e) as ex -> 
           let lt = type_of_identifier var
           and (rt, e') = expr e in
