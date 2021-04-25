@@ -56,6 +56,7 @@ let check (globals, functions) =
       ("destroy", [(Image, "img")], Void); 
       ("flip", [(Image, "img")], Image); 
       ("to_gray", [(Image, "img")], Image); 
+      ("image_paste", [(Image, "target"); (Image, "orig") ], Image); 
       ("get_pixel", [(Image, "img"); (Int, "x")], Int);
       ("set_pixel", [(Image, "img"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x")], Int);
       ("width", [(Image, "img")], Int);

@@ -142,6 +142,12 @@ let translate (globals, functions) =
     L.declare_function "Image_to_gray" grayimage_t the_module 
   in
 
+  let imagepaste_t : L.lltype =
+    L.function_type image_t [| image_t; image_t|] in
+  let imagepaste_func : L.llvalue =
+    L.declare_function "Image_paste" imagepaste_t the_module 
+  in
+
   let getpixel_t : L.lltype =
     L.function_type i32_t [| image_t; i32_t |] in
   let getpixel_func : L.llvalue =
@@ -480,6 +486,7 @@ let translate (globals, functions) =
         | "destroy"  -> destroyimage_func, [| (args.(0)) |],                "destroy"
         | "flip"     -> flipimage_func, [| (args.(0)) |],                   "flip"
         | "to_gray"  -> grayimage_func, [| (args.(0)) |],                   "to_gray"
+        | "image_paste"  -> imagepaste_func, [| args.(0); args.(1)  |],                   "image_paste"
         | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],         "get_pixel"
         | "set_pixel"   -> setpixel_func, [| args.(0); args.(1);args.(2);args.(3);args.(4);args.(5) |],          "set_pixel"
         (* User defined function *)

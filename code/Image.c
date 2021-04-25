@@ -99,6 +99,34 @@ void Image_free(Image *img) {
     }
 }
 
+Image* Image_paste( Image *gray, const Image *orig ) {
+    //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    
+    /*Image* gray = Image_create(target->width, target->height, 0, 0, 0, 255);
+    ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
+    */
+
+    int i = 0;
+    for(unsigned char *p = orig->data, *pg = gray->data; p != orig->data + orig->size; p += orig->channels, pg += gray->channels) {
+        
+        
+        if(i % ((orig-> width)*4) == 0 && i!= 0)
+        {
+            pg+= (((gray-> width)*4) - (orig->width *4));
+            
+        }
+
+        *pg = *p;
+        *(pg + 1) = *(p+1);
+        *(pg + 2) = *(p+2);
+        if(orig->channels == 4) {
+            *(pg + 3) = *(p + 3);
+        }
+        i+=orig-> channels;
+    }
+    return gray;
+}
+
 Image* Image_to_gray(const Image *orig) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
     Image* gray = Image_create(orig->width, orig->height, 0, 0, 0, 255);
