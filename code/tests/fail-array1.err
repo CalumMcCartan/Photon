@@ -1,0 +1,4 @@
+Call parameter type does not match function signature!
+i8* getelementptr inbounds ([2 x i8], [2 x i8]* @str, i32 0, i32 0)
+ i32  call void @array_addint({ i32*, i32* }* %new_array_ptr, i8* getelementptr inbounds ([2 x i8], [2 x i8]* @str, i32 0, i32 0))
+LLVM ERROR: Broken module found, compilation aborted!

@@ -1,0 +1,12 @@
+func int main()
+{
+    Pixel a;
+    a = _silver;
+
+    print(a.r);
+    print(a.g);
+    print(a.b);
+    print(a.a);
+
+    return 0;
+}

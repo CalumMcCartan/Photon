@@ -1,0 +1,11 @@
+func int main()
+{
+    int a;
+    int b;
+    a = 1;
+    b = 2;
+    print (min(a,b));
+    a = 3;
+    print (max(a,b));
+    return 0;
+}
