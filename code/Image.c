@@ -8,8 +8,7 @@
 #include "stb_image/stb_image_write.h"
 
 Image* Image_load(const char *fname) {
-    Image Img;
-    Image* img = &Img;
+    Image* img = malloc(sizeof(Image));
     if((img->data = stbi_load(fname, &img->width, &img->height, &img->channels, 4)) != NULL) {
         img->size = img->width * img->height * img->channels;
         img->allocation_ = STB_ALLOCATED;
@@ -17,6 +16,16 @@ Image* Image_load(const char *fname) {
         printf("Failed to load image %s\n", fname);
     }
     return img;
+}
+
+void Image_save(Image* img, const char* fname) {
+    if(str_ends_in(fname, ".jpg") || str_ends_in(fname, ".JPG") || str_ends_in(fname, ".jpeg") || str_ends_in(fname, ".JPEG")) {
+        stbi_write_jpg(fname, img->width, img->height, img->channels, img->data, 100);
+    } else if(str_ends_in(fname, ".png") || str_ends_in(fname, ".PNG")) {
+        stbi_write_png(fname, img->width, img->height, img->channels, img->data, img->width * img->channels);
+    } else {
+        ON_ERROR_EXIT(false, "");
+    }
 }
 
 int Image_width(Image *img) {

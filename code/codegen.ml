@@ -100,6 +100,12 @@ let translate (globals, functions) =
     L.declare_function "Image_load" loadimage_t the_module 
   in
 
+  let saveimage_t : L.lltype =
+    L.function_type i32_t [| image_t; string_t |] in
+  let saveimage_func : L.llvalue =
+    L.declare_function "Image_save" saveimage_t the_module 
+  in
+
   let imagewidth_t : L.lltype =
     L.function_type i32_t [| image_t |] in
   let imagewidth_func : L.llvalue =
@@ -437,6 +443,7 @@ let translate (globals, functions) =
         | "max"      -> getmax_func,     [| args.(0); args.(1) |],          "get_max"
         | "sqrt"     -> getsqrt_func,    [| args.(0) |],                    "get_sqrt"
         | "load"     -> loadimage_func,  [| (args.(0)) |],                  "load"
+        | "save"     -> saveimage_func,  [| (args.(0)); (args.(1)) |],                  "save"
         | "width"    -> imagewidth_func, [| (args.(0)) |],                  "width"
         | "height"   -> imageheight_func, [| (args.(0)) |],                 "height"
         | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],          "get_pixel"

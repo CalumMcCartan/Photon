@@ -1,15 +1,17 @@
 func int main()
 {
-  #whatever
   image img;
   int wid;
   int ht;
 
-  img = load("sky.jpg");
+  img = load("Shapes.png");
+
   wid = width(img);
   ht = height(img);
   print(wid);
   print(ht);
+
+  save(img, "ShapesSaved.png");
 
   return 0;
 }
