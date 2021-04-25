@@ -315,12 +315,22 @@ let translate (globals, functions) =
     try StringMap.find n local_vars with Not_found -> StringMap.find n global_vars
   in
 
+  (* Clamp given integer between 0-255 so its ready to be cast to a pint *)
+  let build_pint_clamp e builder = 
+    let max = (L.const_int i32_t 255) in
+    let max_cond = L.build_icmp L.Icmp.Sgt e max "compareMax" builder in
+    let e = L.build_select max_cond max e "selectMax" builder in
+    let min = (L.const_int i32_t 0) in
+    let min_cond = L.build_icmp L.Icmp.Slt e min "compareMin" builder in
+    L.build_select min_cond min e "selectMin" builder
+  in
+
   (* Cast an evaluated expression 'e' from type 'rt' to type 'lt' *)
   let cast_expr e lt rt builder = 
     if lt = rt then e else
     let llt = ltype_of_typ lt in
     match lt, rt with
-      | A.Pint, A.Int   -> L.build_trunc e llt "pintCast" builder
+      | A.Pint, A.Int   -> let e' = build_pint_clamp e builder in L.build_trunc e' llt "pintCast" builder
       | A.Int, A.Pint   -> L.build_zext e llt "intCast" builder
       | A.Float, A.Pint -> L.build_uitofp e llt "floatCast" builder
       | A.Float, A.Int  -> L.build_sitofp e llt "floatCast" builder
@@ -341,9 +351,13 @@ let translate (globals, functions) =
         let e' = cast_expr e' t rt builder in 
         ignore(L.build_store e' (lookup s) builder); e'
     | SBinop ((rt1, e1), op, (rt2, e2)) -> 
-      (* If binop type is a bool, then cast both expressions to float for comparision *)
-      let cast_t = if t = A.Bool then 
-        if rt1 = rt2 then rt1 else A.Float 
+      let is_pint_op = (rt1 = A.Pint && rt2 = A.Pint && t = A.Pint) in
+      let cast_t = 
+        (* If both types are pint, cast to int so we dont overflow. *)
+        if is_pint_op then A.Int
+        (* If binop type is a bool, then cast both expressions to float for comparision *)
+        else if t = A.Bool then 
+          if rt1 = rt2 then rt1 else A.Float 
         else t 
       in
       (* Evaluate both expressions and cast to same type 'cast_t' *)
@@ -352,33 +366,38 @@ let translate (globals, functions) =
       let e1' = cast_expr e1' cast_t rt1 builder
       and e2' = cast_expr e2' cast_t rt2 builder in
 
-      if cast_t = A.Float then (match op with
-        | A.Add     -> L.build_fadd
-        | A.Sub     -> L.build_fsub
-        | A.Mult    -> L.build_fmul
-        | A.Div     -> L.build_fdiv
-        | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
-        | A.Neq     -> L.build_fcmp L.Fcmp.One
-        | A.Less    -> L.build_fcmp L.Fcmp.Olt
-        | A.Leq     -> L.build_fcmp L.Fcmp.Ole
-        | A.Greater -> L.build_fcmp L.Fcmp.Ogt
-        | A.Geq     -> L.build_fcmp L.Fcmp.Oge
-        | A.And | A.Or -> raise (Failure "internal error: semant should have rejected and/or on float")
-        ) e1' e2' "floatBinop" builder
-      else (match op with
-        | A.Add     -> L.build_add
-        | A.Sub     -> L.build_sub
-        | A.Mult    -> L.build_mul
-        | A.Div     -> L.build_sdiv
-        | A.And     -> L.build_and
-        | A.Or      -> L.build_or
-        | A.Equal   -> L.build_icmp L.Icmp.Eq
-        | A.Neq     -> L.build_icmp L.Icmp.Ne
-        | A.Less    -> L.build_icmp L.Icmp.Slt
-        | A.Leq     -> L.build_icmp L.Icmp.Sle
-        | A.Greater -> L.build_icmp L.Icmp.Sgt
-        | A.Geq     -> L.build_icmp L.Icmp.Sge
-        ) e1' e2' "nonFloatBinop" builder
+      let result = 
+        if cast_t = A.Float then (match op with
+          | A.Add     -> L.build_fadd
+          | A.Sub     -> L.build_fsub
+          | A.Mult    -> L.build_fmul
+          | A.Div     -> L.build_fdiv
+          | A.Equal   -> L.build_fcmp L.Fcmp.Oeq
+          | A.Neq     -> L.build_fcmp L.Fcmp.One
+          | A.Less    -> L.build_fcmp L.Fcmp.Olt
+          | A.Leq     -> L.build_fcmp L.Fcmp.Ole
+          | A.Greater -> L.build_fcmp L.Fcmp.Ogt
+          | A.Geq     -> L.build_fcmp L.Fcmp.Oge
+          | A.And | A.Or -> raise (Failure "internal error: semant should have rejected and/or on float")
+          ) e1' e2' "floatBinop" builder
+        else (match op with
+          | A.Add     -> L.build_add
+          | A.Sub     -> L.build_sub
+          | A.Mult    -> L.build_mul
+          | A.Div     -> L.build_sdiv
+          | A.And     -> L.build_and
+          | A.Or      -> L.build_or
+          | A.Equal   -> L.build_icmp L.Icmp.Eq
+          | A.Neq     -> L.build_icmp L.Icmp.Ne
+          | A.Less    -> L.build_icmp L.Icmp.Slt
+          | A.Leq     -> L.build_icmp L.Icmp.Sle
+          | A.Greater -> L.build_icmp L.Icmp.Sgt
+          | A.Geq     -> L.build_icmp L.Icmp.Sge
+          ) e1' e2' "nonFloatBinop" builder
+      in
+      (* If is pint op, then cast back from int to pint *)
+      if is_pint_op then cast_expr result A.Pint A.Int builder
+      else result 
     | SUnop(op, ((t, _) as e)) ->
       (* Unop *)
       let e' = expr builder e in (match op with
