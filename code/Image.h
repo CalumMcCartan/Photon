@@ -29,3 +29,4 @@ void Image_free(Image *img);
 Image* Image_to_gray(const Image *orig);
 Image* Image_flip(const Image *orig);
 Image* Image_add( Image *img1, Image *img2);
+Image* Image_subtract( Image *img1, Image *img2);
