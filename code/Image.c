@@ -1,3 +1,9 @@
+/*
+Image library for Photon that implements the stb_image library.
+Image_load, Image_free and Image_save are written by the stb_image 
+library team, the rest is written by the Photon team.
+*/
+
 #include "Image.h"
 #include "utils.h"
 #include <math.h>

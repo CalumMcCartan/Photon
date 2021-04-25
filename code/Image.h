@@ -1,3 +1,11 @@
+/*
+Image headers for Photon that uses the stb_image library.
+Defines the Image struct, its pointer PImage, the Pixel struct, and its 
+PPixel pointer.
+struct Image, Image_load, Image_free and Image_save are written by the 
+stb_image library team. The rest is written by the Photon team.
+*/
+
 #pragma once
 
 #include <stdlib.h>
