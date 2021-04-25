@@ -7,10 +7,12 @@
 
 # Copy images used in tests into root dir
 cd images
+{
 for f in *.png
 do 
    cp -v "$f" ../"$f"
 done
+} > /dev/null 2>&1
 cd ..
 
 # Path to the LLVM interpreter
