@@ -1,0 +1,8 @@
+func int main()
+{
+    string[] a;
+    a = [0,1,9,3];
+    print(a.length);
+
+  return 0;
+}

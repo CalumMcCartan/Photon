@@ -1,0 +1,22 @@
+func int main()
+{
+  Image img;
+  int wid;
+  int ht;
+
+  pint r;
+  pint g;
+
+  r = g = 0;
+  #missing b and a layers
+  img = create(800, 600, r, g);
+
+  wid = width(img);
+  ht = height(img);
+  print(wid);
+  print(ht);
+
+  save(img, "blueImgTest.png");
+
+  return 0;
+}

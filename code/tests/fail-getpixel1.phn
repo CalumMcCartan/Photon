@@ -1,0 +1,28 @@
+func int main()
+{
+  #whatever
+  Image img;
+  
+  int index;
+  Pixel p;
+  float x;
+  int y;
+  int position;
+  int channels;
+  Pixel ps;
+
+  img = load("edwards.png");
+
+  #non integer position should return an error
+  x = 1.5;
+  y = 0;
+
+  p = get_pixel(img, x, y);
+
+  print(p.r);
+  print(p.g);
+  print(p.b);
+  print(p.a);
+
+  return 0;
+}

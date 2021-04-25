@@ -129,6 +129,11 @@ let translate (globals, functions) =
 
   (* array functions *)
 
+  (* 
+  the following array code partially referenced from AP++ 2018 project:
+    http://www.cs.columbia.edu/~sedwards/classes/2018/4115-fall/reports/AP++.tar.gz 
+  *)
+
   (* ltype array_get(array a, i32_t index) *)
   let array_get : L.llvalue StringMap.t = 
     let array_get_ty m typ = 
