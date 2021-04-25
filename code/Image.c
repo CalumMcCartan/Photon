@@ -80,7 +80,7 @@ uint8_t pixel_attr(Pixel p, int attr) {
     return 0;
 }
 
-Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+Image* Image_create(int width, int height, Pixel col) {
     Image* img = malloc(sizeof(Image));
     size_t size = width * height * 4;
     img->data = malloc(size);
@@ -94,10 +94,10 @@ Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t b
     }
 
     for(unsigned char *p = img->data; p != img->data + img->size; p += img->channels) {
-        *p = red;
-        *(p + 1) = green;
-        *(p + 2) = blue;
-        *(p + 3) = alpha;
+        *p = col.r;
+        *(p + 1) = col.g;
+        *(p + 2) = col.b;
+        *(p + 3) = col.a;
     }
     return img;
 }
@@ -147,7 +147,7 @@ Image* Image_add( Image *img1, Image *img2) {
     int i = 0;
     Image* gray;
     if (flag == 1){
-        gray = Image_create(img1->width, img1->height, 0, 0, 0, 255);
+        gray = Image_create(img1->width, img1->height, pixel(0, 0, 0, 255));
         for (int g_idx = 0, img1_idx = 0, img2_idx = 0; g_idx < gray->size; g_idx+= gray->channels, img1_idx += img1->channels) {
             for (int c = 0; c < img1->channels; c++) {
                 gray->data[g_idx + c] = img1->data[img1_idx + c];
@@ -166,7 +166,7 @@ Image* Image_add( Image *img1, Image *img2) {
             }
         }  
     } else {
-        gray = Image_create(img2->width, img2->height, 0, 0, 0, 255);
+        gray = Image_create(img2->width, img2->height, pixel(0, 0, 0, 255));
         for (int g_idx = 0, img1_idx = 0, img2_idx = 0; g_idx < gray->size; g_idx+= gray->channels, img2_idx += img2->channels) {
             //printf("%d", g_idx);
             for (int c = 0; c < img2->channels; c++) {
@@ -196,7 +196,7 @@ Image* Image_subtract( Image *img1, Image *img2) {
     int i = 0;
     Image* gray;
     if (flag == 1){
-        gray = Image_create(img1->width, img1->height, 0, 0, 0, 255);
+        gray = Image_create(img1->width, img1->height, pixel(0, 0, 0, 255));
         for (int g_idx = 0, img1_idx = 0, img2_idx = 0; g_idx < gray->size; g_idx+= gray->channels, img1_idx += img1->channels) {
             for (int c = 0; c < img1->channels; c++) {
                 gray->data[g_idx + c] = img1->data[img1_idx + c];
@@ -215,7 +215,7 @@ Image* Image_subtract( Image *img1, Image *img2) {
             }
         }  
     } else {
-        gray = Image_create(img2->width, img2->height, 0, 0, 0, 255);
+        gray = Image_create(img2->width, img2->height, pixel(0, 0, 0, 255));
         for (int g_idx = 0, img1_idx = 0, img2_idx = 0; g_idx < gray->size; g_idx+= gray->channels, img2_idx += img2->channels) {
             //printf("%d", g_idx);
             for (int c = 0; c < img2->channels; c++) {
@@ -240,7 +240,7 @@ Image* Image_subtract( Image *img1, Image *img2) {
 
 Image* Image_to_gray(const Image *orig) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
-    Image* gray = Image_create(orig->width, orig->height, 0, 0, 0, 255);
+    Image* gray = Image_create(orig->width, orig->height, pixel(0, 0, 0, 255));
     ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
     uint8_t gray_p;
 
@@ -259,7 +259,7 @@ Image* Image_to_gray(const Image *orig) {
 Image* Image_flip(const Image *orig) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
     int channels = 4;
-    Image* flipped = Image_create(orig->width, orig->height, 0, 0, 0, 255);
+    Image* flipped = Image_create(orig->width, orig->height, pixel(0, 0, 0, 255));
     ON_ERROR_EXIT(flipped->data == NULL, "Error in creating the image");
     int index = 0;
     int flippedIndex = 0;

@@ -88,7 +88,7 @@ let translate (globals, functions) =
       | "save" ->
         L.function_type i32_t [| image_t; string_t |], "Image_save"
       | "create" ->
-        L.function_type image_t [| i32_t; i32_t; i8_t; i8_t; i8_t; i8_t|], "Image_create"
+        L.function_type image_t [| i32_t; i32_t; pixel_t |], "Image_create"
       | "width" ->
         L.function_type i32_t [| image_t |], "Image_width"
       | "height" ->
