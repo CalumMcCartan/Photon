@@ -40,36 +40,45 @@ int get_position(int width, int channels, int x, int y) {
     return (x + (width * y)) * (channels); 
 }
 
-int get_pixel(const Image *img, int x, int y) {
-
-
+Pixel* get_pixel(const Image *img, int x, int y) {
     int pos = get_position(img->width, img-> channels, x,y);
-
     unsigned char *p = img->data;
-
     unsigned char pixchar = p[pos];
-    int r = pixchar - 0;
-    
-    int g = p[pos+1] - 0;
 
-    return r; 
+    return pixel(p[pos], p[pos + 1], p[pos + 2], p[pos + 3]); 
 }
 
-int set_pixel(Image *img, int x, int y, int r, int g, int b, int a) {
+int set_pixel(Image *img, int x, int y, Pixel *pix) {
     unsigned char *p = img -> data;
     int pos = get_position(img->width, img-> channels, x,y);
 
-    unsigned char pixchar = p[pos];
-
-    p[pos] = (char)r;
-    p[pos+1] = (char) b;
-    p[pos+2] = (char) g;
-    p[pos+3] = (char) a;
+    p[pos] = pix->r;
+    p[pos+1] = pix->b;
+    p[pos+2] = pix->g;
+    p[pos+3] = pix->a;
 
     return 0;
-
 }
 
+Pixel* pixel(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
+    Pixel* p = malloc(sizeof(Pixel));
+    p->r = red;
+    p->g = green;
+    p->b = blue;
+    p->a = alpha;
+    return p;
+}
+
+uint8_t pixel_attr(Pixel* p, int attr) {
+    switch(attr) {
+        case 0: return p->r;
+        case 1: return p->g;
+        case 2: return p->b;
+        case 3: return p->a;
+        default: printf("Internal error: pixel has no %d attr", attr);
+    }
+    return 0;
+}
 
 Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha) {
     Image* img = malloc(sizeof(Image));

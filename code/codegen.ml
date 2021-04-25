@@ -34,6 +34,7 @@ let translate (globals, functions) =
   and string_t   = L.pointer_type (L.i8_type context)
   and void_t     = L.void_type   context 
   and image_t   = L.pointer_type (L.named_struct_type context "PImage")
+  and pixel_t   = L.pointer_type (L.named_struct_type context "PPixel")
   and array_t t   = L.struct_type context [| L.pointer_type (L.i32_type context); (L.pointer_type t) |]
   in
 
@@ -46,6 +47,7 @@ let translate (globals, functions) =
     | A.Void  -> void_t
     | A.String -> string_t
     | A.Image -> image_t
+    | A.Pixel -> pixel_t
     | A.Array t -> array_t (ltype_of_typ t)
   in
   let type_str t = 
@@ -104,9 +106,13 @@ let translate (globals, functions) =
       | "image_subtract" ->
           L.function_type image_t [| image_t; image_t|], "Image_subtract"
       | "get_pixel" ->
-        L.function_type i32_t [| image_t; i32_t; i32_t |], "get_pixel"
+        L.function_type pixel_t [| image_t; i32_t; i32_t |], "get_pixel"
       | "set_pixel" ->
-        L.function_type i32_t [| image_t; i32_t; i32_t; i32_t; i32_t; i32_t; i32_t |], "set_pixel"
+        L.function_type i32_t [| image_t; i32_t; i32_t; pixel_t |], "set_pixel"
+      | "pixel" ->
+        L.function_type pixel_t [| i8_t; i8_t; i8_t; i8_t; |], "pixel"
+      | "pixel_attr" ->
+        L.function_type i8_t [| pixel_t; i32_t |], "pixel_attr"
       | _ -> 
         raise (Failure "internal error: built-in func does not exist ")
       in
@@ -426,8 +432,9 @@ let translate (globals, functions) =
         | "printf"   -> (func_decl "printf"), [| float_format_str ; args.(0) |], "printf"
         | "prints"   -> (func_decl "printf"), [| str_format_str ; args.(0) |],   "printf"
         (* Built in functions with unmodifed arguments *)
-        | "printbig" | "min" | "max" | "sqrt" | "load" | "save" | "create" | "width" 
-        | "height" | "destroy" | "flip" | "to_gray" | "image_paste" | "image_add"| "image_subtract"| "get_pixel" | "set_pixel" 
+        | "printbig" | "min" | "max" | "sqrt" | "load" | "save" | "create" | "width"
+        | "height" | "destroy" | "flip" | "to_gray" | "image_paste" | "image_add"| "image_subtract"
+        | "get_pixel" | "set_pixel" | "pixel" | "pixel_attr"
           -> (func_decl fname), args, fname
         (* User defined function *)
         | _ ->

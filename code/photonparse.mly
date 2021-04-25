@@ -68,7 +68,7 @@ typ:
   | VOID  { Void  }
   | STRING { String }
   | IMAGE { Image }
-  | PIXEL { Array(Int) }
+  | PIXEL { Pixel }
   | typ LBRACK RBRACK  { Array($1) }
 
 vdecl:
@@ -122,6 +122,7 @@ expr:
   | ID LBRACK expr RBRACK                   { ArrayGet($1, $3) }
   | LBRACK args_opt RBRACK                  { ArrayLiteral($2) }
   | ID PERIOD LENGTH                        { ArraySize($1)    }
+  | ID PERIOD ID                            { Attr($1, $3)     }
 
 
 args_opt:

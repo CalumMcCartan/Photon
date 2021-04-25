@@ -1,8 +1,8 @@
 func int main()
 {
-  image imgshapes;
-  image imgedwards;
-  image newimg;
+  Image imgshapes;
+  Image imgedwards;
+  Image newimg;
   int wid;
   int ht;
 

@@ -1,7 +1,7 @@
 func int main()
 {
   #whatever
-  image img;
+  Image img;
   
   int index;
   int p;
@@ -9,25 +9,20 @@ func int main()
   int y;
   int position;
   int channels;
-  int[] ps;
+  Pixel ps;
 
-  
   img = load("edwards.png");
 
-  #for gettign a specific pixel, input what you want
+  #for getting a specific pixel, input what you want
   x = 1;
   y = 0;
 
-  for( index = 0; index <  4; index = index+1 ) {
-    p = get_pixel(img, x +index, y);
-    array_add(ps,p);
-    print(p);
-    img = load("sky.jpg");
-  }
+  p = get_pixel(img, x, y);
 
-  for ( index = 0; index < ps.length; index = index+1) {
-    print(ps[index]);
-  }
+  print(p.r);
+  print(p.g);
+  print(p.b);
+  print(p.a);
 
   return 0;
 }

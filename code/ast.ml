@@ -5,12 +5,13 @@ type op = Add | Sub | Mult | Div | Equal | Neq | Less | Leq | Greater | Geq |
 
 type uop = Neg | Not
 
-type typ = Int | Pint | Bool | Float | Void | String | Array of typ | Image 
+type typ = Int | Pint | Bool | Float | Void | String | Array of typ | Image | Pixel
 
 type bind = typ * string
 
 type expr =
     Literal of int
+  | PLiteral of int
   | Fliteral of string
   | BoolLit of bool
   | StrLiteral of string
@@ -23,6 +24,7 @@ type expr =
   | ArrayGet of string * expr
   | ArraySize of string
   | ArrayLiteral of expr list
+  | Attr of string * string
   | Noexpr
 
 type stmt =
@@ -66,7 +68,8 @@ let string_of_uop = function
   | Not -> "!"
 
 let rec string_of_expr = function
-    Literal(l) -> string_of_int l
+    PLiteral(l)
+  | Literal(l) -> string_of_int l
   | Alias(l)
   | Fliteral(l) -> l
   | StrLiteral(l) -> "\"" ^ l ^ "\""
@@ -83,6 +86,7 @@ let rec string_of_expr = function
   | ArrayGet(id, e) -> "array_get " ^ id ^ ", " ^ (string_of_expr e)
   | ArraySize(id) -> "array_size " ^ id
   | ArrayLiteral(_) -> "array_literal"
+  | Attr(i, a) -> i ^ "." ^ a
 
 let rec string_of_stmt = function
     Block(stmts) ->
@@ -106,7 +110,8 @@ let rec string_of_typ = function
   | Float -> "float"
   | Void -> "void"
   | String -> "string"
-  | Image -> "image"
+  | Image -> "Image"
+  | Pixel -> "Pixel"
   | Array x -> (string_of_typ x) ^ "[]"
 
 let string_of_vdecl (t, id) = string_of_typ t ^ " " ^ id ^ ";\n"

@@ -59,11 +59,12 @@ let check (globals, functions) =
       ("image_paste", [(Image, "target"); (Image, "orig") ], Image);
       ("image_add", [(Image, "img1"); (Image, "img2") ], Image);
       ("image_subtract", [(Image, "img1"); (Image, "img2") ], Image);
-      ("get_pixel", [(Image, "img"); (Int, "x"); (Int, "y")], Int);
-      ("set_pixel", [(Image, "img"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x"); (Int, "x")], Int);
+      ("get_pixel", [(Image, "img"); (Int, "x"); (Int, "y")], Pixel);
+      ("set_pixel", [(Image, "img"); (Int, "x"); (Int, "y"); (Pixel, "p");], Int);
       ("width", [(Image, "img")], Int);
-      ("height", [(Image, "img")], Int)
-
+      ("height", [(Image, "img")], Int);
+      ("pixel", [(Pint, "r"); (Pint, "g"); (Pint, "b"); (Pint, "a")], Pixel);
+      ("pixel_attr", [(Pixel, "p"); (Int, "attr")], Pint)
       ]
   in
 
@@ -138,6 +139,7 @@ let check (globals, functions) =
     (* Return a semantically-checked expression, i.e., with a type *)
     let rec expr = function
         Literal l -> (Int, SLiteral l)
+      | PLiteral l -> (Pint, SPintLit l)
       | Fliteral l -> (Float, SFliteral l)
       | StrLiteral l -> (String, SStrLiteral l)
       | Alias n -> 
@@ -152,10 +154,21 @@ let check (globals, functions) =
           | "_magenta" -> (255, 0, 255, 255)
           | "_yellow"  -> (255, 255, 0, 255)
           | _ -> raise (Failure ("alias " ^ n ^ " does not exist"))
-        ) in expr (ArrayLiteral ([Literal(r); Literal(g); Literal(b); Literal(a)]))
+        ) in expr (Call ("pixel", [PLiteral(r); PLiteral(g); PLiteral(b); PLiteral(a)]))
       | BoolLit l  -> (Bool, SBoolLit l)
       | Noexpr     -> (Void, SNoexpr)
       | Id s       -> (type_of_identifier s, SId s)
+      | Attr(var, attr) ->
+          let lt = type_of_identifier var in
+          (match lt with
+            | Pixel ->
+                (match attr with
+                  | "r" -> expr (Call("pixel_attr", [Id(var); Literal(0)]))
+                  | "g" -> expr (Call("pixel_attr", [Id(var); Literal(1)]))
+                  | "b" -> expr (Call("pixel_attr", [Id(var); Literal(2)]))
+                  | "a" -> expr (Call("pixel_attr", [Id(var); Literal(3)]))
+                  | _ -> raise (Failure (" has no attribute ")))
+            | _ -> raise (Failure (var ^ " has no attribute " )))
       | Assign(var, e) as ex -> 
           let lt = type_of_identifier var
           and (rt, e') = expr e in

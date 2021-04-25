@@ -1,7 +1,7 @@
 func int main()
 {
-  image img;
-  image flippedimg;
+  Image img;
+  Image flippedimg;
   int wid;
   int ht;
 

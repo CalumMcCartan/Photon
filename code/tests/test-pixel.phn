@@ -1,13 +1,13 @@
 func int main()
 {
-    pixel a;
-    a = _magenta;
+    Pixel p;
 
-    print(a[0]);
-    print(a[1]);
-    print(a[2]);
-    print(a[3]);
-    print(a.length);
+    p = pixel(255, 128, 0, 255);
+
+    print(p.r);
+    print(p.g);
+    print(p.b);
+    print(p.a);
 
     return 0;
 }

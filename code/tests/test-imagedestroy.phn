@@ -1,6 +1,6 @@
 func int main()
 {
-  image img;
+  Image img;
   int wid;
   int ht;
 

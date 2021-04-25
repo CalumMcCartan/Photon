@@ -1,30 +1,36 @@
 func int main()
 {
   #testing set_pixel 
-  image img;
+  Image img;
   
   int index;
   int position;
   int channels;
 
-  int[] ps;
+  Pixel p1;
   int x;
   int y;
-  int p;
 
   img = load("Shapes.png");
 
   #for gettign a specific pixel, input the width * height coordinate you want
   x = 0;
   y = 0;  
-  ps = [255,255,255,255];
+  p1 = pixel(255, 0, 0, 255);
 
-  p = set_pixel(img, x, y,ps[0], ps[1], ps[2], ps[3]);
-
+  # Set pixel
+  set_pixel(img, x, y, p1);
   save(img, "ShapesSavedMod.png");
 
-  print(p);
+  # Check pixel was changed
+  img = load("ShapesSavedMod.png");
+  Pixel p2;
+  p2 = get_pixel(img, x, y);
 
+  print(p2.r);
+  print(p2.g);
+  print(p2.b);
+  print(p2.a);
 
   return 0;
 }
