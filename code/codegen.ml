@@ -69,97 +69,44 @@ let translate (globals, functions) =
 
   (* built-in functions *)
 
-  let printf_t : L.lltype = 
-      L.var_arg_function_type i32_t [| L.pointer_type i8_t |] in
-  let printf_func : L.llvalue = 
-      L.declare_function "printf" printf_t the_module in
-
-  let printbig_t : L.lltype =
-      L.function_type i32_t [| i32_t |] in
-  let printbig_func : L.llvalue =
-      L.declare_function "printbig" printbig_t the_module in
-  
-  let getmin_t : L.lltype =
-    L.function_type i32_t [| i32_t; i32_t |] in
-  let getmin_func : L.llvalue =
-    L.declare_function "get_min" getmin_t the_module in
-  
-  let getmax_t : L.lltype =
-    L.function_type i32_t [| i32_t; i32_t |] in
-  let getmax_func : L.llvalue =
-    L.declare_function "get_max" getmax_t the_module in
-  
-  let getsqrt_t : L.lltype =
-    L.function_type float_t [| float_t |] in
-  let getsqrt_func : L.llvalue =
-    L.declare_function "get_sqrt" getsqrt_t the_module in
-
-  let loadimage_t : L.lltype =
-    L.function_type image_t [| string_t |] in
-  let loadimage_func : L.llvalue =
-    L.declare_function "Image_load" loadimage_t the_module 
-  in
-
-  let saveimage_t : L.lltype =
-    L.function_type i32_t [| image_t; string_t |] in
-  let saveimage_func : L.llvalue =
-    L.declare_function "Image_save" saveimage_t the_module 
-  in
-
-  let createimage_t : L.lltype =
-    L.function_type image_t [| i32_t; i32_t; i8_t; i8_t; i8_t; i8_t|] in
-  let createimage_func : L.llvalue =
-    L.declare_function "Image_create" createimage_t the_module 
-  in
-
-  let imagewidth_t : L.lltype =
-    L.function_type i32_t [| image_t |] in
-  let imagewidth_func : L.llvalue =
-    L.declare_function "Image_width" imagewidth_t the_module 
-  in
-
-  let imageheight_t : L.lltype =
-    L.function_type i32_t [| image_t |] in
-  let imageheight_func : L.llvalue =
-    L.declare_function "Image_height" imageheight_t the_module
-  in
-
-  let destroyimage_t : L.lltype =
-    L.function_type i32_t [| image_t|] in
-  let destroyimage_func : L.llvalue =
-    L.declare_function "Image_free" destroyimage_t the_module 
-  in
-
-  let flipimage_t : L.lltype =
-    L.function_type image_t [| image_t|] in
-  let flipimage_func : L.llvalue =
-    L.declare_function "Image_flip" flipimage_t the_module 
-  in
-
-  let grayimage_t : L.lltype =
-    L.function_type image_t [| image_t|] in
-  let grayimage_func : L.llvalue =
-    L.declare_function "Image_to_gray" grayimage_t the_module 
-  in
-
-  let imagepaste_t : L.lltype =
-    L.function_type image_t [| image_t; image_t|] in
-  let imagepaste_func : L.llvalue =
-    L.declare_function "Image_paste" imagepaste_t the_module 
-  in
-
-  let getpixel_t : L.lltype =
-    L.function_type i32_t [| image_t; i32_t |] in
-  let getpixel_func : L.llvalue =
-    L.declare_function "get_pixel" getpixel_t the_module
-  in
-
-  let setpixel_t : L.lltype =
-    L.function_type i32_t [| image_t; i32_t;i32_t;i32_t;i32_t;i32_t |] in
-  let setpixel_func : L.llvalue =
-    L.declare_function "set_pixel" setpixel_t the_module    
-    
-  
+  let func_decl name =
+    let (func_t, c_name) = match name with  
+      | "printf" -> 
+        L.var_arg_function_type i32_t [| L.pointer_type i8_t |], "printf"
+      | "printbig" ->
+        L.function_type i32_t [| i32_t |], "printbig"
+      | "min" ->
+        L.function_type i32_t [| i32_t; i32_t |], "get_min"
+      | "max" ->
+        L.function_type i32_t [| i32_t; i32_t |], "get_max"
+      | "sqrt" ->
+        L.function_type float_t [| float_t |], "get_sqrt"
+      | "load" ->
+        L.function_type image_t [| string_t |], "Image_load"
+      | "save" ->
+        L.function_type i32_t [| image_t; string_t |], "Image_save"
+      | "create" ->
+        L.function_type image_t [| i32_t; i32_t; i8_t; i8_t; i8_t; i8_t|], "Image_create"
+      | "width" ->
+        L.function_type i32_t [| image_t |], "Image_width"
+      | "height" ->
+        L.function_type i32_t [| image_t |], "Image_height"
+      | "destroy" ->
+        L.function_type i32_t [| image_t|], "Image_free"
+      | "flip" ->
+        L.function_type image_t [| image_t|], "Image_flip"
+      | "to_gray" ->
+        L.function_type  image_t [| image_t|], "Image_to_gray"
+      | "image_paste" ->
+        L.function_type image_t [| image_t; image_t|], "Image_paste"
+      | "get_pixel" ->
+        L.function_type i32_t [| image_t; i32_t |], "get_pixel"
+      | "set_pixel" ->
+        L.function_type i32_t [| image_t; i32_t;i32_t;i32_t;i32_t;i32_t |], "set_pixel"
+      | _ -> 
+        raise (Failure "internal error: built-in func does not exist ")
+      in
+      L.declare_function c_name func_t the_module
   in
 
   (* LLVM insists each basic block end with exactly one "terminator" 
@@ -471,25 +418,13 @@ let translate (globals, functions) =
       let (fdef, args', result) = match fname with
         (* Built in functions with modifed arguments *)
         | "printb"
-        | "print"    -> printf_func, [| int_format_str ; args.(0) |],   "printf"
-        | "printf"   -> printf_func, [| float_format_str ; args.(0) |], "printf"
-        | "prints"   -> printf_func, [| str_format_str ; args.(0) |],   "printf"
+        | "print"    -> (func_decl "printf"), [| int_format_str ; args.(0) |],   "printf"
+        | "printf"   -> (func_decl "printf"), [| float_format_str ; args.(0) |], "printf"
+        | "prints"   -> (func_decl "printf"), [| str_format_str ; args.(0) |],   "printf"
         (* Built in functions with unmodifed arguments *)
-        | "printbig" -> printbig_func,       args, "printbig"
-        | "min"      -> getmin_func,         args, "get_min"
-        | "max"      -> getmax_func,         args, "get_max"
-        | "sqrt"     -> getsqrt_func,        args, "get_sqrt"
-        | "load"     -> loadimage_func,      args, "load"
-        | "save"     -> saveimage_func,      args, "save"
-        | "create"   -> createimage_func,    args, "create"
-        | "width"    -> imagewidth_func,     args, "width"
-        | "height"   -> imageheight_func,    args, "height"
-        | "destroy"  -> destroyimage_func,   args, "destroy"
-        | "flip"     -> flipimage_func,      args, "flip"
-        | "to_gray"  -> grayimage_func,      args, "to_gray"
-        | "image_paste"  -> imagepaste_func, args, "image_paste"
-        | "get_pixel"   -> getpixel_func,    args, "get_pixel"
-        | "set_pixel"   -> setpixel_func,    args, "set_pixel"
+        | "printbig" | "min" | "max" | "sqrt" | "load" | "save" | "create" | "width" 
+        | "height" | "destroy" | "flip" | "to_gray" | "image_paste" | "get_pixel" | "set_pixel" 
+          -> (func_decl fname), args, fname
         (* User defined function *)
         | _ ->
             let (fdef, fdecl) = StringMap.find fname function_decls in
