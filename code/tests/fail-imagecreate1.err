@@ -1,1 +1,1 @@
-Fatal error: exception Failure("expecting 6 arguments in create(800, 600, r, g)")
+Fatal error: exception Failure("expecting 3 arguments in create(800, 600, r, g)")
