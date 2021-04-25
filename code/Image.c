@@ -99,22 +99,21 @@ void Image_free(Image *img) {
     }
 }
 
-/*
-
-
-
-
-void Image_to_gray(const Image *orig, Image *gray) {
-    ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
-    int channels = orig->channels == 4 ? 2 : 1;
-    Image_create(gray, orig->width, orig->height, channels, false);
+Image* Image_to_gray(const Image *orig) {
+    //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
+    int channels = 4;
+    Image* gray = Image_create(orig->width, orig->height, 0, 0, 0, 255);
     ON_ERROR_EXIT(gray->data == NULL, "Error in creating the image");
+    uint8_t gray_p;
 
     for(unsigned char *p = orig->data, *pg = gray->data; p != orig->data + orig->size; p += orig->channels, pg += gray->channels) {
-        *pg = (uint8_t)((*p + *(p + 1) + *(p + 2))/3.0);
+        gray_p = (uint8_t)((*p + *(p + 1) + *(p + 2))/3.0);
+        *pg = gray_p;
+        *(pg + 1) = gray_p;
+        *(pg + 2) = gray_p;
         if(orig->channels == 4) {
-            *(pg + 1) = *(p + 3);
+            *(pg + 3) = *(p + 3);
         }
     }
+    return gray;
 }
-*/

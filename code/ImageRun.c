@@ -4,10 +4,10 @@
 #include "utils.h"
 
 int main(void) {
-    Image* img = Image_load("sky.jpg");
-    Image* emptyimg = Image_create(300, 300, 255, 0, 0, 255);
-    Image_save(emptyimg, "redimg.png");
-    Image_free(emptyimg);
+    Image* img = Image_load("Shapes.png");
+    Image* gray = Image_to_gray(img);
+    Image_save(gray, "grayTest.png");
+    Image_free(gray);
     /*
     ON_ERROR_EXIT(img_sky.data == NULL, "Error in loading the image");
     Image_load(&img_shapes, "Shapes.png");
