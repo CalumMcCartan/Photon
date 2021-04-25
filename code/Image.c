@@ -127,6 +127,55 @@ Image* Image_paste( Image *gray, const Image *orig ) {
     return gray;
 }
 
+Image* Image_add( Image *img1, Image *img2) {
+    int flag, w, h;
+    w = h = 1;
+    flag = img1->size >= img2->size ? 1 : 2;
+    int i = 0;
+    Image* gray;
+    if (flag == 1){
+        gray = Image_create(img1->width, img1->height, 0, 0, 0, 255);
+        for (int g_idx = 0, img1_idx = 0, img2_idx = 0; g_idx < gray->size; g_idx+= gray->channels, img1_idx += img1->channels) {
+            for (int c = 0; c < img1->channels; c++) {
+                gray->data[g_idx + c] = img1->data[img1_idx + c];
+            }
+            if (w <= img2->width && h <= img2->height) {
+                for (int c = 0; c < img2->channels; c++) {
+                    gray->data[g_idx + c] += img2->data[img2_idx + c];
+                }
+                img2_idx += img2->channels;
+            }
+            if (w == gray->width) {
+                w = 1;
+                h += 1;
+            } else {
+                w += 1;
+            }
+        }  
+    } else {
+        gray = Image_create(img2->width, img2->height, 0, 0, 0, 255);
+        for (int g_idx = 0, img1_idx = 0, img2_idx = 0; g_idx < gray->size; g_idx+= gray->channels, img2_idx += img2->channels) {
+            //printf("%d", g_idx);
+            for (int c = 0; c < img2->channels; c++) {
+                gray->data[g_idx + c] = img2->data[img2_idx + c];
+            }
+            if (w <= img1->width && h <= img1->height) {
+                for (int c = 0; c < img1->channels; c++) {
+                    gray->data[g_idx + c] += img1->data[img1_idx + c];
+                }
+                img1_idx += img1->channels;
+            }
+            if (w == gray->width) {
+                w = 1;
+                h += 1;
+            } else {
+                w += 1;
+            }
+        }  
+    }
+    return gray;
+}
+
 Image* Image_to_gray(const Image *orig) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
     Image* gray = Image_create(orig->width, orig->height, 0, 0, 0, 255);

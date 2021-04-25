@@ -28,3 +28,4 @@ Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t b
 void Image_free(Image *img);
 Image* Image_to_gray(const Image *orig);
 Image* Image_flip(const Image *orig);
+Image* Image_add( Image *img1, Image *img2);

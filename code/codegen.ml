@@ -148,6 +148,12 @@ let translate (globals, functions) =
     L.declare_function "Image_paste" imagepaste_t the_module 
   in
 
+  let imageadd_t : L.lltype =
+    L.function_type image_t [| image_t; image_t|] in
+  let imageadd_func : L.llvalue =
+    L.declare_function "Image_add" imageadd_t the_module 
+  in
+
   let getpixel_t : L.lltype =
     L.function_type i32_t [| image_t; i32_t |] in
   let getpixel_func : L.llvalue =
@@ -487,6 +493,7 @@ let translate (globals, functions) =
         | "flip"     -> flipimage_func, [| (args.(0)) |],                   "flip"
         | "to_gray"  -> grayimage_func, [| (args.(0)) |],                   "to_gray"
         | "image_paste"  -> imagepaste_func, [| args.(0); args.(1)  |],                   "image_paste"
+        | "image_add" -> imageadd_func, [| args.(0); args.(1)  |],                   "image_add"
         | "get_pixel"   -> getpixel_func, [| args.(0); args.(1) |],         "get_pixel"
         | "set_pixel"   -> setpixel_func, [| args.(0); args.(1);args.(2);args.(3);args.(4);args.(5) |],          "set_pixel"
         (* User defined function *)
