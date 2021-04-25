@@ -5,6 +5,14 @@
 #  Compile, run, and check the output of each expected-to-work test
 #  Compile and check the error of each expected-to-fail test
 
+# Copy images used in tests into root dir
+cd images
+for f in *.png
+do 
+   cp -v "$f" ../"$f"
+done
+cd ..
+
 # Path to the LLVM interpreter
 LLI="lli"
 #LLI="/usr/local/opt/llvm/bin/lli"
@@ -201,5 +209,16 @@ do
 	    ;;
     esac
 done
+
+# Move output images to images-out
+rm -f -R images-out
+mkdir -p images-out
+for f in *.png 
+do 
+    if ! test -f images/"$f"; then
+        mv "$f" images-out/"$f"
+    fi
+done
+rm *.png
 
 exit $globalerror

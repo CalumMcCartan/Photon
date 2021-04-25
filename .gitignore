@@ -38,3 +38,4 @@ _opam/
 
 *.ll
 testall.log
+images-out
