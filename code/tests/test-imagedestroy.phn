@@ -1,0 +1,22 @@
+func int main()
+{
+  image img;
+  int wid;
+  int ht;
+
+  img = load("Shapes.png");
+
+  wid = width(img);
+  ht = height(img);
+  print(wid);
+  print(ht);
+
+  destroy(img);
+
+  wid = width(img);
+  ht = height(img);
+  print(wid);
+  print(ht);
+
+  return 0;
+}

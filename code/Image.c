@@ -84,10 +84,6 @@ Image* Image_create(int width, int height, uint8_t red, uint8_t green, uint8_t b
     return img;
 }
 
-
-/*
-
-
 void Image_free(Image *img) {
     if(img->allocation_ != NO_ALLOCATION && img->data != NULL) {
         if(img->allocation_ == STB_ALLOCATED) {
@@ -102,6 +98,11 @@ void Image_free(Image *img) {
         img->allocation_ = NO_ALLOCATION;
     }
 }
+
+/*
+
+
+
 
 void Image_to_gray(const Image *orig, Image *gray) {
     ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
