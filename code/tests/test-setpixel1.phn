@@ -1,0 +1,39 @@
+func int main()
+{
+  #testing set_pixel 
+  image img;
+  
+  int index;
+  int position;
+  int channels;
+
+  int[] ps;
+  int x;
+  int y;
+  int p;
+
+
+
+  img = load("Shapes.png");
+
+  #for gettign a specific pixel, input the width * height coordinate you want
+  x = 0;
+  y = 0;
+
+  #array math, assumes 4 channels
+  channels = 4;
+  position = (x + (width(img) * y) ) * channels;  
+  
+  ps = [255,255,255,255];
+  p = set_pixel(img, index,ps[0], ps[1], ps[2], ps[3]);
+
+  save(img, "ShapesSavedMod.png");
+
+  print(p);
+
+
+  return 0;
+}
+
+
+  
