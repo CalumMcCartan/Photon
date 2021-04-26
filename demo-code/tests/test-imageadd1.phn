@@ -1,0 +1,30 @@
+func int main()
+{
+  Image imgshapes;
+  Image imgedwards;
+  Image newimg;
+  int wid;
+  int ht;
+
+  imgshapes = load("Shapes.png");
+  imgedwards = load("edwards.png");
+
+  newimg = image_add(imgshapes, imgedwards);
+
+  wid = width(newimg);
+  ht = height(newimg);
+  print(wid);
+  print(ht);
+
+  save(newimg, "ImgAddTest.png");
+
+
+  # Using operators
+  Image newimg2;
+  newimg2 = imgshapes + imgedwards;
+  save(newimg2, "ImgAddTest2.png");
+  print(newimg2.width);
+  print(newimg2.height);
+
+  return 0;
+} 

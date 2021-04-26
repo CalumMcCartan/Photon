@@ -1,0 +1,10 @@
+func void foo()
+{
+  if (true) return 42; # Should return void 
+  else return;
+}
+
+func int main()
+{
+  return 42;
+}

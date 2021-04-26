@@ -1,0 +1,20 @@
+func int main()
+{
+  Image imgedwards;
+  Image newimg;
+  int wid;
+  int ht;
+
+  imgedwards = load("edwards.png");
+
+  newimg = image_invert(imgedwards);
+
+  wid = width(newimg);
+  ht = height(newimg);
+  print(wid);
+  print(ht);
+
+  save(newimg, "ImgInvertTest.png");
+
+  return 0;
+}

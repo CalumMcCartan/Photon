@@ -1,0 +1,9 @@
+func int main()
+{
+  float a;
+  a = 9.0;
+  float b;
+  b = 0.25;
+  printf(sqrt(a));
+  printf(sqrt(b));
+}

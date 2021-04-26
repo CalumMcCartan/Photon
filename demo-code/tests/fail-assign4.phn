@@ -1,0 +1,6 @@
+
+func int main()
+{
+  pint i;
+  i = 0.5; # Fail - cant assign float to pint
+}

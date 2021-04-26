@@ -1,0 +1,19 @@
+func int main()
+{
+  Image img;
+  Image grayimg;
+  int wid;
+  int ht;
+
+  img = load("Shapes.png");
+  grayimg = to_gray(img);
+
+  wid = width(grayimg);
+  ht = height(grayimg);
+  print(wid);
+  print(ht);
+
+  save(grayimg, "grayImgTest.png");
+
+  return 0;
+}

@@ -1,0 +1,8 @@
+func int foo(int a, bool b, int c) { }
+
+func void bar(int a, bool b, int a) {} # Error: duplicate formal a in bar
+
+func int main()
+{
+  return 0;
+}

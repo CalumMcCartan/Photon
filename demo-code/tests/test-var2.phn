@@ -1,0 +1,13 @@
+int a;
+
+func void foo(int c)
+{
+  a = c + 42;
+}
+
+func int main()
+{
+  foo(73);
+  print(a);
+  return 0;
+}

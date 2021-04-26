@@ -1,0 +1,12 @@
+func int foo() {}
+
+func int bar() {}
+
+func int baz() {}
+
+func void bar() {} # Error: duplicate function bar
+
+func int main()
+{
+  return 0;
+}

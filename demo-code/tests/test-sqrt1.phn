@@ -1,0 +1,7 @@
+func int main()
+{
+  printf(sqrt(4));
+  printf(sqrt(2.25));
+  printf(sqrt(-1));
+  return 0;
+}

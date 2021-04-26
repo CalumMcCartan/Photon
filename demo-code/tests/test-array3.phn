@@ -1,0 +1,11 @@
+func int main()
+{
+    float[] a;
+    a = [1.1,2.2,3.3];
+
+    printf(a[0]);
+    printf(a[1]);
+    printf(a[2]);
+
+  return 0;
+}

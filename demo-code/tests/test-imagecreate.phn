@@ -1,0 +1,17 @@
+func int main()
+{
+  Image img;
+  int wid;
+  int ht;
+
+  img = create(800, 600, _blue);
+
+  wid = width(img);
+  ht = height(img);
+  print(wid);
+  print(ht);
+
+  save(img, "blueImgTest.png");
+
+  return 0;
+}

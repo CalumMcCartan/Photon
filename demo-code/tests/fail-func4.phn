@@ -1,0 +1,12 @@
+func int foo() {}
+
+func void bar() {}
+
+func int print() {} # Should not be able to define print
+
+func void baz() {}
+
+func int main()
+{
+  return 0;
+}

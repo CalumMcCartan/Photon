@@ -1,0 +1,9 @@
+func int main()
+{
+    pint x;
+    x = 20.25;
+    
+    print(x);
+
+    return 0;
+}

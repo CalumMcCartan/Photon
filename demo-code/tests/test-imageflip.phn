@@ -1,0 +1,19 @@
+func int main()
+{
+  Image img;
+  Image flippedimg;
+  int wid;
+  int ht;
+
+  img = load("Shapes.png");
+  flippedimg = flip(img);
+
+  wid = width(flippedimg);
+  ht = height(flippedimg);
+  print(wid);
+  print(ht);
+
+  save(flippedimg, "flipImgTest.png");
+
+  return 0;
+}

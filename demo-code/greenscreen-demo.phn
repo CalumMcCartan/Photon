@@ -1,0 +1,112 @@
+func float distance(Pixel p1, Pixel p2) {
+    float r_dist;
+    float g_dist;
+    float b_dist;
+    float a_dist;
+    r_dist = (p1.r - p2.r) * (p1.r - p2.r);
+    g_dist = (p1.g - p2.g) * (p1.g - p2.g);
+    b_dist = (p1.b - p2.b) * (p1.b - p2.b);
+    a_dist = (p1.a - p2.a) * (p1.a - p2.a);
+    return sqrt(r_dist + g_dist + b_dist + a_dist);
+}
+
+func Image frame(Image orig, int x1, int x2, int y1, int y2) {
+    int i;
+    int j;
+    Pixel blankP;
+    blankP = pixel(0, 0, 0, 0);
+    Pixel greenP;
+    greenP = pixel(101,199,100,255);
+    Pixel currP;
+    for (i = x1; i < x2; i = i + 1) {
+        for (j = y1; j < y2; j = j + 1) {
+            currP = get_pixel(orig, i, j);
+            #print(currP.g);
+            if (distance(currP, greenP) < 13) {
+                set_pixel(orig, i, j, blankP);
+            }
+        }
+    }
+    return orig;
+}
+
+func Image offsetImg(Image bigImg, Image smallImg, int x, int y) {
+    int i;
+    int j;
+    for (i = x; i < x + smallImg.width; i = i + 1) {
+        for (j = y; j < y + smallImg.height; j = j + 1) {
+            set_pixel(bigImg, i, j, get_pixel(smallImg, i-x, j-y));
+        }
+    }
+    return bigImg;
+}
+
+func Image mask(Image bigImg, Image smallImg) {
+    int i;
+    int j;
+    Pixel currP;
+    for (i = 0; i < smallImg.width; i = i + 1) {
+        for (j = 0; j < smallImg.height; j = j + 1) {
+            currP = get_pixel(bigImg, i, j);
+            if (currP.a == 255) {
+                set_pixel(smallImg, i, j, pixel(0,0,0,0));
+            }
+        }
+    }
+    return smallImg;
+}
+
+func Image greenscreen(Image orig) {
+    int i;
+    int j;
+    Pixel blankP;
+    blankP = pixel(0, 0, 0, 0);
+    Pixel greenP;
+    greenP = pixel(67,179,77,255);
+    Pixel currP;
+    for (i = 0; i < orig.width; i = i + 1) {
+        for (j = 0; j < orig.height; j = j + 1) {
+            if (i < 125 || j < 160 || i > 455) {
+                currP = get_pixel(orig, i, j);
+                if (distance(currP, greenP) < 8) {
+                    set_pixel(orig, i, j, blankP);
+                }
+            }
+        }
+    }
+    return orig;
+}
+
+func int main() {
+    int x1;
+    int x2;
+    int y1;
+    int y2;
+    x1 = 140;
+    x2 = 450;
+    y1 = 170;
+    y2 = 380;
+
+    Image frameImg;
+    frameImg = load("green_screen_frame_32.png");
+    frameImg = frame(frameImg, x1, x2, y1, y2);
+    
+    Image edwardsImg;
+    edwardsImg = load("edwards2.png");
+    
+    Image bigEdwardsImg;
+    bigEdwardsImg = create(frameImg.width, frameImg.height, pixel(0,0,0,0));
+    bigEdwardsImg = offsetImg(bigEdwardsImg, edwardsImg, 140, 100);
+    bigEdwardsImg = mask(frameImg, bigEdwardsImg);
+
+    frameImg = bigEdwardsImg + frameImg;
+    frameImg = greenscreen(frameImg);
+
+    Image mountains;
+    mountains = load("mountain-view-demo.png");
+    mountains = mask(frameImg, mountains);
+
+    frameImg = mountains + frameImg;
+    
+    save(frameImg, "green_screen_out.png");
+}

@@ -1,0 +1,15 @@
+
+func int main()
+{
+    int i;
+    float f;
+    i = 5;
+    f = 1.7;
+    f = 1.2 + 5;
+    printf(f);
+    printf(6.4 / 2);
+    printf(2 * 2.2);
+    printf(2 + 2.2);
+    printb(2 > 2.2);
+    printb(3.14 != 3);
+}

@@ -1,0 +1,1 @@
+Fatal error: exception Failure("illegal assignment pint = float in i = 0.5")

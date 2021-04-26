@@ -1,0 +1,49 @@
+func int main()
+{
+    pint x;
+    int i;
+
+    x = 42;
+    print(x);
+    x = 255;
+    print(x);  
+    x = 256;
+    print(x);
+    x = 1000;
+    print(x); 
+    x = 0;
+    print(x);  
+    x = -1;
+    print(x);
+
+    i = 10;
+    x = 1 + 1;
+    print(x); 
+
+    pint x2;
+    x = 200;
+    x2 = 200;
+    print(x + x2);
+
+    x = getBigInt();
+    print(x);
+
+    x = x2;
+    printb(x == x2);
+
+    printPint(66);
+    printPint(-12);
+
+    return 0;
+}
+
+func int getBigInt() {
+    int z;
+    z = 500;
+    return z;
+}
+
+func int printPint(pint p) {
+    print(p);
+    return p;
+}

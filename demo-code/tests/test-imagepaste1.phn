@@ -1,0 +1,28 @@
+func int main()
+{
+  Image imgshapes;
+  Image imgedwards;
+  Image newimg;
+  int wid;
+  int ht;
+  int x;
+  int y;
+
+
+
+  imgshapes = load("Shapes.png");
+  imgedwards = load("edwards.png");
+
+
+  x = y = 0;
+  newimg = image_paste(imgshapes, imgedwards, 0,0);
+
+  wid = width(newimg);
+  ht = height(newimg);
+  print(wid);
+  print(ht);
+
+  save(newimg, "ImgPasteTest.png");
+
+  return 0;
+}

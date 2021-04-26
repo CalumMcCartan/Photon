@@ -1,0 +1,9 @@
+func int foo(int a)
+{
+  return a;
+}
+
+func int main()
+{
+  return 0;
+}

@@ -1,0 +1,28 @@
+func int main()
+{
+  #whatever
+  Image img;
+  
+  int index;
+  Pixel p;
+  int x;
+  int y;
+  int position;
+  int channels;
+  Pixel ps;
+
+  img = load("edwards.png");
+
+  #for getting a specific pixel, input what you want
+  x = 1;
+  y = 0;
+
+  p = get_pixel(img, x, y);
+
+  print(p.r);
+  print(p.g);
+  print(p.b);
+  print(p.a);
+
+  return 0;
+}
