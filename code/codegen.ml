@@ -95,7 +95,7 @@ let translate (globals, functions) =
       | "to_gray" ->
         L.function_type  image_t [| image_t|], "Image_to_gray"
       | "image_paste" ->
-        L.function_type image_t [| image_t; image_t|], "Image_paste"
+        L.function_type image_t [| image_t; image_t; i32_t; i32_t|], "Image_paste"
       | "image_invert" ->
         L.function_type image_t [| image_t|], "Image_invert" 
       | "image_add" ->
