@@ -1,4 +1,13 @@
-(* Ocamllex scanner for Photon *)
+(* 
+  Ocamllex scanner for Photon.
+  Based on MicroC
+  
+  Authors:
+  Franky Campuzano (fc2608)
+  Akira Higaki (abh2171)
+  Calum McCartan (cm4114)
+  Phu D Pham (pdp2121)
+*)
 
 { open Photonparse }
 
