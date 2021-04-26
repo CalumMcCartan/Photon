@@ -129,12 +129,19 @@ void Image_free(Image *img) {
     }
 }
 
-Image* Image_paste( Image *gray, const Image *orig ) {
+Image* Image_paste( Image *gray, const Image *orig, int x, int y ) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");
     
+    int pos = get_position(gray->width, gray-> channels, x,y);
+
     int i = 0;
+    bool fixedpos = false;
     for(unsigned char *p = orig->data, *pg = gray->data; p != orig->data + orig->size; p += orig->channels, pg += gray->channels) {
         
+        if(!fixedpos) {
+            pg+=pos;
+            fixedpos = true;
+        }
         
         if(i % ((orig-> width)*4) == 0 && i!= 0) {
             pg+= (((gray-> width)*4) - (orig->width *4));
@@ -144,6 +151,7 @@ Image* Image_paste( Image *gray, const Image *orig ) {
         *pg = *p;
         *(pg + 1) = *(p+1);
         *(pg + 2) = *(p+2);
+        
         if(orig->channels == 4) {
             *(pg + 3) = *(p + 3);
         }
@@ -151,6 +159,7 @@ Image* Image_paste( Image *gray, const Image *orig ) {
     }
     return gray;
 }
+
 
 Image* Image_invert(Image *orig ) {
     //ON_ERROR_EXIT(!(orig->allocation_ != NO_ALLOCATION && orig->channels >= 3), "The input image must have at least 3 channels.");

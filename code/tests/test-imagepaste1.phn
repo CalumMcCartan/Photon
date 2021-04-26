@@ -5,11 +5,17 @@ func int main()
   Image newimg;
   int wid;
   int ht;
+  int x;
+  int y;
+
+
 
   imgshapes = load("Shapes.png");
   imgedwards = load("edwards.png");
 
-  newimg = image_paste(imgshapes, imgedwards);
+
+  x = y = 0;
+  newimg = image_paste(imgshapes, imgedwards, 0,0);
 
   wid = width(newimg);
   ht = height(newimg);

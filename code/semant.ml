@@ -64,7 +64,7 @@ let check (globals, functions) =
       ("destroy", [(Image, "img")], Void); 
       ("flip", [(Image, "img")], Image); 
       ("to_gray", [(Image, "img")], Image); 
-      ("image_paste", [(Image, "target"); (Image, "orig") ], Image);
+      ("image_paste", [(Image, "target"); (Image, "orig"); (Int, "x"); (Int, "y") ], Image);
       ("image_invert", [(Image, "orig") ], Image);
       ("image_add", [(Image, "img1"); (Image, "img2") ], Image);
       ("image_subtract", [(Image, "img1"); (Image, "img2") ], Image);
