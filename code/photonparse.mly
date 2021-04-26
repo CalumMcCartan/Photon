@@ -1,4 +1,4 @@
-(* 
+/* 
   Ocamlyacc parser for Photon.
   Based on MicroC
   
@@ -6,7 +6,7 @@
   Franky Campuzano (fc2608)
   Akira Higaki (abh2171)
   Calum McCartan (cm4114)
-*)
+*/
 
 %{
 open Ast
