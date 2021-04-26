@@ -2,7 +2,8 @@ The Photon compiler
 
 Coded in OCaml, this takes a highly stripped-down subset of C (ints,
 bools, and void types, arithmetic, if-else, for, and while statements,
-and user-defined functions) and compiles it into LLVM IR.
+and user-defined functions) with special image manipulation functions
+and compiles it into LLVM IR.
 
 It needs the OCaml llvm library, which is most easily installed through opam.
 
@@ -12,15 +13,11 @@ and opam, then use opam to install llvm.
 The version of the OCaml llvm library must match the version of the LLVM
 system installed on your system.
 
-In addition to print, which calls the C library function printf(),
-photon gratuitiously includes a primitive function "printbig," which
-prints large ASCII-encoded characters.
-
-The stock C compiler compiles printbig.o.  testall.sh runs the photon
+The stock C compiler compiles Image.o and utils.o.  testall.sh runs the photon
 executable on each testcase (.phn file) to produce a .ll file, invokes
 "llc" (the LLVM compiler) to produce a .s (assembly) file, then
 invokes "cc" (the stock C compiler) to assemble the .s file, link in
-printbig.o, and generate an executable.  See testall.sh for details.
+Image.o, utils.o, and generates an executable.  See testall.sh for details.
 ----------
 If you get errors about llvm.analysis not being found, it's probably
 because opam enviroment information is missing.  Either run
@@ -241,20 +238,3 @@ Installation under OS X
    sudo ln -s /usr/local/opt/llvm/bin/lli-3.7 /usr/bin/lli   
 
    As before, you may also modify the path to lli in testall.sh
-
-------------------------------
-To run and test:
-
-$ make
-ocamlbuild -use-ocamlfind -pkgs llvm,llvm.analysis -cflags -w,+a-4 photon.native
-Finished, 22 targets (0 cached) in 00:00:01.
-cc    -c -o printbig.o printbig.c
-$ ./testall.sh
-test-arith1...OK
-test-arith2...OK
-test-arith3...OK
-test-fib...OK
-...
-fail-while1...OK
-fail-while2...OK
-
